@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 19:28:37 GMT	John Goerzen <jgoerzen@complete.org>	patch-55
+
+    Summary:
+      Added tests for dicts
+    Revision:
+      missingexts--head--0.7--patch-55
+
+
+    modified files:
+     ChangeLog testsrc/Objectstest.hs
+
+
 2005-02-01 19:03:30 GMT	John Goerzen <jgoerzen@complete.org>	patch-54
 
     Summary:

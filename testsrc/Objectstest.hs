@@ -110,6 +110,19 @@ test_doubles =
        ((1 / (2 ^ 384))::CDouble)
     ]
 
+test_dicts = 
+    [
+     f "empty" ([]::[(String, String)]) fromPyObject ([]::[(String, String)])
+    ,f "one s" [("foo", "bar")] fromPyObject [("foo", "bar")]
+    ,f "mult s" [("foo", "bar"), ("quux", "baz")] 
+           (\x -> fromPyObject x >>= return . sort)
+           [("foo", "bar"), ("quux", "baz")]
+    ,f "s2i" [("foo", 1::CLong), ("quux", 2)]
+           (\x -> fromPyObject x >>= return . sort)
+           [("foo", 1::CLong), ("quux", 2)]
+    ]
+        
+
 test_call =
     [
      TestCase $ do func <- pyRun_String "repr" Py_eval_input []
@@ -153,5 +166,6 @@ tests = TestList [TestLabel "base" (TestList test_base),
                   TestLabel "doubles" (TestList test_doubles),
                   TestLabel "dir" (TestList test_dir),
                   TestLabel "call" (TestList test_call),
-                  TestLabel "attr" (TestList test_attr)
+                  TestLabel "attr" (TestList test_attr),
+                  TestLabel "dict" (TestList test_dicts)
                  ]

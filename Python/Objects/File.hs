@@ -91,10 +91,7 @@ instance Show PyFile where
 
 {- | Wrap an operation, raising exceptions in the IO monad as appropriate. -}
 pyfwrap :: PyFile -> (PyObject -> IO a) -> IO a
-pyfwrap (PyFile pyobj) func =
-    let handler e = do f <- formatException e
-                       fail $ show f
-        in catchPy (func pyobj) handler
+pyfwrap (PyFile pyobj) func = catchPy (func pyobj) exc2ioerror
 
 raiseEOF :: PyFile -> IO a
 raiseEOF h = vThrow h eofErrorType

@@ -13,6 +13,7 @@ Exposed-Modules: Python.Types,
  Python.Exceptions,
  Python.Exceptions.ExcTypes,
  Python.Objects.File,
+ Python.Objects.Dict,
  MissingPy.FileArchive.GZip,
  MissingPy.FileArchive.BZip2
 Hidden-Modules: Python.ForeignImports

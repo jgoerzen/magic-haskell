@@ -94,6 +94,13 @@ foreign import ccall unsafe "glue.h PyDict_New"
 foreign import ccall unsafe "glue.h PyObject_SetItem"
  pyObject_SetItem :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject -> IO CInt
 
+foreign import ccall unsafe "glue.h PyObject_DelItem"
+ pyObject_DelItem :: Ptr CPyObject -> Ptr CPyObject -> IO CInt
+
+foreign import ccall unsafe "glue.h PyObject_GetItem"
+ pyObject_GetItem :: Ptr CPyObject -> Ptr CPyObject -> IO (Ptr CPyObject)
+
+
 foreign import ccall unsafe "glue.h PyObject_Repr"
  pyObject_Repr :: Ptr CPyObject -> IO (Ptr CPyObject)
 

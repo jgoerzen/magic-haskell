@@ -45,9 +45,13 @@ import Python.Objects
 import Python.Utils
 import Foreign
 import Foreign.C.Types
+import Python.Exceptions
+import MissingH.AnyDBM
+import Python.Types
 
 {- | The basic type for a Python dict or dict-like object. -}
-newtype PyDict = PyDict PyObject
+newtype PyDict = PyDict 
+    PyObject                    -- Main dict object
 
 {- | Takes a 'PyObject' representing a Python dict or dict-like objext
 and makes it into a 'PyDict'. -}
@@ -58,3 +62,43 @@ mkPyDict o = PyDict o
 fromPyDict :: PyDict -> PyObject
 fromPyDict (PyDict o) = o
 
+{- | Wrap an operation, raising exceptions in the IO monad as appropriate. -}
+pydwrap :: PyDict -> (PyObject -> IO a) -> IO a
+pydwrap (PyDict pyobj) func = catchPy (func pyobj) exc2ioerror
+
+{- | Give it a CPyObject instead. -}
+cpydwrap :: PyDict -> (Ptr CPyObject -> IO a) -> IO a
+cpydwrap x func = pydwrap x (\y -> withPyObject y func)
+
+instance AnyDBM PyDict where
+    insertA h k v = 
+        do ko <- toPyObject k
+           kv <- toPyObject v
+           withPyObject ko (\ck ->
+            withPyObject kv (\cv ->
+             cpydwrap h (\cdict ->
+              pyObject_SetItem cdict ck cv >>= checkCInt >> return()
+                     )
+                            )
+                           )
+    deleteA h k = 
+        do ko <- toPyObject k
+           withPyObject ko (\ck ->
+            cpydwrap h (\cdict ->
+             pyObject_DelItem cdict ck >>= checkCInt >> return ()))
+    lookupA h k =
+        do ko <- toPyObject k
+           withPyObject ko (\ck ->
+            cpydwrap h (\cdict ->
+             do r <- pyObject_GetItem cdict ck
+                if r == nullPtr
+                   then return Nothing
+                   else do retval <- fromCPyObject r >>= fromPyObject
+                           return $ Just retval
+                                  ))
+    toListA h =
+        pydwrap h fromPyObject
+        
+
+
+    

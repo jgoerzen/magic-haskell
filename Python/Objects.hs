@@ -106,7 +106,9 @@ dirPyObject x = withPyObject x (\cpyo ->
 {- | Call a Python object with all-Haskell parameters.
 Similar to 'PyObject_Call'.  This limits you to a single item type for
 the regular arguments and another single item type for the keyword arguments. 
-Nevertheless, it could be a handy shortcut at times. -}
+Nevertheless, it could be a handy shortcut at times.
+
+For a higher-level wrapper, see 'Python.Interpreter.callByName'. -}
 pyObject_CallHs :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
                    PyObject     -- ^ Object t
                 -> [a]          -- ^ List of non-keyword parameters
@@ -120,7 +122,10 @@ pyObject_CallHs callobj simpleargs kwargs =
            k <- mapM conv kwargs
            pyObject_Call callobj s k >>= fromPyObject
 
-{- | Call a Python object (function, etc) -}
+{- | Call a Python object (function, etc).
+
+For a higher-level wrapper, see 'Python.Interpreter.callByName'.
+ -}
 pyObject_Call :: PyObject       -- ^ Object to call
               -> [PyObject]     -- ^ List of non-keyword parameters (may be empty)
               -> [(String, PyObject)] -- ^ List of keyword parameters (may be empty)

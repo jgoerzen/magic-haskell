@@ -32,6 +32,17 @@ test_base =
                     (10::CLong) @=? newl
     ]
 
+test_callbyname =
+    let f msg func inp exp = TestLabel msg $ TestCase $ 
+                             do r <-callByName func inp noKwParms
+                                exp @=? r
+        in
+        [
+         f "repr" "repr" [5::Integer] "5L"
+        ,f "repr2" "repr" [5::CLong] "5"
+        ,f "pow" "pow" [2::CInt, 32::CInt] ((2 ^ 32)::Integer)
+        ]
+
 test_args =
     let f msg code inp exp = TestLabel msg $ TestCase $ 
                                do let testhdict = [("testval", inp)]
@@ -51,4 +62,5 @@ test_args =
         
 
 tests = TestList [TestLabel "base" (TestList test_base),
-                  TestLabel "args" (TestList test_args)]
+                  TestLabel "args" (TestList test_args),
+                  TestLabel "callByName" (TestList test_callbyname)]

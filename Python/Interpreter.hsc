@@ -34,10 +34,15 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module Python.Interpreter (
                           py_initialize,
+                          -- * Intrepreting Code
                           pyRun_SimpleString,
                           pyRun_String,
                           pyRun_StringHs,
-                          StartFrom(..)
+                          StartFrom(..),
+                          -- * Calling Code
+                          callByName,
+                          noParms,
+                          noKwParms
                           )
 where
 
@@ -97,6 +102,25 @@ pyRun_String command startfrom xglobals xlocals =
                 withPyObject rlocals (\clocals ->
                  cpyRun_String ccommand cstart cglobals clocals >>= fromCPyObject
                               )))
+
+{- | Call a function or callable object by name.
+
+You can use 'noParms' and 'noKwParms' if you have no simple or
+keyword parameters to pass, respectively. -}
+callByName :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
+              String            -- ^ Object/function name
+           -> [a]               -- ^ List of non-keyword parameters
+           -> [(String, b)]     -- ^ List of keyword parameters
+           -> IO c
+callByName fname sparms kwparms =
+    do func <- pyRun_String fname Py_eval_input [] []
+       pyObject_CallHs func sparms kwparms
+
+noParms :: [String]
+noParms = []
+
+noKwParms :: [(String, String)]
+noKwParms = []
 
 foreign import ccall unsafe "Python.h Py_Initialize"
   py_initialize :: IO ()

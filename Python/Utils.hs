@@ -48,9 +48,11 @@ fromCPyObject po =
 
 raisePyException :: IO a
 raisePyException =
+{-
     do cpy <- getexc
        let (exc, val, tb) = cpy
        pyErr_Print
+-}
        fail "Python Error!"
     where getexc = do cexc <- hspy_getexc
                       exc <- peekArray 3 cexc

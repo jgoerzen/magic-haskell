@@ -29,14 +29,27 @@ Written by John Goerzen, jgoerzen\@complete.org
 module Python.Interpreter (
                           py_initialize,
                           pyRun_SimpleString,
-                          pyRun_String
+                          pyRun_String,
+                          StartFrom(..)
                           )
 where
+
+#include <Python.h>
+
 import Python.Utils
 import Python.Types
 import Foreign
 import Foreign.C.String
 import Foreign.C
+
+data StartFrom = Py_eval_input
+               | Py_file_input
+               | Py_single_input
+
+sf2c :: StartFrom -> CInt
+sf2c Py_eval_input = #const Py_eval_input
+sf2c Py_file_input = #const Py_file_input
+sf2c Py_single_input = #const Py_single_input
 
 pyRun_SimpleString :: String -> IO ()
 pyRun_SimpleString x = withCString x (\cs ->
@@ -45,16 +58,17 @@ pyRun_SimpleString x = withCString x (\cs ->
                                      )
     
 pyRun_String :: String          -- ^ Command to run
-             -> CInt            -- ^ Start Token (use 0)
+             -> StartFrom       -- ^ Start Token (use 0)
              -> Maybe PyObject  -- ^ Globals (or Nothing for defaults)
              -> Maybe PyObject  -- ^ Locals (or Nothing for defaults)
              -> IO PyObject     -- ^ Result
-pyRun_String command start globals locals =
+pyRun_String command startfrom globals locals =
     withCString command (\ccommand ->
         maybeWithPyObject globals (\cglobals ->
             maybeWithPyObject locals (\clocals ->
                 cpyRun_String ccommand start cglobals clocals >>= fromCPyObject
                               )))
+    where start = sf2c startfrom
 
 foreign import ccall unsafe "Python.h Py_Initialize"
   py_initialize :: IO ()

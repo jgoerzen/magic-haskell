@@ -1,9 +1,17 @@
 -------------------------
-What is MissingH?
+What is MissingPy?
 -------------------------
 
-It's a collection of Haskell-related utilities.  It is an extension of my
-earlier work developing MissingLib for OCaml.  
+It's two things:
+
+1. A Haskell binding for many C and Python libraries for tasks such as
+   data compression, databases, etc.  This can be found in the
+   MissingPy module tree.
+
+2. A low-level Haskell binding to the Python interpreter to
+   enable development of hybrid applications that use both
+   environments.  This can be found in the Python module tree.  The
+   Haskell bindings above use this environment.
 
 -------------------------
 Major Features

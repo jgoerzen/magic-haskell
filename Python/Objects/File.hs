@@ -31,6 +31,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Python file-like objects
 
 Written by John Goerzen, jgoerzen\@complete.org
+
+This module provides a Haskell interface to work with Python file-like objects.
+The Haskell interface is a "MissingH.IO.HVIO" interface, which is similar
+in concept to the Python file-like object system.
+
+You can create such objects by using 'openPyFile' from this module, or
+'MissingPy.FileArchive.GZip.openGz' or 'MissingPy.FileArchive.BZip2.openBz2'.
+
+Functions that you can use to operate on these objects are defined at
+"MissingH.IO.HVIO".
 -}
 
 module Python.Objects.File (-- * PyFile Objects
@@ -56,7 +66,13 @@ import Foreign.C.Types
 {- | The basic type for a Python file or file-like object.
 
 'PyFile's are a member of MissingH.IO.HVIO and can be used as any other
-Haskell HVFS object such as a Handle. -}
+Haskell HVFS object such as a Handle.
+
+'PyFile' objects cannot reliably detect EOF when asked by 'vIsEOF', but
+can detect it and raise the appropriate IOError when it is reached.
+Also, 'PyFile' objects cannot determine if they are readable, writable,
+or seekable in advance.
+ -}
 newtype PyFile = PyFile PyObject
 
 {- | Takes a 'PyObject' representing a Python file or file-like object

@@ -28,6 +28,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Python low-level exception definitions
 
+These are definitions of the built-in Python exception objects.  You can
+use them with 'MissingPy.Python.Exceptions.doesExceptionMatch' and
+'MissingPy.Python.Exceptions.catchSpecificPy'.
+
+The meanings of these exceptions can be found at
+<http://www.python.org/doc/current/lib/module-exceptions.html>.
+
+Please note that windowsError is available only on Microsoft platforms.
+
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 

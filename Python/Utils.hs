@@ -29,6 +29,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Python low-level utilities
 
 Written by John Goerzen, jgoerzen\@complete.org
+
+Please use sparingly and with caution.  The documentation for their behavior
+should be considered to be the source code.
 -}
 
 module Python.Utils (-- * Objects

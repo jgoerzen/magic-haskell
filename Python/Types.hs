@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Portability: portable
 
 Interfaces to low-level Python types.  You should probably not use this module
-directly.  You probably want 'Python.Objects' instead.
+directly.  You probably want "Python.Objects" instead.
 
 You'll only need this module directly if you are importing new functions
 from the Python C API.

@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-03 22:25:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-75
+
+    Summary:
+      updating docs
+    Revision:
+      missingexts--head--0.7--patch-75
+
+
+    modified files:
+     COPYRIGHT ChangeLog INSTALL MissingPy/FileArchive/BZip2.hs
+     Python/Exceptions/ExcTypes.hsc Python/Objects/Dict.hs
+     Python/Objects/File.hs Python/Types.hs Python/Utils.hs README
+
+
 2005-02-03 17:33:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-74
 
     Summary:

@@ -36,6 +36,7 @@ This module can be used to access Python dicts and dict-like objects such as
 dbm databases.  For a higher-level interface to creating and working with these
 dbm interfaces, please see the functions in "MissingPy.AnyDBM".  Also,
 for functions that use this, please see "MissingH.AnyDBM".
+
 -}
 
 module Python.Objects.Dict (PyDict,

@@ -51,7 +51,7 @@ import Python.Objects.File
 (least compression) to 9 (most compression).  This is ignored when the file
 is opened read-only.
 
-Once opened, the functions defined in 'MissingH.IO.HVIO' can be used
+Once opened, the functions defined in "MissingH.IO.HVIO" can be used
 to work with it.
 
 BZip2 supports only ReadMode and WriteMode for the IOMode. -}

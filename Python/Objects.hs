@@ -45,6 +45,8 @@ module Python.Objects (
                        reprOf,
                        showPyObject,
                        dirPyObject,
+                       -- * Conversions between Python Objects
+                       pyList_AsTuple,
                        -- * Calling Python Objects
                        pyObject_Call,
                        pyObject_CallHs
@@ -124,13 +126,25 @@ pyObject_Call :: PyObject       -- ^ Object to call
               -> [(String, PyObject)] -- ^ List of keyword parameters (may be empty)
               -> IO PyObject    -- ^ Return value
 pyObject_Call callobj simpleparams kwparams =
-        do pyosimple <- toPyObject simpleparams
+        do putStrLn "pyObject_Call"
+           showPyObject callobj >>= putStrLn
+           pyosimple <- toPyObject simpleparams >>= pyList_AsTuple
+           showPyObject pyosimple >>= putStrLn
            pyokw <- toPyObject kwparams
-           withPyObject callobj (\ccallobj ->
-            withPyObject pyosimple (\cpyosimple ->
-             withPyObject pyokw (\cpyokw ->
-              cpyObject_Call ccallobj cpyosimple cpyokw >>= fromCPyObject)))
+           showPyObject pyokw >>= putStrLn
+           cval <- withPyObject callobj (\ccallobj ->
+                    withPyObject pyosimple (\cpyosimple ->
+                     withPyObject pyokw (\cpyokw ->
+                      cpyObject_Call ccallobj cpyosimple cpyokw)))
+           print cval
+           retval <- fromCPyObject cval
+           showPyObject retval >>= putStrLn
+           return retval
        
+-- ^ Converts a Python list to a tuple.
+pyList_AsTuple :: PyObject -> IO PyObject
+pyList_AsTuple x =
+    withPyObject x (\cpo -> cpyList_AsTuple cpo >>= fromCPyObject)
 
 ----------------------------------------------------------------------
 -- Instances
@@ -420,3 +434,6 @@ foreign import ccall unsafe "glue.h PyObject_Dir"
 foreign import ccall "glue.h PyObject_Call"
  cpyObject_Call :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject ->
                    IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyList_AsTuple"
+ cpyList_AsTuple :: Ptr CPyObject -> IO (Ptr CPyObject)

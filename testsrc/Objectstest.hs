@@ -114,6 +114,7 @@ test_call =
     [
      TestCase $ do func <- pyRun_String "repr" Py_eval_input [] []
                    putStrLn "\nafter func"
+                   showPyObject func >>= putStrLn
                    r <- pyObject_CallHs func [5::Integer] ([]::[(String, String)])
                    putStrLn "after call"
                    "5L" @=? r

@@ -1,0 +1,59 @@
+Source: missingh
+Priority: optional
+Maintainer: John Goerzen <jgoerzen@complete.org>
+Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.2.2), ghc6 (<< 6.2.3), haskell-devscripts (>= 0.5.4), libghc6-hunit-dev
+Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs, haskell-devscripts (>= 0.5.4), libhugs-hunit
+Standards-Version: 3.6.1
+Section: devel
+
+Package: libghc6-missingh-dev
+Section: devel
+Architecture: any
+Depends: ${haskell:Depends}
+Suggests: missingh-doc
+Description: Library of utility functions for Haskell, GHC6 package 
+ MissingH is a library of all sorts of utility functions for
+ Haskell programmers.  It is written in pure Haskell and thus should
+ be extremely portable and easy to use.  It also has no prerequisites
+ save those that are commonly included with Haskell compilers.
+ .
+ MissingH is based on my MissingLib library for OCaml and contains some
+ of the same features.  However, some features are left behind because
+ they are already in Haskell or not needed here -- and others are added
+ due to things Haskell is missing, or things that Haskell makes
+ possible.
+
+Package: libhugs-missingh
+Section: devel
+Architecture: all
+Depends: ${haskell:Depends}
+Suggests: missingh-doc
+Description: Library of utility functions for Haskell, Hugs package 
+ MissingH is a library of all sorts of utility functions for
+ Haskell programmers.  It is written in pure Haskell and thus should
+ be extremely portable and easy to use.  It also has no prerequisites
+ save those that are commonly included with Haskell compilers.
+ .
+ MissingH is based on my MissingLib library for OCaml and contains some
+ of the same features.  However, some features are left behind because
+ they are already in Haskell or not needed here -- and others are added
+ due to things Haskell is missing, or things that Haskell makes
+ possible.
+
+Package: missingh-doc
+Section: doc
+Architecture: all
+Description: Documentation for Haskell utility library
+ MissingH is a library of all sorts of utility functions for
+ Haskell programmers.  It is written in pure Haskell and thus should
+ be extremely portable and easy to use.  It also has no prerequisites
+ save those that are commonly included with Haskell compilers.
+ .
+ MissingH is based on my MissingLib library for OCaml and contains some
+ of the same features.  However, some features are left behind because
+ they are already in Haskell or not needed here -- and others are added
+ due to things Haskell is missing, or things that Haskell makes
+ possible.
+ .
+ This package provides the API documentation for MissingH.
+

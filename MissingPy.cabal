@@ -1,0 +1,13 @@
+-- arch-tag: MissingPy main description file
+Name: MissingPy
+Version: 0.8.0
+License: GPL
+Maintainer: John Goerzen <jgoerzen@complete.org>
+Stability: Alpha
+Copyright: Copyright (c) 2005 John Goerzen
+Exposed-Modules: Python.Types,
+    Python.Interpreter
+C-Sources: glue/test.c
+Build-Depends: haskell-src, MissingH
+Options-GHC: -O2
+

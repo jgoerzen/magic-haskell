@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 20:02:21 GMT	John Goerzen <jgoerzen@complete.org>	patch-57
+
+    Summary:
+      Moved foreign import declarations to their own module
+    Revision:
+      missingexts--head--0.7--patch-57
+
+
+    new files:
+     Python/ForeignImports.hsc
+
+    modified files:
+     ChangeLog MissingPy.cabal Python/Exceptions.hs
+     Python/Interpreter.hs Python/Objects.hs Python/Types.hs
+     Python/Utils.hs {arch}/=tagging-method
+
+    renamed files:
+     Python/Interpreter.hsc
+       ==> Python/Interpreter.hs
+
+
 2005-02-01 19:47:49 GMT	John Goerzen <jgoerzen@complete.org>	patch-56
 
     Summary:

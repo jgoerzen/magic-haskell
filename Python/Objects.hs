@@ -28,7 +28,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-Python type instances and object utilities
+Python type instances and object utilities.
+
+For more similar utilities, see "Python.Objects.File" and
+"Python.Objects.Dict".
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
@@ -57,7 +60,7 @@ module Python.Objects (
                        callMethodHs,
                        runMethodHs,
                        noParms,
-                       noKwParms,
+                       noKwParms
                       )
 where
 import Python.Types
@@ -69,6 +72,7 @@ import Foreign.Storable
 import Foreign.Marshal.Alloc
 import Data.List
 import System.IO.Unsafe
+import Python.ForeignImports
 
 {- | Members of this class can be converted from a Haskell type
 to a Python object. -}
@@ -461,89 +465,4 @@ instance FromPyObject a => FromPyObject [a] where
         do pylist <- fromPyObject pylistobj
            mapM fromPyObject pylist
 
-----------------------------------------------------------------------
--- C imports
-----------------------------------------------------------------------
-
-foreign import ccall unsafe "glue.h PyString_FromStringAndSize"
- pyString_FromStringAndSize :: CString -> CInt -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyInt_FromLong"
- pyInt_FromLong :: CLong -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyInt_AsLong"
- pyInt_AsLong :: Ptr CPyObject -> IO CLong
-
-foreign import ccall unsafe "glue.h PyLong_FromString"
- pyLong_FromString :: CString -> Ptr CString -> CInt -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyList_New"
- pyList_New :: CInt -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyList_Append"
- pyList_Append :: Ptr CPyObject -> Ptr CPyObject -> IO CInt
-
-foreign import ccall unsafe "glue.h PyDict_New"
- pyDict_New :: IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyObject_SetItem"
- pyObject_SetItem :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject -> IO CInt
-
-foreign import ccall unsafe "glue.h PyObject_Repr"
- pyObject_Repr :: Ptr CPyObject -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyObject_Type"
- pyObject_Type :: Ptr CPyObject -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyString_AsStringAndSize"
- pyString_AsStringAndSize :: Ptr CPyObject -> Ptr CString -> Ptr CInt -> IO ()
-
-foreign import ccall unsafe "glue.h hspy_list_check"
- pyList_Check :: Ptr CPyObject -> IO CInt
-
-foreign import ccall unsafe "glue.h hspy_tuple_check"
- pyTuple_Check :: Ptr CPyObject -> IO CInt
-
-foreign import ccall unsafe "glue.h PyList_Size"
- pyList_Size :: Ptr CPyObject -> IO CInt
-
-foreign import ccall unsafe "glue.h PyTuple_Size"
- pyTuple_Size :: Ptr CPyObject -> IO CInt
-
-foreign import ccall unsafe "glue.h PyList_GetItem"
- pyList_GetItem :: Ptr CPyObject -> CInt -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyTuple_GetItem"
- pyTuple_GetItem :: Ptr CPyObject -> CInt -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyMapping_Items"
- pyMapping_Items :: Ptr CPyObject -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyFloat_FromDouble"
- pyFloat_FromDouble :: CDouble -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyFloat_AsDouble"
- pyFloat_AsDouble :: Ptr CPyObject -> IO CDouble
-
-foreign import ccall unsafe "glue.h PyObject_Dir"
- pyObject_Dir :: Ptr CPyObject -> IO (Ptr CPyObject)
-
-foreign import ccall "glue.h PyObject_Call"
- cpyObject_Call :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject ->
-                   IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyList_AsTuple"
- cpyList_AsTuple :: Ptr CPyObject -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyObject_GetAttrString"
- pyObject_GetAttrString :: Ptr CPyObject -> CString -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyObject_HasAttrString"
- pyObject_HasAttrString :: Ptr CPyObject -> CString -> IO CInt
-
-foreign import ccall unsafe "glue.h PyObject_SetAttrString"
- pyObject_SetAttrString :: Ptr CPyObject -> CString -> Ptr CPyObject -> IO CInt
-
-foreign import ccall unsafe "glue.h PyObject_Str"
- pyObject_Str :: Ptr CPyObject -> IO (Ptr CPyObject)
 

@@ -56,6 +56,7 @@ import Data.Dynamic
 import Data.Typeable
 import Control.Exception
 import Python.Interpreter
+import Python.ForeignImports
 
 {- | Execute the given IO action.
 
@@ -117,5 +118,3 @@ exc2ioerror :: PyException -> IO a
 exc2ioerror e = do e2 <- formatException e
                    fail $ "Python " ++ show e2
 
-foreign import ccall unsafe "glue.h PyErr_GivenExceptionMatches"
- pyErr_GivenExceptionMatches :: Ptr CPyObject -> Ptr CPyObject -> IO CInt

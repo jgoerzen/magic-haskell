@@ -52,23 +52,14 @@ module Python.Interpreter (
                           )
 where
 
-#include <Python.h>
-
 import Python.Utils
 import Python.Objects
 import Python.Types
+import Python.ForeignImports
 import Foreign
 import Foreign.C.String
 import Foreign.C
 
-data StartFrom = Py_eval_input
-               | Py_file_input
-               | Py_single_input
-
-sf2c :: StartFrom -> CInt
-sf2c Py_eval_input = #const Py_eval_input
-sf2c Py_file_input = #const Py_file_input
-sf2c Py_single_input = #const Py_single_input
 
 pyRun_SimpleString :: String -> IO ()
 pyRun_SimpleString x = withCString x (\cs ->
@@ -168,20 +159,3 @@ py_initialize :: IO ()
 py_initialize = do cpy_initialize
                    pyImport "traceback"
 
-foreign import ccall unsafe "Python.h Py_Initialize"
-  cpy_initialize :: IO ()
-
-foreign import ccall unsafe "Python.h PyRun_SimpleString"
-  cpyRun_SimpleString :: CString -> IO CInt
-
-foreign import ccall unsafe "Python.h PyRun_String"
-  cpyRun_String :: CString -> CInt -> Ptr CPyObject -> Ptr CPyObject -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyImport_ImportModuleEx"
- cpyImport_ImportModuleEx :: CString -> Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyDict_SetItemString"
- pyDict_SetItemString :: Ptr CPyObject -> CString -> Ptr CPyObject -> IO CInt
-
-foreign import ccall unsafe "glue.h PyImport_GetModuleDict"
- pyImport_GetModuleDict :: IO (Ptr CPyObject)

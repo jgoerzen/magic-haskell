@@ -38,7 +38,8 @@ Written by John Goerzen, jgoerzen\@complete.org
 module Python.Types (
                      PyObject(..),
                      CPyObject,
-                     PyException(..)
+                     PyException(..),
+                     StartFrom(..)
                     )
 where
 
@@ -67,4 +68,9 @@ pyExceptionTc = mkTyCon "MissingPy.Python.Types.PyException"
 
 instance Typeable PyException where
     typeOf _ = mkAppTy pyExceptionTc []
+
+{- | How to interpret a snippet of Python code. -}
+data StartFrom = Py_eval_input
+               | Py_file_input
+               | Py_single_input
 

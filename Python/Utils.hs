@@ -46,6 +46,7 @@ module Python.Utils (-- * Objects
                     )
     where
 import Python.Types
+import Python.ForeignImports
 import Foreign.C.Types
 import Foreign.C
 import Foreign
@@ -141,33 +142,3 @@ pyModule_GetDict x =
           py_incref r
           fromCPyObject r)
 
-
-foreign import ccall unsafe "glue.h PyModule_GetDict"
- cpyModule_GetDict :: Ptr CPyObject -> IO (Ptr CPyObject)
-
-foreign import ccall "glue.h &hspy_decref"
- py_decref :: FunPtr (Ptr CPyObject -> IO ())
-
-foreign import ccall "glue.h hspy_incref"
- py_incref :: Ptr CPyObject -> IO ()
-
-foreign import ccall unsafe "glue.h hspy_getexc"
- hspy_getexc :: IO (Ptr (Ptr CPyObject))
-
-foreign import ccall unsafe "glue.h PyErr_Fetch"
- pyErr_Fetch :: Ptr (Ptr CPyObject) -> Ptr (Ptr CPyObject) -> Ptr (Ptr CPyObject) -> IO ()
-
-foreign import ccall unsafe "glue.h PyErr_NormalizeException"
- pyErr_NormalizeException :: Ptr (Ptr CPyObject) -> Ptr (Ptr CPyObject) -> Ptr (Ptr CPyObject) -> IO ()
-
-foreign import ccall unsafe "glue.h PyErr_Clear"
- pyErr_Clear :: IO ()
-
-foreign import ccall unsafe "glue.h PyErr_Print"
- pyErr_Print :: IO ()
-
-foreign import ccall unsafe "glue.h PyImport_AddModule"
- cpyImport_AddModule :: CString -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h hspy_none"
- cNone :: IO (Ptr CPyObject)

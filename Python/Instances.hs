@@ -34,12 +34,24 @@ import Python.Utils
 import Foreign.C.Types
 import Foreign.C.String
 import Foreign.Ptr
+import Data.List
+
+-- FIXME: ERROR CHECKING!
+
+-- | Lists from a PyObject
+instance PyObjectConv [PyObject] where
+    toPyObject mainlist =
+        do l <- pyList_New 0
+           mapM_ (\pyo -> withPyObject pyo (pyList_Append l)) mainlist
+           fromCPyObject l
+
+instance PyObjectConv CString where
+   toPyObject x = 
+            withCString "s" $ \cstr ->
+                py_buildvalues cstr x >>= fromCPyObject
 
 instance PyObjectConv String where
-    toPyObject x =
-        withCString x $ \cx ->
-            withCString "s" $ \cstr ->
-                py_buildvalues cstr cx >>= fromCPyObject
+    toPyObject x = withCString x toPyObject
 
 instance PyObjectConv CInt where
     toPyObject x = 
@@ -57,3 +69,8 @@ foreign import ccall unsafe "glue.h Py_BuildValue"
 foreign import ccall unsafe "glue.h Py_BuildValue"
  py_buildvalues :: CString -> CString -> IO (Ptr CPyObject)
 
+foreign import ccall unsafe "glue.h PyList_New"
+ pyList_New :: CInt -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyList_Append"
+ pyList_Append :: Ptr CPyObject -> Ptr CPyObject -> IO CInt

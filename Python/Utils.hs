@@ -26,7 +26,8 @@ Python low-level utilities
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module Python.Utils (fromCPyObject
+module Python.Utils (fromCPyObject,
+                     withPyObject
                     )
     where
 import Python.Types
@@ -39,6 +40,8 @@ fromCPyObject po =
     do fp <- newForeignPtr py_decref po
        return $ PyObject fp
 
+withPyObject :: PyObject -> (Ptr CPyObject -> IO b) -> IO b
+withPyObject (PyObject x) = withForeignPtr x    
 
 foreign import ccall "glue.h &hspy_decref"
  py_decref :: FunPtr (Ptr CPyObject -> IO ())

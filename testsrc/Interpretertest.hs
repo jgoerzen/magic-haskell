@@ -35,7 +35,7 @@ test_base =
 
 test_callbyname =
     let f msg func inp exp = TestLabel msg $ TestCase $ 
-                             do r <-callByName func inp noKwParms
+                             do r <-callByNameHs func inp noKwParms
                                 exp @=? r
         in
         [
@@ -45,7 +45,7 @@ test_callbyname =
 
         ,TestLabel "import" $ TestCase $
          do pyImport "base64"
-            r <- callByName "base64.encodestring" ["hi"] noKwParms
+            r <- callByNameHs "base64.encodestring" ["hi"] noKwParms
             "aGk=\n" @=? r
         ]
 

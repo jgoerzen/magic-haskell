@@ -41,6 +41,7 @@ module Python.Interpreter (
                           StartFrom(..),
                           -- * Calling Code
                           callByName,
+                          callByNameHs,
                           noParms,
                           noKwParms,
                           -- * Imports
@@ -106,18 +107,29 @@ pyRun_String command startfrom xlocals =
                  cpyRun_String ccommand cstart cglobals clocals >>= fromCPyObject
                               )))
 
-{- | Call a function or callable object by name.
+{- | Call a function or callable object by name. -}
+callByName :: String            -- ^ Object\/function name
+           -> [PyObject]        -- ^ List of non-keyword parameters
+           -> [(String, PyObject)] -- ^ List of keyword parameters
+           -> IO PyObject
+callByName fname sparms kwparms =
+    do func <- pyRun_String fname Py_eval_input []
+       pyObject_Call func sparms kwparms
+
+{- | Call a function or callable object by namem using Haskell args
+and return values..
 
 You can use 'noParms' and 'noKwParms' if you have no simple or
 keyword parameters to pass, respectively. -}
-callByName :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
+callByNameHs :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
               String            -- ^ Object\/function name
            -> [a]               -- ^ List of non-keyword parameters
            -> [(String, b)]     -- ^ List of keyword parameters
            -> IO c
-callByName fname sparms kwparms =
+callByNameHs fname sparms kwparms =
     do func <- pyRun_String fname Py_eval_input []
        pyObject_CallHs func sparms kwparms
+
 
 {- | Import a module into the current environment in the normal sense
 (similar to \"import\" in Python).

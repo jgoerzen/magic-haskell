@@ -76,7 +76,8 @@ raisePyException =
           otb <- fromCPyObject ctb
           let exc = PyException {excType = otype, excValue = oval,
                                  excTraceBack = otb,
-                                 excFormatted = "not yet"}
+                                 excFormatted = ""}
+          pyErr_Clear
           throwDyn exc
                    )))
 {-

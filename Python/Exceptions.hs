@@ -33,7 +33,8 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module Python.Exceptions (PyException(..),
                           catchPy,
-                          pyExceptions
+                          pyExceptions,
+                          formatException
                          )
 where
 
@@ -45,6 +46,7 @@ import Python.Types
 import Data.Dynamic
 import Data.Typeable
 import Control.Exception
+import Python.Interpreter
 
 {- | Execute the given IO action.
 
@@ -59,4 +61,18 @@ the exception otherwise. -}
 pyExceptions :: Exception -> Maybe PyException
 pyExceptions exc = dynExceptions exc >>= fromDynamic
 
+{- | When an exception is thrown, it is not immediately formatted.
 
+This call will format it. -}
+formatException :: PyException -> IO PyException
+formatException e =
+{-
+    do fmt <- callByName "traceback.format_exception" 
+                [excType e, excValue e, excTraceBack e] [] >>= fromPyObject
+-}
+    do ename <- strOf (excType e)
+       evalue <- strOf (excValue e)
+       let fmt = ename ++ ": " ++ evalue
+       return $ e  {excFormatted = fmt}
+
+       

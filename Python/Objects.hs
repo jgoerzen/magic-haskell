@@ -85,13 +85,14 @@ class FromPyObject a where
 {- | Gets the type of a Python object.  Same as type(x) in Python. -}
 typeOf :: PyObject -> IO PyObject
 typeOf x = withPyObject x (\pyo -> pyObject_Type pyo >>= fromCPyObject)
-                                      
+      
 {- | Gets a string representation of a Python object.  Same 
 as str(x) in Python. -}
 strOf :: PyObject -> IO String
 strOf x = withPyObject x 
             (\pyo -> pyObject_Str pyo >>= fromCPyObject >>= fromPyObject)
 
+                                
 {- | Gets the Python representation of a Python object.
 Same as repr(x) in Python. -}
 reprOf :: PyObject -> IO String
@@ -483,9 +484,6 @@ foreign import ccall unsafe "glue.h PyDict_New"
 foreign import ccall unsafe "glue.h PyDict_SetItem"
  pyDict_SetItem :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject -> IO CInt
 
-foreign import ccall unsafe "glue.h PyObject_Str"
- pyObject_Str :: Ptr CPyObject -> IO (Ptr CPyObject)
-
 foreign import ccall unsafe "glue.h PyObject_Repr"
  pyObject_Repr :: Ptr CPyObject -> IO (Ptr CPyObject)
 
@@ -540,3 +538,7 @@ foreign import ccall unsafe "glue.h PyObject_HasAttrString"
 
 foreign import ccall unsafe "glue.h PyObject_SetAttrString"
  pyObject_SetAttrString :: Ptr CPyObject -> CString -> Ptr CPyObject -> IO CInt
+
+foreign import ccall unsafe "glue.h PyObject_Str"
+ pyObject_Str :: Ptr CPyObject -> IO (Ptr CPyObject)
+

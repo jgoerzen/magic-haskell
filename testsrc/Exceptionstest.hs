@@ -29,10 +29,18 @@ f msg inp code exp = TestLabel msg $ TestCase $ do pyo <- toPyObject inp
                                                    exp @=? r
 
 test_base =
-    [
-     TestCase $ do r <- pyRun_StringHs "2 + None" Py_eval_input noKwParms
-                   (5::CLong) @=? r
-    ]
+    let handler e = do e2 <- formatException e
+                       fail (excFormatted e2)
+        in
+        [
+         TestCase $ catchPy (do r <- pyRun_StringHs "2 + None" Py_eval_input noKwParms
+                                (5::CLong) @=? r
+                            ) handler
+        ,TestCase $ catchPy (do pyImport "regsub"
+                                r <- pyRun_StringHs "regsub.sub(None, None, None)" Py_eval_input noKwParms
+                                (5::CLong) @=? r
+                            ) handler
+        ]
                 
 tests = TestList [TestLabel "base" (TestList test_base)
                  ]

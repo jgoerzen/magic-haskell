@@ -15,6 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+.PHONY: all
 all: setup
 	./setup configure
 	./setup build
@@ -30,15 +31,23 @@ clean:
 	-./setup clean
 	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \
 		`find . -name "*~"` *.a setup dist testsrc/runtests \
-		MissingPy.cabal
+		MissingPy.cabal local-pkg
 	-cd doc && $(MAKE) clean
 
-testsrc/runtests: setup $(shell find testsrc -name "*.hs")
-	./setup configure
-	./setup build
-	ghc6 -O2 -o testsrc/runtests -Ldist/build -odir dist/build -hidir dist/build -idist/build -itestsrc dist/build/libHSMissingPy-* \
-		-package HUnit -package MissingH --make -lpython2.3 testsrc/runtests.hs
+.PHONY: local-pkg
+local-pkg: all
+	echo "[" > local-pkg
+	cat .installed-pkg-config >> local-pkg
+	echo "]" >> local-pkg
 
+testsrc/runtests: local-pkg $(shell find . -name "*.hs") \
+			$(shell find . -name "*.hsc")
+	ghc6 -O2 -o testsrc/runtests -Ldist/build -odir dist/build \
+	   -package-conf local-pkg \
+	   -hidir dist/build -idist/build -itestsrc \
+		-package HUnit -package MissingPy --make testsrc/runtests.hs
+
+# dist/build/libHSMissingPy-*
 test-ghc6: testsrc/runtests
 	testsrc/runtests 
 

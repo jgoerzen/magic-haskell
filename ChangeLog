@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-03 17:31:38 GMT	John Goerzen <jgoerzen@complete.org>	patch-73
+
+    Summary:
+      Checkpointing build system improvements
+    Revision:
+      missingexts--head--0.7--patch-73
+
+
+    modified files:
+     ChangeLog Makefile testsrc/AnyDBMPytest.hs
+
+
 2005-02-03 17:23:56 GMT	John Goerzen <jgoerzen@complete.org>	patch-72
 
     Summary:

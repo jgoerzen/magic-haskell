@@ -22,10 +22,10 @@ import MissingPy.AnyDBM
 import AnyDBMtest hiding (tests)
 
 testmod m = generic_persist_test (return ())
-             (\f -> openSpecificDBM m ("testsrc/" ++ m) DBM_ReadWriteCreate)
+             (\f -> openSpecificDBM m ("tmptest/" ++ m) DBM_ReadWriteCreate)
             ++
             generic_test (return ())
-             (\f -> openSpecificDBM m ("testsrc/" ++ m) DBM_ReadWriteCreate)
+             (\f -> openSpecificDBM m ("tmptest/" ++ m) DBM_ReadWriteCreate)
 
 tests = TestList [TestLabel "anydbm" (TestList $ testmod "anydbm")
                  ,TestLabel "dbhash" (TestList $ testmod "dbhash")

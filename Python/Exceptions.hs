@@ -31,10 +31,16 @@ Python low-level exception handling
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module Python.Exceptions (PyException(..),
+module Python.Exceptions (-- * Types
+                          PyException(..),
+                          -- * General Catching
                           catchPy,
                           pyExceptions,
-                          formatException
+                          -- * Catching of specific Python exceptions
+                          catchSpecificPy,
+                          -- * Exception Object Operations
+                          formatException,
+                          doesExceptionMatch
                          )
 where
 
@@ -54,6 +60,16 @@ If it raises a 'PyException', then execute the supplied handler and return
 its return value.  Otherwise, process as normal. -}
 catchPy :: IO a -> (PyException -> IO a) -> IO a
 catchPy = catchDyn
+
+{- | Like catchPy, but catches only instances of the Python class given
+(see 'doesExceptionMatch'). -}
+catchSpecificPy :: PyObject -> IO a -> (PyException -> IO a) -> IO a
+catchSpecificPy pyo action handlerfunc =
+    let handler e = do d <- doesExceptionMatch e pyo
+                       if d
+                          then handlerfunc e
+                          else throwDyn e
+        in catchPy action handler
 
 {- | Useful as the first argument to catchJust, tryJust, or handleJust.
 Return Nothing if the given exception is not a 'PyException', or 
@@ -75,4 +91,18 @@ formatException e =
        let fmt = ename ++ ": " ++ evalue
        return $ e  {excFormatted = fmt}
 
-       
+{- | Returns true if the passed 'PyException' matches the given Python
+exception class or one of its subclasses.  Standard Python exception classes
+are given in 'Python.Exceptions.ExcTypes'. -}
+doesExceptionMatch :: PyException -> PyObject -> IO Bool
+doesExceptionMatch e pyo =
+    withPyObject (excType e) (\ctyp ->
+     withPyObject pyo (\cpo ->
+      do r <- pyErr_GivenExceptionMatches ctyp cpo
+         if r == 0
+            then return False
+            else return True
+                      ))
+
+foreign import ccall unsafe "glue.h PyErr_GivenExceptionMatches"
+ pyErr_GivenExceptionMatches :: Ptr CPyObject -> Ptr CPyObject -> IO CInt

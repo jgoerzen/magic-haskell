@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-03 22:30:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-76
+
+    Summary:
+      more doc work
+    Revision:
+      missingexts--head--0.7--patch-76
+
+
+    modified files:
+     ChangeLog INSTALL README
+
+
 2005-02-03 22:25:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-75
 
     Summary:

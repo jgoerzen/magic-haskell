@@ -1,10 +1,29 @@
 INSTALLATION INSTRUCTIONS
+-------------------------
+
+Before you start, you will of course need to have Python installed,
+version 2.3 or better.  Get it from www.python.org if you don't have
+it already.  It's very portable and easily built.
+
+Now, you're ready to build MissingPy.
 
 First, install the Cabal distribution for your favorite compiler.
 Get it from http://www.haskell.org/cabal.  Debian users can
-apt-get install libghc6-cabal-dev.  Then run "make setup" (you may
-need to edit the Makefile if you don't use GHC or if your GHC is at an
-unusual location).
+apt-get install libghc6-cabal-dev.  
+
+Next, download and install MissingH, version 0.9.0 or above.  Grab it
+from http://quux.org/devel/missingh.  Debian users can
+apt-get install libghc6-missingh-dev.
+
+Now, run:
+
+ python gencabal.py
+
+This will generate the build file MissingPy.cabal.  Look at the
+declarations near the top and edit them if necessary.
+
+Now, run "make setup" (you may need to edit the Makefile if you don't
+use GHC or if your GHC is at an unusual location).
 
 Then:
 
@@ -14,11 +33,7 @@ Then:
  
 Optionally, to run the unit tests, you'll need to install HUnit.  Then:
 
- make test-ghc6
-
-or:
-
- make test-hugs
+ make test
 
 (More to come in this file)
 

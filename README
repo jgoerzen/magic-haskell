@@ -13,143 +13,21 @@ It's two things:
    environments.  This can be found in the Python module tree.  The
    Haskell bindings above use this environment.
 
+MissingPy permits you to call Python code from Haskell.  It does NOT
+permit you to call Haskell code from Python.
+
 -------------------------
 Major Features
 -------------------------
 
- * Powerful Logging Framework for Haskell
-   This framework provides a system of hierarchical loggers and
-   modular handlers permitting fine-grained logging with a great deal
-   of control and yet a simple and fast interface.  It's based on
-   log4j for Java and logging for Python.
+ * GZip and BZip2 compression and decompression using the generic
+   Handle-like HVIO interface
 
-   Also included is a native-Haskell Syslog client.
+ * *dbm persistent storage using the generic AnyDBM interface
 
- * Versatile modules to simplify everyday tasks:
-   + FTP client library
-   + E-mail client library
-   + MIME types library to determine MIME types from files or URLs
-   + Configuration file parser/generator
+ * Low-level interface to Python for extending your own Haskell code
 
- * IO utilities make it easier to work with line-based text files
-   and binary files
-
- * Network utilities to streamline connections
-
- * List utilities including association list tools,
-   list splitting, truncation, and delimiter joining
-
- * String utilities including removal of leading or trailing
-   whitespace, joining, splitting, and truncation
-
- * Other utilities for threads, parers, filenames, etc.
-
- * Printf utilities for formatting strings
-
- * GZip decompression
-
- * Hundreds of unit tests to verify proper functionality
-
-The following modules are are provided at this time, and more are
-likely to follow:
-
-MissingH.Bits            * Obtain individual bytes from a bitfield
-
-MissingH.Cmd             * Trap errors during calls to external programs
-
-MissingH.Checksum.*      * Utilities for calculating checksums over strings
-
-MissingH.Compression.*   * Compression/decompression algorithms
-
-MissingH.Compression.    * The Inflate algorithm from unzip and
-  Inflate                  gunzip
-
-MissingH.ConfigParser    * Configuration file parser
-                         * Interpolation supported
-                         * Compatible with Python and OCaml ConfigParsers
-
-MissingH.Either          * Utilities for the Either type/Error monad
-
-MissingH.Email.Parser    * Parse a flat string into component parts
-                         * Walk through the components of a message
-
-MissingH.Email.Sendmail  * Send a message via a locally-installed Sendmail
-                           program
-
-MisssingH.FileArchive.   * Support for analyzing and extracting
-  GZip                     GZip archives
-
-MissingH.FiniteMap       * Flip a finite map
-
-MissingH.Hsemail         * E-mail parsers
-
-MissingH.IO              * Copying data between files or handles
-                         * Lazy operations on line input
-
-MissingH.IO.Binary       * Binary I/O with Haskell strings
-                         * Lazy operations on binary blocks
-
-MissingH.List            * Association list manipulation
-                         * List splitting and delimiter joining
-                         * Truncation
-
-MissingH.Logging         * Base logging types
-
-MissingH.Logging.Handler * Base handler types
-
-MissingH.Logging.        * Logging to a stream
- Handler.Simple          * Logging to a file
-
-MissingH.Logging.        * Logging to local or remote syslog
- Handler.Syslog          * No C library implementation required
-
-MissingH.Logging.Logger  * Primary user interface to logging
-                         * Documentation for the logging system
-
-MissingH.MIMETypes       * Determine the MIME type of a file
-                         * Guess an extension based on MIME type
-
-MissingH.Network         * Establish TCP connections easily
-                         * Trap SIGPIPE to prevent odd crashes
-
-MissingH.Network.        * Versatile FTP client module
- FTP.Client              * Full support for uploads and downloads
-                         * Passive or standard mode
-                         * Lazy uploads and downloads
-                         * Also provides low-level interface to issue
-                           advanced server commands
-
-MissingH.Network.        * Parse FTP protocol replies
- FTP.Parser
-
-MissingH.Parsec          * Invert the sense of a parser
-
-MissingH.Path            * Split apart filename components
-                         * Recursive directory scanning
-                         * Recursive file/directory removal (rm -r)
-
-MissingH.Printf          * Format strings using C-like syntax
-                         * Support for args as a list or as
-                           a variable-length argument
-
-MissingH.Str             * Leading/trailing whitespace removal
-                         * Beginning/ending tests
-                         * Joining, splitting, and truncation
-
-MissingH.Threads         * Threaded callbacks
-
-MissingH.Time            * Utilities for working with times and dates
-
-Wash.Mail.*              * Generate or parse e-mail messages
-                         * Full support for headers and MIME
-
-Wash.Utility.*           * Base64 codec
-                         * Various Internet-related parsers
-
-The entire library has no prerequisites save the Haskell standard
-library and is designed to install without complexity on a variety of
-systems.  It could also easily be embedded within your own source
-trees so that users need not have it installed beforehand.
+ * Many unit tests to verify proper functionality
 
 ** THIS IS CURRENTLY BETA-QUALITY CODE; MAJOR API FLUCTUATIONS MAY YET OCCUR.
 
@@ -163,26 +41,26 @@ See the file INSTALL.
 Usage in programs
 -------------------------
 
-You can simply use -package MissingH in most compilers to enable
+You can simply use -package MissingPy in most compilers to enable
 this library.  
 
 The API docs can be built with "make doc", or you can find them at:
 
-http://quux.org/devel/missingh
+http://quux.org/devel/missingpy
 
 -------------------------
 Author & Homepage
 -------------------------
 
-MissingH was written by John Goerzen <jgoerzen@complete.org>.
+MissingPy was written by John Goerzen <jgoerzen@complete.org>.
 
 The latest version may be obtained at:
 
-   gopher://quux.org/1/devel/missingh
+   gopher://quux.org/1/devel/missingpy
 
 or:
 
-   http://quux.org/devel/missingh
+   http://quux.org/devel/missingpy
 
 Documentation is also available on that page.
 
@@ -191,11 +69,6 @@ See the COPYRIGHT and COPYING files for more details.
 
 If the GPL is unacceptable for your uses, please e-mail me; alternative
 terms can be negotiated for your project.
-
-Certain code in MissingH was written by third parties.  Licenses of
-these components may vary and are stated in COPYRIGHT.  All code in
-MissingH is GPL-compatible, and the work as a whole may be distributed
-as a GPL'd work.
 
 arch-tag: general information
 

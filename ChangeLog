@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 17:38:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-53
+
+    Summary:
+      Checkpointing (tests work)
+    Revision:
+      missingexts--head--0.7--patch-53
+
+
+    modified files:
+     ChangeLog Python/Objects/File.hs testsrc/BZip2test.hs
+
+
 2005-02-01 17:08:28 GMT	John Goerzen <jgoerzen@complete.org>	patch-52
 
     Summary:

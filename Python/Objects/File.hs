@@ -120,7 +120,8 @@ instance HVIO PyFile where
                                      [] -> return []
                                      x -> do next <- loop
                                              return $ x : next
-                           in loop >>= (return . concat)
+                           in do c <- loop
+                                 return $ concat c
                                                         )
 
 
@@ -154,7 +155,10 @@ instance HVIO PyFile where
                               vPutStr pyf next
 
     vFlush pyf = pyfwrap pyf (\pyo ->
-                     runMethodHs pyo "flush" noParms noKwParms)
+                     do h <- hasattr pyo "flush"
+                        if h then runMethodHs pyo "flush" noParms noKwParms
+                           else return ()
+                             )
 
     {- | Some file-like objects don't take an offset.  Sigh. -}
     vSeek pyf sm offset =

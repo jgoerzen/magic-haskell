@@ -42,6 +42,9 @@ where
 
 
 import Python.Objects.Dict
+import Python.Interpreter
+import Python.Utils
+import Python.Objects
 import MissingH.AnyDBM
 
 {- | Flags used to open a dbm-type database -}
@@ -82,11 +85,11 @@ openSpecificDBM :: String       -- ^ Python module name to use
                 -> FilePath     -- ^ Path to database files
                 -> PyDBMOpenFlags -- ^ Flags to use when opening
                 -> IO PyDict    -- ^ Result
-openSpecificDBM mod fp flag 
+openSpecificDBM mod fp flag =
     let flagstr = flag2str flag
         in
         do pyImport mod
-           fileobj <- toPyObjct fp
+           fileobj <- toPyObject fp
            flagobj <- toPyObject flagstr
            obj <- callByName (mod ++ ".open") [fileobj, flagobj] []
            return $ mkPyDict obj

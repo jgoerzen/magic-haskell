@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-03 15:32:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-69
+
+    Summary:
+      fixed compilation errors
+    Revision:
+      missingexts--head--0.7--patch-69
+
+
+    modified files:
+     ChangeLog MissingPy/AnyDBM.hs
+
+
 2005-02-03 15:29:22 GMT	John Goerzen <jgoerzen@complete.org>	patch-68
 
     Summary:

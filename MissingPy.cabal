@@ -6,8 +6,7 @@ Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha
 Copyright: Copyright (c) 2005 John Goerzen
 C-Sources: glue/glue.c
-Exposed-Modules: Python.Types,
-    Python.Interpreter
+Exposed-Modules: Python.Types
 Include-Dirs: /usr/include/python2.3, glue
 Build-Depends: haskell-src, MissingH
 Options-GHC: -O2

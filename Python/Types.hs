@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : Python.Types
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
 Interfaces to low-level Python types
@@ -27,7 +27,9 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module Python.Types (
-                     PyObject
+                     PyObject,
+                     ToPyObject(..),
+                     fromCPyObject
                     )
 where
 
@@ -55,8 +57,13 @@ instance ToPyObject CInt where
     toPyObject x = 
         withCString "i" $ \cstr ->
             do po <- py_buildvalue cstr x
-               fp <- newForeignPtr py_decref po
-               return $ PyObject fp
+               fromCPyObject po
+
+fromCPyObject :: Ptr CPyObject -> IO PyObject
+fromCPyObject po =
+    do fp <- newForeignPtr py_decref po
+       return $ PyObject fp
+
 
 ----------------------------------------------------------------------
 -- C imports

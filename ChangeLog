@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 03:02:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-43
+
+    Summary:
+      Wrote Python.Objects.File
+    Revision:
+      missingexts--head--0.7--patch-43
+
+
+    new files:
+     Python/Objects/.arch-ids/=id Python/Objects/File.hs
+
+    modified files:
+     ChangeLog MissingPy.cabal
+
+    new directories:
+     Python/Objects Python/Objects/.arch-ids
+
+
 2005-02-01 02:16:37 GMT	John Goerzen <jgoerzen@complete.org>	patch-42
 
     Summary:

@@ -19,24 +19,64 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : Python.Types
+   Module     : Python.Objects
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
-Python type instances
+Python type instances and object utilities
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module Python.Instances (
-                        )
+module Python.Objects (
+                       ToPyObject(..),
+                       FromPyObject(..),
+                       PyObject,
+                       typeOf,
+                       strOf,
+                       reprOf,
+                       showPyObject
+                      )
 where
 import Python.Types
 import Python.Utils
 import Foreign.C.Types
 import Foreign.C.String
 import Foreign.Ptr
+import Foreign.Storable
 import Data.List
+
+{- | Members of this class can be converted from a Haskell type
+to a Python object. -}
+class ToPyObject a where
+    toPyObject :: a -> IO PyObject
+
+{- | Members of this class can be derived from a Python object. -}
+class FromPyObject a where
+    fromPyObject :: PyObject -> IO a
+
+----------------------------------------------------------------------
+-- Functions
+----------------------------------------------------------------------
+{- | Gets the type of a Python object.  Same as type(x) in Python. -}
+typeOf :: PyObject -> IO PyObject
+typeOf x = withPyObject x (\pyo -> pyObject_Type pyo >>= fromCPyObject)
+                                      
+{- | Gets a string representation of a Python object.  Same 
+as str(x) in Python. -}
+strOf :: PyObject -> IO String
+strOf x = withPyObject x 
+            (\pyo -> pyObject_Str pyo >>= fromCPyObject >>= fromPyObject)
+
+{- | Gets the Python representation of a Python object.
+Same as repr(x) in Python. -}
+reprOf :: PyObject -> IO String
+reprOf x = withPyObject x
+             (\pyo -> pyObject_Repr pyo >>= fromCPyObject >>= fromPyObject)
+
+----------------------------------------------------------------------
+-- Instances
+----------------------------------------------------------------------
 
 -- FIXME: ERROR CHECKING!
 
@@ -75,6 +115,17 @@ instance ToPyObject CString where
 instance ToPyObject String where
     toPyObject x = withCString x toPyObject
 
+instance FromPyObject String where
+    fromPyObject x = withPyObject x (\po ->
+           do 
+              let lenptr = nullPtr::(Ptr CInt)
+              let strptr = nullPtr::(Ptr CString)
+              pyString_AsStringAndSize po strptr lenptr
+              len <- peek lenptr
+              cstr <- peek strptr
+              peekCStringLen (cstr, (fromIntegral) len)
+                                    )
+
 instance ToPyObject CInt where
     toPyObject x = 
         withCString "i" $ \cstr ->
@@ -99,6 +150,7 @@ instance ToPyObject a => ToPyObject [a] where
 
 ----------------------------------------------------------------------
 -- C imports
+----------------------------------------------------------------------
 
 foreign import ccall unsafe "glue.h Py_BuildValue"
  py_buildvalue :: CString -> CInt -> IO (Ptr CPyObject)
@@ -123,3 +175,15 @@ foreign import ccall unsafe "glue.h PyInt_FromLong"
 
 foreign import ccall unsafe "glue.h PyInt_AsLong"
  pyInt_AsLong :: Ptr CPyObject -> IO CLong
+
+foreign import ccall unsafe "glue.h PyObject_Str"
+ pyObject_Str :: Ptr CPyObject -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyObject_Repr"
+ pyObject_Repr :: Ptr CPyObject -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyObject_Type"
+ pyObject_Type :: Ptr CPyObject -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyString_AsStringAndSize"
+ pyString_AsStringAndSize :: Ptr CPyObject -> Ptr CString -> Ptr CInt -> IO ()

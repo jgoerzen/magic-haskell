@@ -8,7 +8,7 @@ Copyright: Copyright (c) 2005 John Goerzen
 C-Sources: glue/glue.c
 Exposed-Modules: Python.Types,
  Python.Utils,
- Python.Instances,
+ Python.Objects,
  Python.Interpreter
 Include-Dirs: /usr/include/python2.3, glue
 Extra-Libs: python2.3

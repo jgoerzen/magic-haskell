@@ -21,15 +21,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
-Interfaces to low-level Python types
+Interfaces to low-level Python types.  You should probably not use this module
+directly.  You probably want 'Python.Objects' instead.
+
+You'll only need this module directly if you are importing new functions
+from the Python C API.
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module Python.Types (
                      PyObject(..),
-                     ToPyObject(..),
-                     FromPyObject(..),
                      CPyObject
                     )
 where
@@ -42,15 +44,6 @@ type CPyObject = ()
 
 -- | The type of Python objects.
 newtype PyObject = PyObject (ForeignPtr CPyObject)
-
-{- | Members of this class can be converted from a Haskell type
-to a Python object. -}
-class ToPyObject a where
-    toPyObject :: a -> IO PyObject
-
-{- | Members of this class can be derived from a Python object. -}
-class FromPyObject a where
-    fromPyObject :: PyObject -> IO a
 
 
 

@@ -39,6 +39,7 @@ import Foreign
 import Foreign.Ptr
 import Foreign.Marshal.Array
 
+{- | Convert a Ptr 'CPyObject' to a 'PyObject'. -}
 fromCPyObject :: Ptr CPyObject -> IO PyObject
 fromCPyObject po =
     if po == nullPtr
@@ -46,6 +47,8 @@ fromCPyObject po =
        else do fp <- newForeignPtr py_decref po
                return $ PyObject fp
 
+{- | Called when a Python exception has been detected.  It will raise
+the exception in Haskell. -}
 raisePyException :: IO a
 raisePyException =
 {-
@@ -62,13 +65,15 @@ raisePyException =
                                [x, y, z] -> return (x, y, z)
                                _ -> fail "Got unexpected number of elements"
     
-
+{- | Uses a 'PyObject' in a function that needs Ptr 'CPyObject'. -}
 withPyObject :: PyObject -> (Ptr CPyObject -> IO b) -> IO b
 withPyObject (PyObject x) = withForeignPtr x    
 
+{- | Same as 'withPyObject', but uses nullPtr if the input is Nothing. -}
 maybeWithPyObject :: Maybe PyObject -> (Ptr CPyObject -> IO b) -> IO b
 maybeWithPyObject Nothing func = func nullPtr
 maybeWithPyObject (Just x) y = withPyObject x y
+
 
 foreign import ccall "glue.h &hspy_decref"
  py_decref :: FunPtr (Ptr CPyObject -> IO ())
@@ -78,3 +83,5 @@ foreign import ccall unsafe "glue.h hspy_getexc"
 
 foreign import ccall unsafe "glue.h PyErr_Print"
  pyErr_Print :: IO ()
+
+

@@ -44,9 +44,7 @@ test_callbyname =
         ,f "pow" "pow" [2::CInt, 32::CInt] ((2 ^ 32)::Integer)
 
         ,TestLabel "import" $ TestCase $
-         do putStrLn "import"
-            pyImport "base64"
-            putStrLn "callByName"
+         do pyImport "base64"
             r <- callByName "base64.encodestring" ["hi"] noKwParms
             "aGk=\n" @=? r
         ]

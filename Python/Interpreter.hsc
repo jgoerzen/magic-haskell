@@ -116,10 +116,7 @@ callByName :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
            -> [(String, b)]     -- ^ List of keyword parameters
            -> IO c
 callByName fname sparms kwparms =
-    do putStrLn "inCallByName"
-       getDefaultGlobals >>= showPyObject >>= putStrLn
-       func <- pyRun_String fname Py_eval_input []
-       showPyObject func >>= putStrLn
+    do func <- pyRun_String fname Py_eval_input []
        pyObject_CallHs func sparms kwparms
 
 {- | Import a module into the current environment in the normal sense
@@ -133,10 +130,8 @@ pyImport x =
        py_incref cdict
        dict <- fromCPyObject cdict >>= fromPyObject
        case lookup x dict of
-           Nothing -> do putStrLn $ "No " ++ x 
-                         return ()
-           Just pyo -> do putStrLn $ "Found " ++ x
-                          withPyObject globals (\cglobals ->
+           Nothing -> return ()
+           Just pyo -> do withPyObject globals (\cglobals ->
                            withPyObject pyo (\cmodule ->
                             withCString x (\cstr ->
                              pyDict_SetItemString cglobals cstr cmodule)))

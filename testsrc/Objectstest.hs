@@ -123,6 +123,18 @@ test_dir =
                    assertBool "replace" $ "replace" `elem` dv
                    assertBool "rindex" $ "rindex" `elem` dv
     ]
+
+test_attr =
+    [
+     TestCase $ do pyImport "md5"
+                   md5 <- pyRun_String "md5.md5()" Py_eval_input []
+                   fupdate <- getattr md5 "update"
+                   fhexdigest <- getattr md5 "hexdigest"
+                   pyObject_RunHs fupdate ["hi"] noKwParms
+                   pyObject_RunHs fupdate ["there"] noKwParms
+                   r <- pyObject_CallHs fhexdigest noParms noKwParms
+                   "a8b767bb9cf0938dc7f40603f33987e5" @=? r
+    ]
                 
 tests = TestList [TestLabel "base" (TestList test_base),
                   TestLabel "lists/tuples" (TestList test_lists),
@@ -133,5 +145,6 @@ tests = TestList [TestLabel "base" (TestList test_base),
                   TestLabel "longs" (TestList test_longs),
                   TestLabel "doubles" (TestList test_doubles),
                   TestLabel "dir" (TestList test_dir),
-                  TestLabel "call" (TestList test_call)
+                  TestLabel "call" (TestList test_call),
+                  TestLabel "attr" (TestList test_attr)
                  ]

@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-31 20:26:07 GMT	John Goerzen <jgoerzen@complete.org>	patch-33
+
+    Summary:
+      Object Access Works
+    Revision:
+      missingexts--head--0.7--patch-33
+
+
+    modified files:
+     ChangeLog Python/Interpreter.hsc Python/Objects.hs
+     Python/Utils.hs testsrc/Objectstest.hs
+
+
 2005-01-31 19:12:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-32
 
     Summary:

@@ -45,11 +45,17 @@ module Python.Objects (
                        reprOf,
                        showPyObject,
                        dirPyObject,
+                       getattr,
+                       hasattr,
+                       setattr,
                        -- * Conversions between Python Objects
                        pyList_AsTuple,
                        -- * Calling Python Objects
                        pyObject_Call,
-                       pyObject_CallHs
+                       pyObject_CallHs,
+                       pyObject_RunHs,
+                       noParms,
+                       noKwParms,
                       )
 where
 import Python.Types
@@ -108,19 +114,47 @@ Similar to 'PyObject_Call'.  This limits you to a single item type for
 the regular arguments and another single item type for the keyword arguments. 
 Nevertheless, it could be a handy shortcut at times.
 
-For a higher-level wrapper, see 'Python.Interpreter.callByName'. -}
+For a higher-level wrapper, see 'Python.Interpreter.callByName'.
+
+You may find 'noParms' and 'noKwParms' useful if you aren't passing any
+parameters. -}
 pyObject_CallHs :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
                    PyObject     -- ^ Object t
                 -> [a]          -- ^ List of non-keyword parameters
                 -> [(String, b)] -- ^ List of keyword parameters
-                -> IO c         -- ^ Return value
+                -> IO c          -- ^ Return value
 pyObject_CallHs callobj simpleargs kwargs =
+    pyObject_Hs callobj simpleargs kwargs >>= fromPyObject
+
+pyObject_Hs :: (ToPyObject a, ToPyObject b) =>
+                   PyObject     -- ^ Object t
+                -> [a]          -- ^ List of non-keyword parameters
+                -> [(String, b)] -- ^ List of keyword parameters
+                -> IO PyObject         -- ^ Return value
+pyObject_Hs callobj simpleargs kwargs =
     let conv (k, v) = do v1 <- toPyObject v
                          return (k, v1)
         in
         do s <- mapM toPyObject simpleargs
            k <- mapM conv kwargs
-           pyObject_Call callobj s k >>= fromPyObject
+           pyObject_Call callobj s k
+
+{- | Like 'PyObject_CallHs', but discards the return value. -}
+pyObject_RunHs :: (ToPyObject a, ToPyObject b) =>
+                   PyObject     -- ^ Object t
+                -> [a]          -- ^ List of non-keyword parameters
+                -> [(String, b)] -- ^ List of keyword parameters
+                -> IO ()         -- ^ Return value
+pyObject_RunHs callobj simpleargs kwargs =
+    pyObject_Hs callobj simpleargs kwargs >> return ()
+
+noParms :: [String]
+noParms = []
+
+noKwParms :: [(String, String)]
+noKwParms = []
+
+
 
 {- | Call a Python object (function, etc).
 
@@ -143,6 +177,39 @@ pyObject_Call callobj simpleparams kwparams =
 pyList_AsTuple :: PyObject -> IO PyObject
 pyList_AsTuple x =
     withPyObject x (\cpo -> cpyList_AsTuple cpo >>= fromCPyObject)
+
+{- | An interface to a function similar to Python's getattr.  This will
+look up an attribute (such as a method) of an object. -}
+getattr :: PyObject -> String -> IO PyObject
+getattr pyo s =
+    withPyObject pyo (\cpo ->
+     withCString s (\cstr ->
+      pyObject_GetAttrString cpo cstr >>= fromCPyObject))
+
+{- | An interface to Python's hasattr.  Returns True if the named
+attribute exists; False otherwise. -}
+hasattr :: PyObject -> String -> IO Bool
+hasattr pyo s =
+    withPyObject pyo (\cpo ->
+     withCString s (\cstr ->
+      do r <- pyObject_HasAttrString cpo cstr
+         if r == 0
+            then return False
+            else return True
+                   )
+                     )
+{- | An interface to Python's setattr, used to set attributes of an object.
+-}
+setattr :: PyObject             -- ^ Object to operate on
+        -> String               -- ^ Name of attribute
+        -> PyObject             -- ^ Set the attribute to this value
+        -> IO ()
+setattr pyo s setpyo =
+    withPyObject pyo (\cpo ->
+     withPyObject setpyo (\csetpyo ->
+      withCString s (\cstr ->
+       pyObject_SetAttrString cpo cstr csetpyo >> return ()
+                    )))
 
 ----------------------------------------------------------------------
 -- Instances
@@ -414,9 +481,6 @@ foreign import ccall unsafe "glue.h PyList_GetItem"
 foreign import ccall unsafe "glue.h PyTuple_GetItem"
  pyTuple_GetItem :: Ptr CPyObject -> CInt -> IO (Ptr CPyObject)
 
-foreign import ccall unsafe "glue.h hspy_incref"
- py_incref :: Ptr CPyObject -> IO ()
-
 foreign import ccall unsafe "glue.h PyDict_Items"
  pyDict_Items :: Ptr CPyObject -> IO (Ptr CPyObject)
 
@@ -435,3 +499,12 @@ foreign import ccall "glue.h PyObject_Call"
 
 foreign import ccall unsafe "glue.h PyList_AsTuple"
  cpyList_AsTuple :: Ptr CPyObject -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyObject_GetAttrString"
+ pyObject_GetAttrString :: Ptr CPyObject -> CString -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyObject_HasAttrString"
+ pyObject_HasAttrString :: Ptr CPyObject -> CString -> IO CInt
+
+foreign import ccall unsafe "glue.h PyObject_SetAttrString"
+ pyObject_SetAttrString :: Ptr CPyObject -> CString -> Ptr CPyObject -> IO CInt

@@ -122,19 +122,25 @@ callByName fname sparms kwparms =
        showPyObject func >>= putStrLn
        pyObject_CallHs func sparms kwparms
 
-noParms :: [String]
-noParms = []
-
-noKwParms :: [(String, String)]
-noKwParms = []
-
 {- | Import a module into the current environment in the normal sense
-(via \"import\" in Python).
+(similar to \"import\" in Python).
 -}
 pyImport :: String -> IO ()
 pyImport x = 
-    do pyRun_String ("import " ++ x) Py_single_input []
-       return ()
+    do r <- pyImport_ImportModule x 
+       globals <- getDefaultGlobals
+       cdict <- pyImport_GetModuleDict
+       py_incref cdict
+       dict <- fromCPyObject cdict >>= fromPyObject
+       case lookup x dict of
+           Nothing -> do putStrLn $ "No " ++ x 
+                         return ()
+           Just pyo -> do putStrLn $ "Found " ++ x
+                          withPyObject globals (\cglobals ->
+                           withPyObject pyo (\cmodule ->
+                            withCString x (\cstr ->
+                             pyDict_SetItemString cglobals cstr cmodule)))
+                          return ()
 
 {- | Wrapper around C PyImport_ImportModule, which imports a module.
 
@@ -143,10 +149,11 @@ pyImport_ImportModule :: String -> IO PyObject
 pyImport_ImportModule x =
     do globals <- getDefaultGlobals
        fromlist <- toPyObject ['*']
-       withPyObject globals (\cglobals ->
-        withPyObject fromlist (\cfromlist ->
-         withCString x (\cstr -> 
-          cpyImport_ImportModuleEx cstr cglobals nullPtr cfromlist >>= fromCPyObject)))
+       cr <- withPyObject globals (\cglobals ->
+              withPyObject fromlist (\cfromlist ->
+               withCString x (\cstr -> 
+                cpyImport_ImportModuleEx cstr cglobals cglobals cfromlist)))
+       fromCPyObject cr
 
 
 foreign import ccall unsafe "Python.h Py_Initialize"
@@ -161,5 +168,8 @@ foreign import ccall unsafe "Python.h PyRun_String"
 foreign import ccall unsafe "glue.h PyImport_ImportModuleEx"
  cpyImport_ImportModuleEx :: CString -> Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject -> IO (Ptr CPyObject)
 
+foreign import ccall unsafe "glue.h PyDict_SetItemString"
+ pyDict_SetItemString :: Ptr CPyObject -> CString -> Ptr CPyObject -> IO CInt
 
-
+foreign import ccall unsafe "glue.h PyImport_GetModuleDict"
+ pyImport_GetModuleDict :: IO (Ptr CPyObject)

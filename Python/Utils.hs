@@ -40,7 +40,8 @@ module Python.Utils (-- * Objects
                      -- * Environment
                      getDefaultGlobals,
                      pyImport_AddModule,
-                     pyModule_GetDict
+                     pyModule_GetDict,
+                     py_incref
                     )
     where
 import Python.Types

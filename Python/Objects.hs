@@ -299,14 +299,14 @@ instance ToPyObject [(PyObject, PyObject)] where
         where setitem l (key, value) =
                   withPyObject key (\keyo ->
                       withPyObject value (\valueo ->
-                          pyDict_SetItem l keyo valueo >>= checkCInt))
+                          pyObject_SetItem l keyo valueo >>= checkCInt))
 
 -- | ALs from Dicts
 instance FromPyObject [(PyObject, PyObject)] where
     fromPyObject pydict = withPyObject pydict (\cpydict ->
-           -- Type sigs here are for clarity onlyw
+           -- Type sigs here are for clarity only
         do -- This gives a PyObject
-           items <- (pyDict_Items cpydict >>= fromCPyObject):: IO PyObject
+           items <- (pyMapping_Items cpydict >>= fromCPyObject):: IO PyObject
            -- Now, make a Haskell [[PyObject, PyObject]] list
            itemlist <- (fromPyObject items)::IO [[PyObject]]
            -- Finally, convert it to a list of tuples.
@@ -486,8 +486,8 @@ foreign import ccall unsafe "glue.h PyList_Append"
 foreign import ccall unsafe "glue.h PyDict_New"
  pyDict_New :: IO (Ptr CPyObject)
 
-foreign import ccall unsafe "glue.h PyDict_SetItem"
- pyDict_SetItem :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject -> IO CInt
+foreign import ccall unsafe "glue.h PyObject_SetItem"
+ pyObject_SetItem :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject -> IO CInt
 
 foreign import ccall unsafe "glue.h PyObject_Repr"
  pyObject_Repr :: Ptr CPyObject -> IO (Ptr CPyObject)
@@ -516,8 +516,8 @@ foreign import ccall unsafe "glue.h PyList_GetItem"
 foreign import ccall unsafe "glue.h PyTuple_GetItem"
  pyTuple_GetItem :: Ptr CPyObject -> CInt -> IO (Ptr CPyObject)
 
-foreign import ccall unsafe "glue.h PyDict_Items"
- pyDict_Items :: Ptr CPyObject -> IO (Ptr CPyObject)
+foreign import ccall unsafe "glue.h PyMapping_Items"
+ pyMapping_Items :: Ptr CPyObject -> IO (Ptr CPyObject)
 
 foreign import ccall unsafe "glue.h PyFloat_FromDouble"
  pyFloat_FromDouble :: CDouble -> IO (Ptr CPyObject)

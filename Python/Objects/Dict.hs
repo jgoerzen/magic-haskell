@@ -92,7 +92,8 @@ instance AnyDBM PyDict where
             cpydwrap h (\cdict ->
              do r <- pyObject_GetItem cdict ck
                 if r == nullPtr
-                   then return Nothing
+                   then do pyErr_Clear -- Ignore this exception
+                           return Nothing
                    else do retval <- fromCPyObject r >>= fromPyObject
                            return $ Just retval
                                   ))

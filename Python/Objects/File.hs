@@ -109,7 +109,9 @@ instance HVIO PyFile where
                             else return False -- Don't know; fake it.
                                 )
 
-    vGetContents pyf = pyfwrap pyf (\pyo ->
+    vGetContents pyf = do vTestOpen pyf
+                          vTestEOF pyf
+                          pyfwrap pyf (\pyo ->
                            let loop = unsafeInterleaveIO $
                                 do block <- callMethodHs pyo "read" 
                                             [4096::CLong] noKwParms
@@ -128,32 +130,36 @@ instance HVIO PyFile where
 
     vShow pyf = pyfwrap pyf showPyObject
 
-    vGetChar pyf = pyfwrap pyf (\pyo ->
-                     do c <- callMethodHs pyo "read" [1::CInt] noKwParms
-                        case c of 
+    vGetChar pyf = do vTestOpen pyf
+                      pyfwrap pyf (\pyo ->
+                        do c <- callMethodHs pyo "read" [1::CInt] noKwParms
+                           case c of 
                                 [] -> raiseEOF pyf
                                 [x] -> return x
                                )
 
-    vGetLine pyf = pyfwrap pyf (\pyo ->
-                    do line <- callMethodHs pyo "readline" noParms noKwParms
-                       case reverse line of
-                         [] -> raiseEOF pyf
-                         '\n':xs -> return $ reverse xs
-                         x -> return x
+    vGetLine pyf = do vTestOpen pyf
+                      pyfwrap pyf (\pyo ->
+                       do line <- callMethodHs pyo "readline" noParms noKwParms
+                          case reverse line of
+                                   [] -> raiseEOF pyf
+                                   '\n':xs -> return $ reverse xs
+                                   x -> return line
                                )
 
     vPutChar pyf c = vPutStr pyf [c]
 
     {- Python strings are non-lazy, so process these in chunks. -}
-    vPutStr pyf [] = return ()
+    vPutStr pyf [] = vTestOpen pyf >> return ()
     vPutStr pyf s = let (this, next) = splitAt 4096 s
-                        in do pyfwrap pyf (\pyo ->
+                        in do vTestOpen pyf
+                              pyfwrap pyf (\pyo ->
                                      runMethodHs pyo "write" [this] noKwParms)
                               vPutStr pyf next
 
     vFlush pyf = pyfwrap pyf (\pyo ->
-                     do h <- hasattr pyo "flush"
+                     do vTestOpen pyf
+                        h <- hasattr pyo "flush"
                         if h then runMethodHs pyo "flush" noParms noKwParms
                            else return ()
                              )
@@ -164,7 +170,8 @@ instance HVIO PyFile where
                            AbsoluteSeek -> 0::CLong
                            RelativeSeek -> 1
                            SeekFromEnd -> 2
-            in pyfwrap pyf (\pyo -> 
+            in do vTestOpen pyf
+                  pyfwrap pyf (\pyo -> 
                    case sm of
                        AbsoluteSeek -> runMethodHs pyo "seek" 
                                          [(fromIntegral offset)::CLong]
@@ -174,7 +181,7 @@ instance HVIO PyFile where
                            )
 
     vTell pyf = pyfwrap pyf (\pyo ->
-                 callMethodHs pyo "tell" noParms noKwParms)
+                 vTestOpen pyf >> callMethodHs pyo "tell" noParms noKwParms)
 
     vIsSeekable _ = return True -- fake it
     vIsWritable _ = return True -- fake it

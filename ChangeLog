@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-02 20:40:25 GMT	John Goerzen <jgoerzen@complete.org>	patch-61
+
+    Summary:
+      Checkpointing; odd rts error
+    Revision:
+      missingexts--head--0.7--patch-61
+
+
+    new files:
+     testsrc/Dicttest.hs
+
+    modified files:
+     ChangeLog Python/Objects/Dict.hs Python/Objects/File.hs
+     testsrc/BZip2test.hs testsrc/Tests.hs
+
+
 2005-02-02 20:08:43 GMT	John Goerzen <jgoerzen@complete.org>	patch-60
 
     Summary:

@@ -23,6 +23,7 @@ import qualified Objectstest
 import qualified Exceptionstest
 import qualified GZiptest
 import qualified BZip2test
+import qualified Dicttest
 
 test1 = TestCase ("x" @=? "x")
 
@@ -30,6 +31,7 @@ tests = TestList [TestLabel "test1" test1,
                   TestLabel "objects" Objectstest.tests,
                   TestLabel "interpreter" Interpretertest.tests,
                   TestLabel "exceptions" Exceptionstest.tests,
+                  TestLabel "AnyDBM/Dict" Dicttest.tests,
                   TestLabel "bzip2" BZip2test.tests,
                   TestLabel "gzip" GZiptest.tests
                  ]

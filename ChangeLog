@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 16:06:08 GMT	John Goerzen <jgoerzen@complete.org>	patch-47
+
+    Summary:
+      Checkpointing working gzip tests
+    Revision:
+      missingexts--head--0.7--patch-47
+
+
+    modified files:
+     ChangeLog testsrc/GZiptest.hs
+
+
 2005-02-01 16:05:20 GMT	John Goerzen <jgoerzen@complete.org>	patch-46
 
     Summary:

@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 01:52:34 GMT	John Goerzen <jgoerzen@complete.org>	patch-41
+
+    Summary:
+      checkpointing
+    Revision:
+      missingexts--head--0.7--patch-41
+
+
+    modified files:
+     ChangeLog testsrc/Exceptionstest.hs testsrc/Objectstest.hs
+     {arch}/=tagging-method
+
+
 2005-01-31 22:56:19 GMT	John Goerzen <jgoerzen@complete.org>	patch-40
 
     Summary:

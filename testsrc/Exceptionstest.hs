@@ -21,25 +21,32 @@ module Exceptionstest(tests) where
 import HUnit
 import Python.Objects
 import Python.Exceptions
+import Python.Exceptions.ExcTypes
 import Python.Interpreter
 import Foreign.C.Types
+import qualified Control.Exception
 
 f msg inp code exp = TestLabel msg $ TestCase $ do pyo <- toPyObject inp
                                                    r <- code pyo
                                                    exp @=? r
 
 test_base =
-    let handler e = do e2 <- formatException e
-                       fail (excFormatted e2)
+    let handler e = return ()
         in
         [
-         TestCase $ catchPy (do r <- pyRun_StringHs "2 + None" Py_eval_input noKwParms
-                                (5::CLong) @=? r
-                            ) handler
-        ,TestCase $ catchPy (do pyImport "regsub"
-                                r <- pyRun_StringHs "regsub.sub(None, None, None)" Py_eval_input noKwParms
-                                (5::CLong) @=? r
-                            ) handler
+
+         TestCase $ catchSpecificPy typeError (
+                       do r <- pyRun_StringHs "2 + None" Py_eval_input noKwParms
+                          r @=? "no exception raised"
+                                               ) handler
+        ,TestCase $ catchSpecificPy valueError (
+                       do Control.Exception.catch 
+                                (do r <- pyRun_StringHs "2 + None" Py_eval_input noKwParms
+                                    r @=? "no exception raised"
+                                )
+                                 (\e -> return () )
+                                               )
+                                               (\e -> fail "Incorrectly caught exception")
         ]
                 
 tests = TestList [TestLabel "base" (TestList test_base)

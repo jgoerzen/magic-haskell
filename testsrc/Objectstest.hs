@@ -153,6 +153,6 @@ tests = TestList [TestLabel "base" (TestList test_base),
                   TestLabel "longs" (TestList test_longs),
                   TestLabel "doubles" (TestList test_doubles),
                   TestLabel "dir" (TestList test_dir),
-                  TestLabel "call" (TestList test_call),
-                  TestLabel "attr" (TestList test_attr)
+                  TestLabel "call" (TestList test_call)--
+--                  TestLabel "attr" (TestList test_attr)
                  ]

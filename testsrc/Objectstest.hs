@@ -113,7 +113,9 @@ test_doubles =
 test_call =
     [
      TestCase $ do func <- pyRun_String "repr" Py_eval_input [] []
+                   putStrLn "\nafter func"
                    r <- pyObject_CallHs func [5::Integer] ([]::[(String, String)])
+                   putStrLn "after call"
                    "5L" @=? r
     ]
 
@@ -132,6 +134,6 @@ tests = TestList [TestLabel "base" (TestList test_base),
                   TestLabel "ints" (TestList test_ints),
                   TestLabel "longs" (TestList test_longs),
                   TestLabel "doubles" (TestList test_doubles),
-                  TestLabel "dir" (TestList test_dir)
---                  TestLabel "call" (TestList test_call)
+                  TestLabel "dir" (TestList test_dir),
+                  TestLabel "call" (TestList test_call)
                  ]

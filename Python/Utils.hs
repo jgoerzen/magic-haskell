@@ -27,13 +27,15 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module Python.Utils (fromCPyObject,
-                     withPyObject
+                     withPyObject,
+                     maybeWithPyObject
                     )
     where
 import Python.Types
 import Foreign.C.Types
 import Foreign.C
 import Foreign
+import Foreign.Ptr
 
 fromCPyObject :: Ptr CPyObject -> IO PyObject
 fromCPyObject po =
@@ -42,6 +44,10 @@ fromCPyObject po =
 
 withPyObject :: PyObject -> (Ptr CPyObject -> IO b) -> IO b
 withPyObject (PyObject x) = withForeignPtr x    
+
+maybeWithPyObject :: Maybe PyObject -> (Ptr CPyObject -> IO b) -> IO b
+maybeWithPyObject Nothing func = func nullPtr
+maybeWithPyObject (Just x) y = withPyObject x y
 
 foreign import ccall "glue.h &hspy_decref"
  py_decref :: FunPtr (Ptr CPyObject -> IO ())

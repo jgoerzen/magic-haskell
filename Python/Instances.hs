@@ -41,14 +41,14 @@ import Data.List
 -- FIXME: ERROR CHECKING!
 
 -- | Lists from a PyObject
-instance PyObjectConv [PyObject] where
+instance ToPyObject [PyObject] where
     toPyObject mainlist =
         do l <- pyList_New 0
            mapM_ (\pyo -> withPyObject pyo (pyList_Append l)) mainlist
            fromCPyObject l
 
 -- | Dicts from ALs
-instance PyObjectConv [(PyObject, PyObject)] where
+instance ToPyObject [(PyObject, PyObject)] where
     toPyObject mainlist =
         do d <- pyDict_New
            mapM_ (setitem d) mainlist
@@ -59,7 +59,7 @@ instance PyObjectConv [(PyObject, PyObject)] where
                           pyDict_SetItem l keyo valueo))
                                        
 -- | Dicts from Haskell objects
-instance (PyObjectConv a, PyObjectConv b) => PyObjectConv [(a, b)] where
+instance (ToPyObject a, ToPyObject b) => ToPyObject [(a, b)] where
     toPyObject mainlist =
         let convone (i1, i2) = do oi1 <- toPyObject i1
                                   oi2 <- toPyObject i2
@@ -67,23 +67,31 @@ instance (PyObjectConv a, PyObjectConv b) => PyObjectConv [(a, b)] where
         in do newl <- mapM convone mainlist
               toPyObject newl
 
-instance PyObjectConv CString where
+instance ToPyObject CString where
    toPyObject x = 
             withCString "s" $ \cstr ->
                 py_buildvalues cstr x >>= fromCPyObject
 
-instance PyObjectConv String where
+instance ToPyObject String where
     toPyObject x = withCString x toPyObject
 
-instance PyObjectConv CInt where
+instance ToPyObject CInt where
     toPyObject x = 
         withCString "i" $ \cstr ->
             do po <- py_buildvalue cstr x
                fromCPyObject po
 
+instance ToPyObject CLong where
+    toPyObject x =
+        pyInt_FromLong x >>= fromCPyObject
+
+instance FromPyObject CLong where
+    fromPyObject po = 
+        withPyObject po pyInt_AsLong
+
 {-
 -- | Lists from anything else
-instance PyObjectConv a => PyObjectConv [a] where
+instance ToPyObject a => ToPyObject [a] where
     toPyObject mainlist = 
         do newlist <- mapM toPyObject mainlist
            toPyObject newlist
@@ -109,3 +117,9 @@ foreign import ccall unsafe "glue.h PyDict_New"
 
 foreign import ccall unsafe "glue.h PyDict_SetItem"
  pyDict_SetItem :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject -> IO CInt
+
+foreign import ccall unsafe "glue.h PyInt_FromLong"
+ pyInt_FromLong :: CLong -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyInt_AsLong"
+ pyInt_AsLong :: Ptr CPyObject -> IO CLong

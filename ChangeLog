@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-30 02:06:46 GMT	John Goerzen <jgoerzen@complete.org>	patch-14
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingexts--head--0.7--patch-14
+
+
+    modified files:
+     ChangeLog Python/Instances.hs Python/Interpreter.hs
+     Python/Types.hs Python/Utils.hs testsrc/Interpretertest.hs
+
+
 2005-01-30 01:35:19 GMT	John Goerzen <jgoerzen@complete.org>	patch-13
 
     Summary:

@@ -28,7 +28,8 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module Python.Interpreter (
                           py_initialize,
-                          pyRun_SimpleString
+                          pyRun_SimpleString,
+                          pyRun_String
                           )
 where
 import Python.Utils
@@ -43,13 +44,17 @@ pyRun_SimpleString x = withCString x (\cs ->
                                              return ()
                                      )
     
-{-
-
 pyRun_String :: String          -- ^ Command to run
-             -> CInt            -- ^ Start Token
+             -> CInt            -- ^ Start Token (use 0)
              -> Maybe PyObject  -- ^ Globals (or Nothing for defaults)
              -> Maybe PyObject  -- ^ Locals (or Nothing for defaults)
--}
+             -> IO PyObject     -- ^ Result
+pyRun_String command start globals locals =
+    withCString command (\ccommand ->
+        maybeWithPyObject globals (\cglobals ->
+            maybeWithPyObject locals (\clocals ->
+                cpyRun_String ccommand start cglobals clocals >>= fromCPyObject
+                              )))
 
 foreign import ccall unsafe "Python.h Py_Initialize"
   py_initialize :: IO ()

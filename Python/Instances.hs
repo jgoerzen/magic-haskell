@@ -1,6 +1,5 @@
-{-
 {-# OPTIONS -fallow-overlapping-instances #-}
--}
+
 {- arch-tag: Python type instances
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
@@ -59,6 +58,14 @@ instance PyObjectConv [(PyObject, PyObject)] where
                       withPyObject value (\valueo ->
                           pyDict_SetItem l keyo valueo))
                                        
+-- | Dicts from Haskell objects
+instance (PyObjectConv a, PyObjectConv b) => PyObjectConv [(a, b)] where
+    toPyObject mainlist =
+        let convone (i1, i2) = do oi1 <- toPyObject i1
+                                  oi2 <- toPyObject i2
+                                  return (oi1, oi2)
+        in do newl <- mapM convone mainlist
+              toPyObject newl
 
 instance PyObjectConv CString where
    toPyObject x = 

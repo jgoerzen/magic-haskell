@@ -7,7 +7,8 @@ Stability: Alpha
 Copyright: Copyright (c) 2005 John Goerzen
 Exposed-Modules: Python.Types,
     Python.Interpreter
-C-Sources: glue/test.c
+C-Sources: glue/glue.c
+Include-Dirs: /usr/include/python2.3
 Build-Depends: haskell-src, MissingH
 Options-GHC: -O2
-
+Extensions: ForeignFunctionInterface

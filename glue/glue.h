@@ -1,4 +1,4 @@
-/* arch-tag: Python Utility Functions
+/* arch-tag: Python Utility Functions, header file
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -17,8 +17,4 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include <Python.h>
-
-void hspy_decref(PyObject *o) {
-  Py_DECREF(o);
-}
-
+extern void hspy_decref(PyObject *o);

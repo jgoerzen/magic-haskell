@@ -31,8 +31,6 @@ module Python.Types (
                     )
 where
 
-#include <Python.h>
-
 import Foreign
 import Foreign.C
 import Foreign.C.Types
@@ -53,7 +51,7 @@ class (Show a, Eq, a, Ord a) => FromPyObject a where
     fromPyObject :: PyObject -> IO a
 -}
 
-instance ToPyObject #{type int} where
+instance ToPyObject CInt where
     toPyObject x = 
         withCString "i" $ \cstr ->
             do po <- py_buildvalue cstr x
@@ -63,8 +61,9 @@ instance ToPyObject #{type int} where
 ----------------------------------------------------------------------
 -- C imports
 
-foreign import ccall unsafe "&hspy_DECREF"
+foreign import ccall unsafe "glue.h Py_BuildValue"
+ py_buildvalue :: CString -> CInt -> IO (Ptr CPyObject)
+
+foreign import ccall "glue.h &hspy_decref"
  py_decref :: FunPtr (Ptr CPyObject -> IO ())
 
-foreign import ccall unsafe "Py_BuildValue"
- py_buildvalue :: CString -> Int32 -> IO (Ptr CPyObject)

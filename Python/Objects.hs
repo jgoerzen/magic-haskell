@@ -44,6 +44,7 @@ import Foreign.C.Types
 import Foreign.C.String
 import Foreign.Ptr
 import Foreign.Storable
+import Foreign.Marshal.Alloc
 import Data.List
 
 {- | Members of this class can be converted from a Haskell type
@@ -123,14 +124,16 @@ instance ToPyObject String where
 
 instance FromPyObject String where
     fromPyObject x = withPyObject x (\po ->
-           do 
-              let lenptr = nullPtr::(Ptr CInt)
-              let strptr = nullPtr::(Ptr CString)
-              pyString_AsStringAndSize po strptr lenptr
-              len <- peek lenptr
-              cstr <- peek strptr
-              peekCStringLen (cstr, (fromIntegral) len)
+        alloca (\lenptr ->
+           alloca (\strptr ->
+            do pyString_AsStringAndSize po strptr lenptr
+               len <- peek lenptr
+               cstr <- peek strptr
+               peekCStringLen (cstr, (fromIntegral) len)
+                  )
+               )
                                     )
+           
 
 instance ToPyObject CInt where
     toPyObject x = 

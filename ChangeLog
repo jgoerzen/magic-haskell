@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-30 15:48:10 GMT	John Goerzen <jgoerzen@complete.org>	patch-21
+
+    Summary:
+      Strings Working
+    Revision:
+      missingexts--head--0.7--patch-21
+
+
+    modified files:
+     ChangeLog Python/Objects.hs
+
+
 2005-01-30 15:41:23 GMT	John Goerzen <jgoerzen@complete.org>	patch-20
 
     Summary:

@@ -1,4 +1,5 @@
-/* arch-tag: Python Utility Functions
+{-# OPTIONS -fallow-overlapping-instances #-}
+{- arch-tag: Exceptions tests main file
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -14,37 +15,24 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
+-}
 
-#include <Python.h>
+module Exceptionstest(tests) where
+import HUnit
+import Python.Objects
+import Python.Exceptions
+import Python.Interpreter
+import Foreign.C.Types
 
-void hspy_decref(PyObject *o) {
-  Py_DECREF(o);
-}
+f msg inp code exp = TestLabel msg $ TestCase $ do pyo <- toPyObject inp
+                                                   r <- code pyo
+                                                   exp @=? r
 
-void hspy_incref(PyObject *o) {
-  Py_INCREF(o);
-}
-
-int hspy_list_check(PyObject *o) {
-  return PyList_Check(o);
-}
-
-int hspy_tuple_check(PyObject *o) {
-  return PyTuple_Check(o);
-}
-
-PyObject ** hspy_getexc() {
-  static PyObject *retval [3];
-  PyObject *type;
-  PyObject *val;
-  PyObject *tb;
-
-  PyErr_Fetch(&type, &val, &tb);
-  PyErr_NormalizeException(&type, &val, &tb);
-  retval[0] = type;
-  retval[1] = val;
-  retval[2] = tb;
-  PyErr_Clear();
-  return retval;
-}
+test_base =
+    [
+     TestCase $ do r <- pyRun_StringHs "2 + None" Py_eval_input noKwParms
+                   (5::CLong) @=? r
+    ]
+                
+tests = TestList [TestLabel "base" (TestList test_base)
+                 ]

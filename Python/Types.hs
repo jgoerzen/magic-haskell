@@ -37,13 +37,15 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module Python.Types (
                      PyObject(..),
-                     CPyObject
+                     CPyObject,
+                     PyException(..)
                     )
 where
 
 import Foreign
 import Foreign.C
 import Foreign.C.Types
+import Data.Typeable
 
 type CPyObject = ()
 
@@ -55,7 +57,14 @@ newtype PyObject = PyObject (ForeignPtr CPyObject)
 data PyException = PyException {excType :: PyObject, -- ^ Exception type
                                 excValue :: PyObject, -- ^ Exception value
                                 excTraceBack :: PyObject, -- ^ Traceback
-                                formatted :: String -- ^ Formatted for display
+                                excFormatted :: String -- ^ Formatted for display
                                }
 instance Show PyException where
-    show x = formatted x
+    show x = excFormatted x
+
+pyExceptionTc :: TyCon
+pyExceptionTc = mkTyCon "MissingPy.Python.Types.PyException"
+
+instance Typeable PyException where
+    typeOf _ = mkAppTy pyExceptionTc []
+

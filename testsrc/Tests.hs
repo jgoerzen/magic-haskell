@@ -20,12 +20,14 @@ module Tests(tests) where
 import HUnit
 import qualified Interpretertest
 import qualified Objectstest
+import qualified Exceptionstest
 
 test1 = TestCase ("x" @=? "x")
 
 tests = TestList [TestLabel "test1" test1,
                   TestLabel "objects" Objectstest.tests,
-                  TestLabel "interpreter" Interpretertest.tests
+                  TestLabel "interpreter" Interpretertest.tests,
+                  TestLabel "exceptions" Exceptionstest.tests
                  ]
 
 

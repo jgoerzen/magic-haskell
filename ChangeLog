@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-31 21:27:14 GMT	John Goerzen <jgoerzen@complete.org>	patch-36
+
+    Summary:
+      Working on exceptions
+    Revision:
+      missingexts--head--0.7--patch-36
+
+
+    new files:
+     testsrc/Exceptionstest.hs
+
+    modified files:
+     ChangeLog Python/Exceptions.hs Python/Interpreter.hsc
+     Python/Types.hs Python/Utils.hs glue/glue.c
+     testsrc/Objectstest.hs testsrc/Tests.hs
+
+
 2005-01-31 20:37:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-35
 
     Summary:

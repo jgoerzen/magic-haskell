@@ -50,6 +50,8 @@ import Foreign.C
 import Foreign
 import Foreign.Ptr
 import Foreign.Marshal.Array
+import Foreign.Marshal.Alloc
+import Control.Exception
 
 {- | Convert a Ptr 'CPyObject' to a 'PyObject'. -}
 fromCPyObject :: Ptr CPyObject -> IO PyObject
@@ -63,12 +65,24 @@ fromCPyObject po =
 the exception in Haskell. -}
 raisePyException :: IO a
 raisePyException =
+    alloca (\typeptr -> alloca (\valptr -> alloca (\tbptr ->
+       do pyErr_Fetch typeptr valptr tbptr
+          pyErr_NormalizeException typeptr valptr tbptr
+          ctype <- peek typeptr
+          cval <- peek valptr
+          ctb <- peek tbptr
+          otype <- fromCPyObject ctype
+          oval <- fromCPyObject cval
+          otb <- fromCPyObject ctb
+          let exc = PyException {excType = otype, excValue = oval,
+                                 excTraceBack = otb,
+                                 excFormatted = "not yet"}
+          throwDyn exc
+                   )))
 {-
     do cpy <- getexc
        let (exc, val, tb) = cpy
-       pyErr_Print
--}
-    do pyErr_Print
+       --pyErr_Print
        fail "Python Error!"
     where getexc = do cexc <- hspy_getexc
                       exc <- peekArray 3 cexc
@@ -76,7 +90,8 @@ raisePyException =
                       case exc2 of
                                [x, y, z] -> return (x, y, z)
                                _ -> fail "Got unexpected number of elements"
-    
+-}  
+  
 {- | Uses a 'PyObject' in a function that needs Ptr 'CPyObject'. -}
 withPyObject :: PyObject -> (Ptr CPyObject -> IO b) -> IO b
 withPyObject (PyObject x) = withForeignPtr x    
@@ -121,6 +136,15 @@ foreign import ccall "glue.h hspy_incref"
 
 foreign import ccall unsafe "glue.h hspy_getexc"
  hspy_getexc :: IO (Ptr (Ptr CPyObject))
+
+foreign import ccall unsafe "glue.h PyErr_Fetch"
+ pyErr_Fetch :: Ptr (Ptr CPyObject) -> Ptr (Ptr CPyObject) -> Ptr (Ptr CPyObject) -> IO ()
+
+foreign import ccall unsafe "glue.h PyErr_NormalizeException"
+ pyErr_NormalizeException :: Ptr (Ptr CPyObject) -> Ptr (Ptr CPyObject) -> Ptr (Ptr CPyObject) -> IO ()
+
+foreign import ccall unsafe "glue.h PyErr_Clear"
+ pyErr_Clear :: IO ()
 
 foreign import ccall unsafe "glue.h PyErr_Print"
  pyErr_Print :: IO ()

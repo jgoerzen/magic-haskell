@@ -111,7 +111,7 @@ pyRun_String command startfrom xlocals =
 You can use 'noParms' and 'noKwParms' if you have no simple or
 keyword parameters to pass, respectively. -}
 callByName :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
-              String            -- ^ Object/function name
+              String            -- ^ Object\/function name
            -> [a]               -- ^ List of non-keyword parameters
            -> [(String, b)]     -- ^ List of keyword parameters
            -> IO c
@@ -150,9 +150,13 @@ pyImport_ImportModule x =
                 cpyImport_ImportModuleEx cstr cglobals cglobals cfromlist)))
        fromCPyObject cr
 
+{- | Initialize the Python interpreter environment. -}
+py_initialize :: IO ()
+py_initialize = do cpy_initialize
+                   pyImport "traceback"
 
 foreign import ccall unsafe "Python.h Py_Initialize"
-  py_initialize :: IO ()
+  cpy_initialize :: IO ()
 
 foreign import ccall unsafe "Python.h PyRun_SimpleString"
   cpyRun_SimpleString :: CString -> IO CInt

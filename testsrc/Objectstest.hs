@@ -134,12 +134,14 @@ test_attr =
                    pyObject_RunHs fupdate ["there"] noKwParms
                    r <- pyObject_CallHs fhexdigest noParms noKwParms
                    "a8b767bb9cf0938dc7f40603f33987e5" @=? r
+{-
     ,TestCase $ do pyImport "md5"
                    md5 <- pyRun_String "md5.md5()" Py_eval_input []
                    runMethodHs md5 "update" ["hi"] noKwParms
                    runMethodHs md5 "update" ["there"] noKwParms
                    r <- callMethodHs md5 "hexdigest" noParms noKwParms
                    "a8b767bb9cf0938dc7f40603f33987e5" @=? r
+-}
     ]
                 
 tests = TestList [TestLabel "base" (TestList test_base),

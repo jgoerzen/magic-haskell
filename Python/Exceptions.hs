@@ -31,15 +31,32 @@ Python low-level exception handling
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module Python.Exceptions where
+module Python.Exceptions (PyException(..),
+                          catchPy,
+                          pyExceptions
+                         )
+where
 
 import Python.Utils
 import Foreign.C.Types
 import Python.Objects
 import Foreign
+import Python.Types
+import Data.Dynamic
+import Data.Typeable
+import Control.Exception
 
-{- | An exception that could be raised from Python. -}
-data PyException = PyException {
-                                excType :: Int
-                               }
+{- | Execute the given IO action.
+
+If it raises a 'PyException', then execute the supplied handler and return
+its return value.  Otherwise, process as normal. -}
+catchPy :: IO a -> (PyException -> IO a) -> IO a
+catchPy = catchDyn
+
+{- | Useful as the first argument to catchJust, tryJust, or handleJust.
+Return Nothing if the given exception is not a 'PyException', or 
+the exception otherwise. -}
+pyExceptions :: Exception -> Maybe PyException
+pyExceptions exc = dynExceptions exc >>= fromDynamic
+
 

@@ -1,4 +1,4 @@
-{- arch-tag: Python types
+{- arch-tag: Python low-level exception handling
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : Python.Types
+   Module     : Python.Exceptions
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -26,36 +26,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-Interfaces to low-level Python types.  You should probably not use this module
-directly.  You probably want 'Python.Objects' instead.
-
-You'll only need this module directly if you are importing new functions
-from the Python C API.
+Python low-level exception handling
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module Python.Types (
-                     PyObject(..),
-                     CPyObject
-                    )
-where
+module Python.Exceptions where
 
-import Foreign
-import Foreign.C
+import Python.Utils
 import Foreign.C.Types
+import Python.Objects
+import Foreign
 
-type CPyObject = ()
-
--- | The type of Python objects.
-newtype PyObject = PyObject (ForeignPtr CPyObject)
-    deriving (Eq, Show)
-
--- | The type of Python exceptions.
-data PyException = PyException {excType :: PyObject, -- ^ Exception type
-                                excValue :: PyObject, -- ^ Exception value
-                                excTraceBack :: PyObject, -- ^ Traceback
-                                formatted :: String -- ^ Formatted for display
+{- | An exception that could be raised from Python. -}
+data PyException = PyException {
+                                excType :: Int
                                }
-instance Show PyException where
-    show x = formatted x
+

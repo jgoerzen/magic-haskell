@@ -21,6 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
+   Maintainer : John Goerzen,
+   Maintainer : jgoerzen@complete.org
+   Stability  : provisional
+   Portability: portable
+
 Interface to Python interpreter
 
 Written by John Goerzen, jgoerzen\@complete.org

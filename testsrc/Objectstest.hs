@@ -108,6 +108,13 @@ test_doubles =
     ,f "1/(2^384)" ((1 / (2 ^ 384))::CDouble) fromPyObject
        ((1 / (2 ^ 384))::CDouble)
     ]
+
+test_dir =
+    [
+     TestCase $ do dv <- toPyObject ([]::String) >>= dirPyObject
+                   assertBool "replace" $ "replace" `elem` dv
+                   assertBool "rindex" $ "rindex" `elem` dv
+    ]
                 
 tests = TestList [TestLabel "base" (TestList test_base),
                   TestLabel "lists/tuples" (TestList test_lists),
@@ -116,5 +123,6 @@ tests = TestList [TestLabel "base" (TestList test_base),
                   TestLabel "strings" (TestList test_strings),
                   TestLabel "ints" (TestList test_ints),
                   TestLabel "longs" (TestList test_longs),
-                  TestLabel "doubles" (TestList test_doubles)
+                  TestLabel "doubles" (TestList test_doubles),
+                  TestLabel "dir" (TestList test_dir)
                  ]

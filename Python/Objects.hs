@@ -23,19 +23,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
+   Maintainer : John Goerzen,
+   Maintainer : jgoerzen@complete.org
+   Stability  : provisional
+   Portability: portable
+
 Python type instances and object utilities
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module Python.Objects (
+                       -- * Basic Object Types
+                       PyObject,
+                       -- * Conversions between Haskell and Python Objects
                        ToPyObject(..),
                        FromPyObject(..),
-                       PyObject,
+                       -- * Information about Python Objects
                        typeOf,
                        strOf,
                        reprOf,
-                       showPyObject
+                       showPyObject,
+                       dirPyObject,
+                       -- * Calling Python Objects
+                       pyObject_Call
                       )
 where
 import Python.Types
@@ -81,6 +92,30 @@ showPyObject :: PyObject -> IO String
 showPyObject x = do typestr <- typeOf x >>= strOf
                     contentstr <- strOf x
                     return $ typestr ++ ": " ++ contentstr
+
+{- | Displays a list of keys contained in the Python object. -}
+dirPyObject :: PyObject -> IO [String]
+dirPyObject x = withPyObject x (\cpyo ->
+                   do dr <- pyObject_Dir cpyo >>= fromCPyObject
+                      fromPyObject dr
+                               )
+
+{- | Call a Python object (function, etc) -}
+pyObject_Call :: PyObject       -- ^ Object to call
+              -> [PyObject]     -- ^ List of non-keyword parameters (may be empty)
+              -> [(String, PyObject)] -- ^ List of keyword parameters (may be empty)
+              -> IO PyObject    -- ^ Return value
+pyObject_Call callobj simpleparams kwparams =
+    let conv (k, v) = do k1 <- toPyObject k
+                         return (k1, v)
+        in
+        do pyosimple <- toPyObject simpleparams
+           pyokw <- mapM conv kwparams >>= toPyObject
+           withPyObject callobj (\ccallobj ->
+            withPyObject pyosimple (\cpyosimple ->
+             withPyObject pyokw (\cpyokw ->
+              cpyObject_Call ccallobj cpyosimple cpyokw >>= fromCPyObject)))
+       
 
 ----------------------------------------------------------------------
 -- Instances
@@ -349,3 +384,10 @@ foreign import ccall unsafe "glue.h PyFloat_FromDouble"
 
 foreign import ccall unsafe "glue.h PyFloat_AsDouble"
  pyFloat_AsDouble :: Ptr CPyObject -> IO CDouble
+
+foreign import ccall unsafe "glue.h PyObject_Dir"
+ pyObject_Dir :: Ptr CPyObject -> IO (Ptr CPyObject)
+
+foreign import ccall "glue.h PyObject_Call"
+ cpyObject_Call :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject ->
+                   IO (Ptr CPyObject)

@@ -9,7 +9,8 @@ C-Sources: glue/glue.c
 Exposed-Modules: Python.Types,
  Python.Utils,
  Python.Objects,
- Python.Interpreter
+ Python.Interpreter,
+ Python.Exceptions
 Include-Dirs: /usr/include/python2.3, glue
 Extra-Libs: python2.3
 Build-Depends: haskell-src, MissingH

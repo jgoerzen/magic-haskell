@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-04-05 20:08:31 GMT	John Goerzen <jgoerzen@complete.org>	patch-82
+
+    Summary:
+      More cabal fixes
+    Revision:
+      missingexts--head--0.7--patch-82
+
+
+    modified files:
+     ChangeLog gencabal.py
+
+
 2005-04-05 19:58:08 GMT	John Goerzen <jgoerzen@complete.org>	patch-81
 
     Summary:

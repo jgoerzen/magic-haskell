@@ -36,7 +36,9 @@ Written by John Goerzen, jgoerzen\@complete.org
 module Python.Objects.File (-- * PyFile Objects
                             PyFile,
                             mkPyFile,
-                            fromPyFile
+                            fromPyFile,
+                            pyfwrap,
+                            openModeConv
                       )
 where
 import Python.Types
@@ -64,15 +66,17 @@ mkPyFile o = PyFile o
 fromPyFile :: PyFile -> PyObject
 fromPyFile (PyFile o) = o
 
+{- | Convert a Haskell open mode to a Python mode string -}
+openModeConv ReadMode = "r"
+openModeConv WriteMode = "w"
+openModeConv AppendMode = "a"
+openModeConv ReadWriteMode = "r+"
+
 {- | Open a file on disk and return a 'PyFile'. -}
 openPyFile :: FilePath -> IOMode -> IO PyFile
 openPyFile fp mode =
-    let mode2str ReadMode = "r"
-        mode2str WriteMode = "w"
-        mode2str AppendMode = "a"
-        mode2str ReadWriteMode = "r+"
-        in do parms1 <- toPyObject [fp]
-              parms2 <- toPyObject [mode2str mode]
+           do parms1 <- toPyObject [fp]
+              parms2 <- toPyObject [openModeConv mode]
               obj <- callByName "open" [parms1, parms2] []
               return $ mkPyFile obj
 
@@ -83,6 +87,7 @@ openPyFile fp mode =
 instance Show PyFile where
     show _ = "<Python File Object>"
 
+{- | Wrap an operation, raising exceptions in the IO monad as appropriate. -}
 pyfwrap :: PyFile -> (PyObject -> IO a) -> IO a
 pyfwrap (PyFile pyobj) func =
     let handler e = do f <- formatException e

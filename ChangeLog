@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 03:13:23 GMT	John Goerzen <jgoerzen@complete.org>	patch-44
+
+    Summary:
+      Added GZip
+    Revision:
+      missingexts--head--0.7--patch-44
+
+
+    new files:
+     MissingPy/.arch-ids/=id MissingPy/FileArchive/.arch-ids/=id
+     MissingPy/FileArchive/GZip.hs
+
+    modified files:
+     ChangeLog MissingPy.cabal Python/Objects/File.hs
+
+    new directories:
+     MissingPy MissingPy/.arch-ids MissingPy/FileArchive
+     MissingPy/FileArchive/.arch-ids
+
+
 2005-02-01 03:02:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-43
 
     Summary:

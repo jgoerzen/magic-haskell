@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-03 15:52:40 GMT	John Goerzen <jgoerzen@complete.org>	patch-70
+
+    Summary:
+      tests run
+    Revision:
+      missingexts--head--0.7--patch-70
+
+
+    new files:
+     testsrc/AnyDBMPytest.hs testsrc/AnyDBMtest.hs
+
+    removed files:
+     MissingPy/AnyDBM/.arch-ids/=id
+
+    modified files:
+     ChangeLog MissingPy/AnyDBM.hs testsrc/Tests.hs
+
+    removed directories:
+     MissingPy/AnyDBM MissingPy/AnyDBM/.arch-ids
+
+
 2005-02-03 15:32:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-69
 
     Summary:

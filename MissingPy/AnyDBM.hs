@@ -36,7 +36,9 @@ See and import "MissingH.AnyDBM" to use these features.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingPy.AnyDBM(
+module MissingPy.AnyDBM(PyDBMOpenFlags(..),
+                        openAnyDBM,
+                        openSpecificDBM
                        )
 where
 

@@ -167,14 +167,19 @@ instance (FromPyObject a, FromPyObject b) => FromPyObject [(a, b)] where
             in do pyodict <- ((fromPyObject pydict)::IO [(PyObject, PyObject)])
                   mapM conv pyodict
 
-instance ToPyObject CString where
-   toPyObject x = 
-            withCString "s" $ \cstr ->
-                py_buildvalues cstr x >>= fromCPyObject
+--------------------------------------------------
+-- Strings
 
+-- CStringLen to PyObject.  Use CStringLen to handle embedded nulls.
+instance ToPyObject CStringLen where
+   toPyObject (x, len) = 
+       pyString_FromStringAndSize x (fromIntegral len) >>= fromCPyObject
+
+-- String to PyObject
 instance ToPyObject String where
-    toPyObject x = withCString x toPyObject
+    toPyObject x = withCString x (\cstr -> toPyObject (cstr, length x))
 
+-- PyObject to String
 instance FromPyObject String where
     fromPyObject x = withPyObject x (\po ->
         alloca (\lenptr ->
@@ -186,23 +191,74 @@ instance FromPyObject String where
                   )
                )
                                     )
+
+--------------------------------------------------
+-- Numbers, Python Ints
+
+-- Python ints are C longs
+instance ToPyObject CLong where
+    toPyObject x =  pyInt_FromLong x >>= fromCPyObject
+
+-- And convert back.
+instance FromPyObject CLong where
+    fromPyObject x = withPyObject x pyInt_AsLong
+
+-- We'll also support CInts.
 instance ToPyObject CInt where
-    toPyObject x = 
-        withCString "i" $ \cstr ->
-            do po <- py_buildvalue cstr x
-               fromCPyObject po
+    toPyObject x = toPyObject ((fromIntegral x)::CLong)
 
 instance FromPyObject CInt where
     fromPyObject x = do y <- (fromPyObject x)::IO CLong
                         return $ fromIntegral y
 
-instance ToPyObject CLong where
-    toPyObject x =
-        pyInt_FromLong x >>= fromCPyObject
+--------------------------------------------------
+-- Numbers, Python Longs
 
-instance FromPyObject CLong where
-    fromPyObject po = 
-        withPyObject po pyInt_AsLong
+instance ToPyObject Integer where
+    toPyObject i = 
+        -- Use strings here since no other C type supports
+        -- unlimited precision.
+        let repr = show i
+        in withCString repr (\cstr -> 
+             pyLong_FromString cstr nullPtr 10 >>= fromCPyObject)
+                                 
+instance FromPyObject Integer where
+    fromPyObject pyo = 
+        do longstr <- strOf pyo
+           return $ read longstr
+
+--------------------------------------------------
+-- Numbers, anything else.
+{- For these, we attempt to guess whether to handle it as an
+int or a long. -}
+{-
+Disabled for now; this is a low-level interface, and it seems to be overly
+complex for this.
+
+instance Integral a => ToPyObject a where
+    toPyObject x =
+        let intval = toInteger x
+            in
+            if (intval < (toInteger (minBound::CLong)) ||
+                intval > (toInteger (maxBound::CLong)))
+                then toPyObject intval
+                else toPyObject ((fromIntegral x)::CLong)
+
+-- On the return conversion, we see what the bounds for
+-- the desired type are, and treat it thusly.
+instance (Bounded a, Integral a) => FromPyObject a where
+    fromPyObject x =
+        let minpyint = toInteger (minBound::CLong)
+            maxpyint = toInteger (maxBound::CLong)
+            minpassed = toInteger (minBound::a)
+            maxpassed = toInteger (maxBound::a)
+            in if (minpassed < minpyint || maxpassed > maxpyint)
+                  then do intval <- fromPyObject x
+                          return $ fromInteger intval
+                  else do longval <- ((fromPyObject x)::IO CLong)
+                          return $ fromIntegral longval
+
+-}
 
 -- | Lists from anything else
 instance ToPyObject a => ToPyObject [a] where
@@ -219,11 +275,17 @@ instance FromPyObject a => FromPyObject [a] where
 -- C imports
 ----------------------------------------------------------------------
 
-foreign import ccall unsafe "glue.h Py_BuildValue"
- py_buildvalue :: CString -> CInt -> IO (Ptr CPyObject)
+foreign import ccall unsafe "glue.h PyString_FromStringAndSize"
+ pyString_FromStringAndSize :: CString -> CInt -> IO (Ptr CPyObject)
 
-foreign import ccall unsafe "glue.h Py_BuildValue"
- py_buildvalues :: CString -> CString -> IO (Ptr CPyObject)
+foreign import ccall unsafe "glue.h PyInt_FromLong"
+ pyInt_FromLong :: CLong -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyInt_AsLong"
+ pyInt_AsLong :: Ptr CPyObject -> IO CLong
+
+foreign import ccall unsafe "glue.h PyLong_FromString"
+ pyLong_FromString :: CString -> Ptr CString -> CInt -> IO (Ptr CPyObject)
 
 foreign import ccall unsafe "glue.h PyList_New"
  pyList_New :: CInt -> IO (Ptr CPyObject)
@@ -236,12 +298,6 @@ foreign import ccall unsafe "glue.h PyDict_New"
 
 foreign import ccall unsafe "glue.h PyDict_SetItem"
  pyDict_SetItem :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject -> IO CInt
-
-foreign import ccall unsafe "glue.h PyInt_FromLong"
- pyInt_FromLong :: CLong -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyInt_AsLong"
- pyInt_AsLong :: Ptr CPyObject -> IO CLong
 
 foreign import ccall unsafe "glue.h PyObject_Str"
  pyObject_Str :: Ptr CPyObject -> IO (Ptr CPyObject)

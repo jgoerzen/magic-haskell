@@ -52,8 +52,57 @@ test_al =
            [(1::CInt, 2::CInt), (3, 4)]
     ]
        
+test_functions =
+    [
+     f "typestr" (5::CInt) (\x -> typeOf x >>= strOf) "<type 'int'>"
+    ,f "repr" ["foo", "bar"] reprOf "['foo', 'bar']"
+    ]
 
+test_strings = 
+    [
+     f "empty" ([]::String) fromPyObject ([]::String)
+    ,f "basic" "foo" fromPyObject "foo"
+    ,f "dquotes" "foo\"" fromPyObject "foo\""
+    ,f "squotes" "foo'" fromPyObject "foo'"
+    ,f "embedded null" "foo\0bar" fromPyObject "foo\0bar"
+    ,f "null only" "\0" fromPyObject "\0"
+    ,f "quotes" "\"'\"" fromPyObject "\"'\""
+    ]
+
+test_ints =
+    [
+     f "0L" (0::CLong) fromPyObject (0::CLong)
+    ,f "-5L" (-5::CLong) fromPyObject (-5::CLong)
+    ,f "5L" (5::CLong) fromPyObject (5::CLong)
+    ,f "max long" (maxBound::CLong) fromPyObject (maxBound::CLong)
+    ,f "min long" (minBound::CLong) fromPyObject (minBound::CLong)
+    ,f "0i" (0::CInt) fromPyObject (0::CInt)
+    ,f "-5i" (-5::CInt) fromPyObject (-5::CInt)
+    ,f "5i" (5::CInt) fromPyObject (5::CInt)
+    ,f "min int" (minBound::CInt) fromPyObject (minBound::CInt)
+    ,f "max int" (maxBound::CInt) fromPyObject (maxBound::CInt)
+    ,f "long/int" (12345::CLong) fromPyObject (12345::CInt)
+    ,f "int/long" (12354::CInt) fromPyObject (12354::CInt)
+    ,f "repr max" (maxBound::CLong) reprOf (show (maxBound::CLong))
+    ,f "str min" (minBound::CLong) strOf (show (minBound::CLong))
+    ]
+
+test_longs =
+    [
+     f "0" (0::Integer) fromPyObject (0::Integer)
+    ,f "-5" (-5::Integer) fromPyObject (-5::Integer)
+    ,f "5" (5::Integer) fromPyObject (5::Integer)
+    ,f "2^384" ((2 ^ 384)::Integer) fromPyObject ((2 ^ 384)::Integer)
+    ,f "2^384*-1" (( 2 ^ 384 * (-1))::Integer) fromPyObject ((2 ^ 384 * (-1))::Integer)
+    ,f "str 2^384" ((2 ^ 384)::Integer) strOf (show ((2 ^ 384)::Integer))
+    ]
+       
+                
 tests = TestList [TestLabel "base" (TestList test_base),
                   TestLabel "lists/tuples" (TestList test_lists),
-                  TestLabel "al" (TestList test_al)
+                  TestLabel "al" (TestList test_al),
+                  TestLabel "functions" (TestList test_functions),
+                  TestLabel "strings" (TestList test_strings),
+                  TestLabel "ints" (TestList test_ints),
+                  TestLabel "longs" (TestList test_longs)
                  ]

@@ -117,7 +117,8 @@ instance HVIO PyFile where
                                 do block <- callMethodHs pyo "read" 
                                             [4096::CLong] noKwParms
                                    case block of
-                                     [] -> return []
+                                     [] -> do vClose pyf
+                                              return []
                                      x -> do next <- loop
                                              return $ x : next
                            in do c <- loop

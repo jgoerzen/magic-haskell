@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-29 22:04:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-3
+
+    Summary:
+      Initial cabal test success
+    Revision:
+      missingexts--head--0.7--patch-3
+
+
+    modified files:
+     ChangeLog Makefile
+
+
 2005-01-29 22:02:33 GMT	John Goerzen <jgoerzen@complete.org>	patch-2
 
     Summary:

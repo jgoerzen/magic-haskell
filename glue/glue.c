@@ -22,3 +22,16 @@ void hspy_decref(PyObject *o) {
   Py_DECREF(o);
 }
 
+PyObject ** hspy_getexc() {
+  static PyObject *retval [3];
+  PyObject *type;
+  PyObject *val;
+  PyObject *tb;
+
+  PyErr_Fetch(&type, &val, &tb);
+  PyErr_NormalizeException(&type, &val, &tb);
+  retval[0] = type;
+  retval[1] = val;
+  retval[2] = tb;
+  return retval;
+}

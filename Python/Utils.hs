@@ -28,6 +28,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module Python.Utils (fromCPyObject,
                      withPyObject,
+                     raisePyException,
                      maybeWithPyObject
                     )
     where
@@ -36,11 +37,28 @@ import Foreign.C.Types
 import Foreign.C
 import Foreign
 import Foreign.Ptr
+import Foreign.Marshal.Array
 
 fromCPyObject :: Ptr CPyObject -> IO PyObject
 fromCPyObject po =
-    do fp <- newForeignPtr py_decref po
-       return $ PyObject fp
+    if po == nullPtr
+       then raisePyException
+       else do fp <- newForeignPtr py_decref po
+               return $ PyObject fp
+
+raisePyException :: IO a
+raisePyException =
+    do cpy <- getexc
+       let (exc, val, tb) = cpy
+       pyErr_Print
+       fail "Python Error!"
+    where getexc = do cexc <- hspy_getexc
+                      exc <- peekArray 3 cexc
+                      exc2 <- mapM fromCPyObject exc
+                      case exc2 of
+                               [x, y, z] -> return (x, y, z)
+                               _ -> fail "Got unexpected number of elements"
+    
 
 withPyObject :: PyObject -> (Ptr CPyObject -> IO b) -> IO b
 withPyObject (PyObject x) = withForeignPtr x    
@@ -51,3 +69,9 @@ maybeWithPyObject (Just x) y = withPyObject x y
 
 foreign import ccall "glue.h &hspy_decref"
  py_decref :: FunPtr (Ptr CPyObject -> IO ())
+
+foreign import ccall unsafe "glue.h hspy_getexc"
+ hspy_getexc :: IO (Ptr (Ptr CPyObject))
+
+foreign import ccall unsafe "glue.h PyErr_Print"
+ pyErr_Print :: IO ()

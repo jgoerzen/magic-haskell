@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-30 05:27:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-16
+
+    Summary:
+      Checkpointing basic exception stuff
+    Revision:
+      missingexts--head--0.7--patch-16
+
+
+    modified files:
+     ChangeLog Python/Utils.hs glue/glue.c glue/glue.h
+
+
 2005-01-30 02:08:27 GMT	John Goerzen <jgoerzen@complete.org>	patch-15
 
     Summary:

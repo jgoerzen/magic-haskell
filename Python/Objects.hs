@@ -225,7 +225,7 @@ hasattr :: PyObject -> String -> IO Bool
 hasattr pyo s =
     withPyObject pyo (\cpo ->
      withCString s (\cstr ->
-      do r <- pyObject_HasAttrString cpo cstr
+      do r <- pyObject_HasAttrString cpo cstr >>= checkCInt
          if r == 0
             then return False
             else return True
@@ -241,7 +241,7 @@ setattr pyo s setpyo =
     withPyObject pyo (\cpo ->
      withPyObject setpyo (\csetpyo ->
       withCString s (\cstr ->
-       pyObject_SetAttrString cpo cstr csetpyo >> return ()
+       pyObject_SetAttrString cpo cstr csetpyo >>= checkCInt >> return ()
                     )))
 
 ----------------------------------------------------------------------
@@ -257,15 +257,15 @@ setattr pyo s setpyo =
 instance ToPyObject [PyObject] where
     toPyObject mainlist =
         do l <- pyList_New 0
-           mapM_ (\pyo -> withPyObject pyo (pyList_Append l)) mainlist
+           mapM_ (\pyo -> withPyObject pyo (\x -> pyList_Append l x >>= checkCInt)) mainlist
            fromCPyObject l
 
 -- | Tuples and Lists to [PyObject] lists
 instance FromPyObject [PyObject] where
     fromPyObject x = 
         let worker cpyo =
-                do islist <- pyList_Check cpyo
-                   istuple <- pyTuple_Check cpyo
+                do islist <- pyList_Check cpyo >>= checkCInt
+                   istuple <- pyTuple_Check cpyo >>= checkCInt
                    if islist /= 0
                       then fromx pyList_Size pyList_GetItem cpyo
                       else if istuple /= 0
@@ -299,7 +299,7 @@ instance ToPyObject [(PyObject, PyObject)] where
         where setitem l (key, value) =
                   withPyObject key (\keyo ->
                       withPyObject value (\valueo ->
-                          pyDict_SetItem l keyo valueo))
+                          pyDict_SetItem l keyo valueo >>= checkCInt))
 
 -- | ALs from Dicts
 instance FromPyObject [(PyObject, PyObject)] where

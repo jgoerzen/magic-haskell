@@ -37,6 +37,7 @@ module Python.Utils (-- * Objects
                      maybeWithPyObject,
                      -- * Exceptions
                      raisePyException,
+                     checkCInt,
                      -- * Environment
                      getDefaultGlobals,
                      pyImport_AddModule,
@@ -60,6 +61,14 @@ fromCPyObject po =
        then raisePyException
        else do fp <- newForeignPtr py_decref po
                return $ PyObject fp
+
+{- | Called to make sure the passed CInt isn't -1.  Raise an exception if
+it is. -}
+checkCInt :: CInt -> IO CInt
+checkCInt x = 
+    if x == (-1)
+       then raisePyException
+       else return x
 
 {- | Called when a Python exception has been detected.  It will raise
 the exception in Haskell. -}

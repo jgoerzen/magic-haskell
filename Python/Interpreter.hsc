@@ -72,7 +72,7 @@ sf2c Py_single_input = #const Py_single_input
 
 pyRun_SimpleString :: String -> IO ()
 pyRun_SimpleString x = withCString x (\cs ->
-                                          do cpyRun_SimpleString cs
+                                          do cpyRun_SimpleString cs >>= checkCInt
                                              return ()
                                      )
 
@@ -147,7 +147,7 @@ pyImport x =
            Just pyo -> do withPyObject globals (\cglobals ->
                            withPyObject pyo (\cmodule ->
                             withCString x (\cstr ->
-                             pyDict_SetItemString cglobals cstr cmodule)))
+                             pyDict_SetItemString cglobals cstr cmodule >>= checkCInt)))
                           return ()
 
 {- | Wrapper around C PyImport_ImportModule, which imports a module.

@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 19:03:30 GMT	John Goerzen <jgoerzen@complete.org>	patch-54
+
+    Summary:
+      Added error checking for C functions returning CInt
+    Revision:
+      missingexts--head--0.7--patch-54
+
+
+    modified files:
+     ChangeLog Python/Exceptions.hs Python/Interpreter.hsc
+     Python/Objects.hs Python/Utils.hs
+
+
 2005-02-01 17:38:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-53
 
     Summary:

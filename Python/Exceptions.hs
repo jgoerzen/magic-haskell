@@ -105,7 +105,7 @@ doesExceptionMatch :: PyException -> PyObject -> IO Bool
 doesExceptionMatch e pyo =
     withPyObject (excType e) (\ctyp ->
      withPyObject pyo (\cpo ->
-      do r <- pyErr_GivenExceptionMatches ctyp cpo
+      do r <- pyErr_GivenExceptionMatches ctyp cpo >>= checkCInt
          if r == 0
             then return False
             else return True

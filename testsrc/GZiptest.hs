@@ -40,6 +40,7 @@ f fn exp = TestCase $ do gzf <- openGz ("testsrc/gzfiles/" ++ fn) ReadMode 9
 test_gunzip =
     [
      f "t1.gz" "Test 1"
+    ,f "empty.gz" ""
      --    , "t1bad has errors
     ,f "t2.gz" "Test 1Test 2"
     ,TestCase $ handlePy exc2ioerror $

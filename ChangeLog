@@ -2,6 +2,32 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 16:38:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-51
+
+    Summary:
+      Checkpointing (initial bzip2)
+    Revision:
+      missingexts--head--0.7--patch-51
+
+
+    new files:
+     MissingPy/FileArchive/BZip2.hs testsrc/BZip2test.hs
+     testsrc/bz2files/.arch-ids/=id
+     testsrc/bz2files/.arch-ids/empty.bz2.id
+     testsrc/bz2files/.arch-ids/t1.bz2.id
+     testsrc/bz2files/.arch-ids/t2.bz2.id
+     testsrc/bz2files/.arch-ids/zeros.bz2.id
+     testsrc/bz2files/empty.bz2 testsrc/bz2files/t1.bz2
+     testsrc/bz2files/t2.bz2 testsrc/bz2files/zeros.bz2
+
+    modified files:
+     ChangeLog MissingPy.cabal MissingPy/FileArchive/GZip.hs
+     testsrc/GZiptest.hs testsrc/Tests.hs
+
+    new directories:
+     testsrc/bz2files testsrc/bz2files/.arch-ids
+
+
 2005-02-01 16:23:10 GMT	John Goerzen <jgoerzen@complete.org>	patch-50
 
     Summary:

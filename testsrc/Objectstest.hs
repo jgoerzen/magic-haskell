@@ -97,6 +97,17 @@ test_longs =
     ,f "str 2^384" ((2 ^ 384)::Integer) strOf (show ((2 ^ 384)::Integer))
     ]
        
+test_doubles =
+    [
+     f "0" (0::CDouble) fromPyObject (0::CDouble)
+    ,f "-5" (-5::CDouble) fromPyObject (-5::CDouble)
+    ,f "5.1234" (5.1234::CDouble) fromPyObject (5.1234::CDouble)
+    ,f "str 5.1234" (5.1234::CDouble) strOf "5.1234"
+    ,f "2^384" ((2^384)::CDouble) fromPyObject ((2^384)::CDouble)
+    ,f "2^384*-1" ((2^384 * (-1)::CDouble)) fromPyObject ((2^384 * (-1)::CDouble))
+    ,f "1/(2^384)" ((1 / (2 ^ 384))::CDouble) fromPyObject
+       ((1 / (2 ^ 384))::CDouble)
+    ]
                 
 tests = TestList [TestLabel "base" (TestList test_base),
                   TestLabel "lists/tuples" (TestList test_lists),
@@ -104,5 +115,6 @@ tests = TestList [TestLabel "base" (TestList test_base),
                   TestLabel "functions" (TestList test_functions),
                   TestLabel "strings" (TestList test_strings),
                   TestLabel "ints" (TestList test_ints),
-                  TestLabel "longs" (TestList test_longs)
+                  TestLabel "longs" (TestList test_longs),
+                  TestLabel "doubles" (TestList test_doubles)
                  ]

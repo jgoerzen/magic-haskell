@@ -260,6 +260,15 @@ instance (Bounded a, Integral a) => FromPyObject a where
 
 -}
 
+--------------------------------------------------
+-- Floating-Point Values
+
+instance ToPyObject CDouble where
+    toPyObject x = pyFloat_FromDouble x >>= fromCPyObject
+
+instance FromPyObject CDouble where
+    fromPyObject x = withPyObject x pyFloat_AsDouble
+
 -- | Lists from anything else
 instance ToPyObject a => ToPyObject [a] where
     toPyObject mainlist = 
@@ -334,3 +343,9 @@ foreign import ccall unsafe "glue.h hspy_incref"
 
 foreign import ccall unsafe "glue.h PyDict_Items"
  pyDict_Items :: Ptr CPyObject -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyFloat_FromDouble"
+ pyFloat_FromDouble :: CDouble -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyFloat_AsDouble"
+ pyFloat_AsDouble :: Ptr CPyObject -> IO CDouble

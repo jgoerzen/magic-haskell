@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-31 15:50:07 GMT	John Goerzen <jgoerzen@complete.org>	patch-24
+
+    Summary:
+      Added and tested doubles
+    Revision:
+      missingexts--head--0.7--patch-24
+
+
+    modified files:
+     ChangeLog Python/Objects.hs testsrc/Objectstest.hs
+
+
 2005-01-31 15:34:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-23
 
     Summary:

@@ -8,8 +8,10 @@ Copyright: Copyright (c) 2005 John Goerzen
 C-Sources: glue/glue.c
 Exposed-Modules: Python.Types,
  Python.Utils,
- Python.Instances
+ Python.Instances,
+ Python.Interpreter
 Include-Dirs: /usr/include/python2.3, glue
+Extra-Libs: python2.3
 Build-Depends: haskell-src, MissingH
 Options-GHC: -O2
 Extensions: ForeignFunctionInterface, TypeSynonymInstances

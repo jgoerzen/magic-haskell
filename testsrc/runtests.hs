@@ -20,6 +20,8 @@ module Main where
 
 import HUnit
 import Tests
+import Python.Interpreter
 
-main = runTestTT tests
+main = do py_initialize
+          runTestTT tests
 

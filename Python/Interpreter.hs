@@ -31,10 +31,31 @@ module Python.Interpreter (
                           pyRun_SimpleString
                           )
 where
+import Python.Utils
+import Python.Types
+import Foreign
+import Foreign.C.String
+import Foreign.C
 
-pyRun_SimpleString :: String -> IO PyObject
-pyRun_SimpleString x = withCString x (cpyRun_SimpleString >>= fromCPyObject)
+pyRun_SimpleString :: String -> IO ()
+pyRun_SimpleString x = withCString x (\cs ->
+                                          do cpyRun_SimpleString cs
+                                             return ()
+                                     )
     
+{-
+
+pyRun_String :: String          -- ^ Command to run
+             -> CInt            -- ^ Start Token
+             -> Maybe PyObject  -- ^ Globals (or Nothing for defaults)
+             -> Maybe PyObject  -- ^ Locals (or Nothing for defaults)
+-}
 
 foreign import ccall unsafe "Python.h Py_Initialize"
   py_initialize :: IO ()
+
+foreign import ccall unsafe "Python.h PyRun_SimpleString"
+  cpyRun_SimpleString :: CString -> IO CInt
+
+foreign import ccall unsafe "Python.h PyRun_String"
+  cpyRun_String :: CString -> CInt -> Ptr CPyObject -> Ptr CPyObject -> IO (Ptr CPyObject)

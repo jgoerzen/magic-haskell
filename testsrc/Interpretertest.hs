@@ -1,5 +1,5 @@
-{- arch-tag: IO tests main file
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+{- arch-tag: Interpreter tests main file
+Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module IOtest() where
+module Interpretertest(tests) where
 import HUnit
-import MissingH.IO
-import Testutil
+import Python.Interpreter
 
+test_base =
+    [
+     TestCase $ pyRun_SimpleString "print \"Hi from Python\""
+    ]
 
-
-
-
-
+tests = TestList [TestLabel "base" (TestList test_base)]

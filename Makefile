@@ -15,35 +15,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-SOURCES := $(wildcard libsrc/MissingH/*.hs) \
-	$(wildcard libsrc/MissingH/*/*.hs) \
-	$(wildcard libsrc/MissingH/*/*/*.hs) 
-LHSSOURCES := $(wildcard libsrc/MissingH/*/*.lhs) \
-	$(wildcard libsrc/MissingH/*/*/*.lhs)
-O1 := $(SOURCES:.hs=.o) $(LHSSOURCES)
-OBJS := $(O1:.lhs=.o)
-
-all: libmissingH.a
-
 setup: Setup.lhs MissingPy.cabal
 	ghc -package Cabal Setup.lhs -o setup
-
-libmissingH.a: $(OBJS)
-	-rm -f libmissingH.a
-	ar q libmissingH.a $(OBJS)
-
-%.o: %.hs
-	ghc -O2 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.hs$$,, -e s,/,.,g`
-
-%.o: %.lhs
-	ghc -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.lhs$$,, -e s,/,.,g`
-
-doc:
-	-rm -rf html
-	mkdir html
-	haddock $(HADDOCKARGS) --package=MissingH \
-	   --dump-interface=html/MissingH.haddock \
-	   -t 'MissingH API Manual' -h -o html $(SOURCES)
 
 clean:
 	-./setup clean
@@ -51,8 +24,12 @@ clean:
 		`find . -name "*~"` *.a setup dist testsrc/runtests
 	-cd doc && $(MAKE) clean
 
-testsrc/runtests: all $(shell find testsrc -name "*.hs")
-	ghc6 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -package HUnit --make -o testsrc/runtests -itestsrc -ilibsrc testsrc/runtests.hs
+testsrc/runtests: setup $(shell find testsrc -name "*.hs")
+	./setup configure
+	./setup build
+	ghc6 -o testsrc/runtests -Ldist/build -odir dist/build -hidir dist/build -idist/build -itestsrc dist/build/libHSMissingPy-* \
+		-package HUnit --make -lpython2.3 testsrc/runtests.hs
+	#ghc6 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -package HUnit --make -o testsrc/runtests -itestsrc -ilibsrc testsrc/runtests.hs
 
 test-ghc6: testsrc/runtests
 	testsrc/runtests 

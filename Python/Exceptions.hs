@@ -41,7 +41,9 @@ module Python.Exceptions (-- * Types
                           catchSpecificPy,
                           -- * Exception Object Operations
                           formatException,
-                          doesExceptionMatch
+                          doesExceptionMatch,
+                          -- * Re-Raising Exceptions
+                          exc2ioerror
                          )
 where
 
@@ -108,6 +110,12 @@ doesExceptionMatch e pyo =
             then return False
             else return True
                       ))
+
+{- | A handler for use in 'catchPy' or 'handlePy'.  Grabs the Python exception,
+describes it, and raises the description in the IO monad with 'fail'. -}
+exc2ioerror :: PyException -> IO a
+exc2ioerror e = do e2 <- formatException e
+                   fail $ "Python " ++ show e2
 
 foreign import ccall unsafe "glue.h PyErr_GivenExceptionMatches"
  pyErr_GivenExceptionMatches :: Ptr CPyObject -> Ptr CPyObject -> IO CInt

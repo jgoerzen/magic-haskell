@@ -40,9 +40,15 @@ f fn exp = TestCase $ do gzf <- openGz ("testsrc/gzfiles/" ++ fn) ReadMode 9
 test_gunzip =
     [
      f "t1.gz" "Test 1"
-    ,f "t1bad.gz" "has errors"
      --    , "t1bad has errors
     ,f "t2.gz" "Test 1Test 2"
+    ,TestCase $ handlePy exc2ioerror $
+                do gzf <- openGz "testsrc/gzfiles/t1bad.gz" ReadMode 1
+                   assertRaises "crc" (Control.Exception.IOException $ userError "Python exceptions.IOError: CRC check failed") 
+                      (handlePy exc2ioerror $ do c <- vGetContents gzf
+                                                 "nonexistant bad data" @=? c
+                      )
+                   vClose gzf
     ,TestCase $ do gzf <- openGz "testsrc/gzfiles/zeros.gz" ReadMode 1
                    c <- vGetContents gzf
                    10485760 @=? length c
@@ -51,9 +57,7 @@ test_gunzip =
     ]
 
 test_gzip = TestCase $ 
-    handlePy (\e -> do e2 <- formatException e
-                       fail $ show e2
-                ) $
+    handlePy exc2ioerror $
     do gzf <- openGz "testsrc/gzfiles/deleteme.gz" ReadWriteMode 9
        finally (do vPutStr gzf "Test 2\n"
                    vSeek gzf AbsoluteSeek 7

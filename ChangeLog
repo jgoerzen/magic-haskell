@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 16:23:10 GMT	John Goerzen <jgoerzen@complete.org>	patch-50
+
+    Summary:
+      GZip tests work
+    Revision:
+      missingexts--head--0.7--patch-50
+
+
+    modified files:
+     ChangeLog Python/Exceptions.hs testsrc/GZiptest.hs
+
+
 2005-02-01 16:07:52 GMT	John Goerzen <jgoerzen@complete.org>	patch-49
 
     Summary:

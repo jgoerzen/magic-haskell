@@ -126,20 +126,13 @@ pyObject_Call :: PyObject       -- ^ Object to call
               -> [(String, PyObject)] -- ^ List of keyword parameters (may be empty)
               -> IO PyObject    -- ^ Return value
 pyObject_Call callobj simpleparams kwparams =
-        do putStrLn "pyObject_Call"
-           showPyObject callobj >>= putStrLn
-           pyosimple <- toPyObject simpleparams >>= pyList_AsTuple
-           showPyObject pyosimple >>= putStrLn
+        do pyosimple <- toPyObject simpleparams >>= pyList_AsTuple
            pyokw <- toPyObject kwparams
-           showPyObject pyokw >>= putStrLn
            cval <- withPyObject callobj (\ccallobj ->
                     withPyObject pyosimple (\cpyosimple ->
                      withPyObject pyokw (\cpyokw ->
                       cpyObject_Call ccallobj cpyosimple cpyokw)))
-           print cval
-           retval <- fromCPyObject cval
-           showPyObject retval >>= putStrLn
-           return retval
+           fromCPyObject cval
        
 -- ^ Converts a Python list to a tuple.
 pyList_AsTuple :: PyObject -> IO PyObject

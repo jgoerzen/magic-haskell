@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-31 18:11:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-29
+
+    Summary:
+      Removed debugging code
+    Revision:
+      missingexts--head--0.7--patch-29
+
+
+    modified files:
+     ChangeLog Python/Objects.hs testsrc/Objectstest.hs
+
+
 2005-01-31 18:10:15 GMT	John Goerzen <jgoerzen@complete.org>	patch-28
 
     Summary:

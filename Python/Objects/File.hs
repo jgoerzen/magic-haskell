@@ -37,6 +37,7 @@ module Python.Objects.File (-- * PyFile Objects
                             PyFile,
                             mkPyFile,
                             fromPyFile,
+                            openPyFile,
                             pyfwrap,
                             openModeConv
                       )
@@ -47,6 +48,7 @@ import Python.Objects
 import Python.Interpreter
 import System.IO
 import System.IO.Error
+import System.IO.Unsafe
 import Python.Exceptions
 import MissingH.IO.HVIO
 import Foreign.C.Types
@@ -109,6 +111,18 @@ instance HVIO PyFile where
                                   else return True
                             else return False -- Don't know; fake it.
                                 )
+
+    vGetContents pyf = pyfwrap pyf (\pyo ->
+                           let loop = unsafeInterleaveIO $
+                                do block <- callMethodHs pyo "read" 
+                                            [20480::CInt] noKwParms
+                                   case block of
+                                     [] -> return []
+                                     x -> do next <- loop
+                                             return $ x : next
+                           in loop >>= (return . concat)
+                                                        )
+
 
     -- Have to fake it.  We have no EOF indication.
     vIsEOF pyf = return False

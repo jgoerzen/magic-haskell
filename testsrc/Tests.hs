@@ -21,13 +21,15 @@ import HUnit
 import qualified Interpretertest
 import qualified Objectstest
 import qualified Exceptionstest
+import qualified GZiptest
 
 test1 = TestCase ("x" @=? "x")
 
 tests = TestList [TestLabel "test1" test1,
                   TestLabel "objects" Objectstest.tests,
                   TestLabel "interpreter" Interpretertest.tests,
-                  TestLabel "exceptions" Exceptionstest.tests
+                  TestLabel "exceptions" Exceptionstest.tests,
+                  TestLabel "gzip" GZiptest.tests
                  ]
 
 

@@ -27,8 +27,8 @@ clean:
 testsrc/runtests: setup $(shell find testsrc -name "*.hs")
 	./setup configure
 	./setup build
-	ghc6 -o testsrc/runtests -Ldist/build -odir dist/build -hidir dist/build -idist/build -itestsrc dist/build/libHSMissingPy-* \
-		-package HUnit --make -lpython2.3 testsrc/runtests.hs
+	ghc6 -O2 -o testsrc/runtests -Ldist/build -odir dist/build -hidir dist/build -idist/build -itestsrc dist/build/libHSMissingPy-* \
+		-package HUnit -package MissingH --make -lpython2.3 testsrc/runtests.hs
 	#ghc6 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -package HUnit --make -o testsrc/runtests -itestsrc -ilibsrc testsrc/runtests.hs
 
 test-ghc6: testsrc/runtests

@@ -33,7 +33,7 @@ Python file-like objects
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingPy.FileArchive.GZip (
+module MissingPy.FileArchive.GZip (openGz
                                    )
 where
 
@@ -49,7 +49,7 @@ import MissingH.IO.HVIO
 import Foreign.C.Types
 import Python.Objects.File
 
-{- Open a GZip file.  The compression level should be from 1
+{- |Open a GZip file.  The compression level should be from 1
 (least compression) to 9 (most compression). -}
 openGz :: FilePath              -- ^ File to open
        -> IOMode                -- ^ Mode to open with

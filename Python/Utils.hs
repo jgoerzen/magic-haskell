@@ -31,10 +31,17 @@ Python low-level utilities
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module Python.Utils (fromCPyObject,
+module Python.Utils (-- * Objects
+                     fromCPyObject,
                      withPyObject,
+                     maybeWithPyObject,
+                     -- * Exceptions
                      raisePyException,
-                     maybeWithPyObject
+                     -- * Environment
+                     getDefaultGlobals,
+                     -- * Import
+                     pyImport_AddModule,
+                     pyModule_GetDict
                     )
     where
 import Python.Types
@@ -79,6 +86,22 @@ maybeWithPyObject :: Maybe PyObject -> (Ptr CPyObject -> IO b) -> IO b
 maybeWithPyObject Nothing func = func nullPtr
 maybeWithPyObject (Just x) y = withPyObject x y
 
+{- | Returns the default globals environment. -}
+getDefaultGlobals :: IO PyObject
+getDefaultGlobals = 
+    do m <- pyImport_AddModule "__main__"
+       pyModule_GetDict m
+       
+
+{- | Wrapper around C PyImport_AddModule, which looks up an existing module -}
+pyImport_AddModule :: String -> IO PyObject
+pyImport_AddModule x =
+    withCString x (\cstr -> cpyImport_AddModule cstr >>= fromCPyObject)
+
+{- | Gets the dict associated with a module. -}
+pyModule_GetDict :: PyObject -> IO PyObject
+pyModule_GetDict x =
+    withPyObject x (\cpyo -> cpyModule_GetDict cpyo >>= fromCPyObject)
 
 foreign import ccall "glue.h &hspy_decref"
  py_decref :: FunPtr (Ptr CPyObject -> IO ())
@@ -89,4 +112,8 @@ foreign import ccall unsafe "glue.h hspy_getexc"
 foreign import ccall unsafe "glue.h PyErr_Print"
  pyErr_Print :: IO ()
 
+foreign import ccall unsafe "glue.h PyImport_AddModule"
+ cpyImport_AddModule :: CString -> IO (Ptr CPyObject)
 
+foreign import ccall unsafe "glue.h PyModule_GetDict"
+ cpyModule_GetDict :: Ptr CPyObject -> IO (Ptr CPyObject)

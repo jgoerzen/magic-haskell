@@ -46,7 +46,8 @@ module Python.Objects (
                        showPyObject,
                        dirPyObject,
                        -- * Calling Python Objects
-                       pyObject_Call
+                       pyObject_Call,
+                       pyObject_CallHs
                       )
 where
 import Python.Types
@@ -100,17 +101,31 @@ dirPyObject x = withPyObject x (\cpyo ->
                       fromPyObject dr
                                )
 
+{- | Call a Python object with all-Haskell parameters.
+Similar to 'PyObject_Call'.  This limits you to a single item type for
+the regular arguments and another single item type for the keyword arguments. 
+Nevertheless, it could be a handy shortcut at times. -}
+pyObject_CallHs :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
+                   PyObject     -- ^ Object t
+                -> [a]          -- ^ List of non-keyword parameters
+                -> [(String, b)] -- ^ List of keyword parameters
+                -> IO c         -- ^ Return value
+pyObject_CallHs callobj simpleargs kwargs =
+    let conv (k, v) = do v1 <- toPyObject v
+                         return (k, v1)
+        in
+        do s <- mapM toPyObject simpleargs
+           k <- mapM conv kwargs
+           pyObject_Call callobj s k >>= fromPyObject
+
 {- | Call a Python object (function, etc) -}
 pyObject_Call :: PyObject       -- ^ Object to call
               -> [PyObject]     -- ^ List of non-keyword parameters (may be empty)
               -> [(String, PyObject)] -- ^ List of keyword parameters (may be empty)
               -> IO PyObject    -- ^ Return value
 pyObject_Call callobj simpleparams kwparams =
-    let conv (k, v) = do k1 <- toPyObject k
-                         return (k1, v)
-        in
         do pyosimple <- toPyObject simpleparams
-           pyokw <- mapM conv kwparams >>= toPyObject
+           pyokw <- toPyObject kwparams
            withPyObject callobj (\ccallobj ->
             withPyObject pyosimple (\cpyosimple ->
              withPyObject pyokw (\cpyokw ->
@@ -184,6 +199,20 @@ instance FromPyObject [(PyObject, PyObject)] where
                                   x1:x2:[] -> (x1, x2)
                                   _ -> error "Expected 2-tuples in fromPyObject dict"
                                        
+-- | This is a common variant used for arg lists
+instance ToPyObject a => ToPyObject [(a, PyObject)] where
+    toPyObject mainlist =
+        let conv (k, v) = do k1 <- toPyObject k
+                             return (k1, v)
+            in mapM conv mainlist >>= toPyObject
+instance FromPyObject a => FromPyObject [(a, PyObject)] where
+    fromPyObject pyo =
+        let conv (k, v) = do k1 <- fromPyObject k
+                             return (k1, v)
+        in do list <- (fromPyObject pyo)::IO [(PyObject, PyObject)]
+              mapM conv list
+
+
 -- | Dicts from Haskell objects
 instance (ToPyObject a, ToPyObject b) => ToPyObject [(a, b)] where
     toPyObject mainlist =

@@ -23,6 +23,7 @@ import Python.Objects
 import Foreign.C.Types
 import Python.Types
 import Data.List
+import Python.Interpreter
 
 f msg inp code exp = TestLabel msg $ TestCase $ do pyo <- toPyObject inp
                                                    r <- code pyo
@@ -109,6 +110,13 @@ test_doubles =
        ((1 / (2 ^ 384))::CDouble)
     ]
 
+test_call =
+    [
+     TestCase $ do func <- pyRun_String "repr" Py_eval_input [] []
+                   r <- pyObject_CallHs func [5::Integer] ([]::[(String, String)])
+                   "5L" @=? r
+    ]
+
 test_dir =
     [
      TestCase $ do dv <- toPyObject ([]::String) >>= dirPyObject
@@ -125,4 +133,5 @@ tests = TestList [TestLabel "base" (TestList test_base),
                   TestLabel "longs" (TestList test_longs),
                   TestLabel "doubles" (TestList test_doubles),
                   TestLabel "dir" (TestList test_dir)
+--                  TestLabel "call" (TestList test_call)
                  ]

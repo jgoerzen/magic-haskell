@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-31 17:47:20 GMT	John Goerzen <jgoerzen@complete.org>	patch-26
+
+    Summary:
+      Checkpointing... call still has issues
+    Revision:
+      missingexts--head--0.7--patch-26
+
+
+    modified files:
+     ChangeLog Python/Interpreter.hsc Python/Objects.hs
+     Python/Utils.hs testsrc/Interpretertest.hs
+     testsrc/Objectstest.hs
+
+
 2005-01-31 16:38:40 GMT	John Goerzen <jgoerzen@complete.org>	patch-25
 
     Summary:

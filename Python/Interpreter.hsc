@@ -1,3 +1,4 @@
+{-# OPTIONS -fallow-overlapping-instances #-}
 {- arch-tag: Python interpreter module
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
@@ -35,6 +36,7 @@ module Python.Interpreter (
                           py_initialize,
                           pyRun_SimpleString,
                           pyRun_String,
+                          pyRun_StringHs,
                           StartFrom(..)
                           )
 where
@@ -42,6 +44,7 @@ where
 #include <Python.h>
 
 import Python.Utils
+import Python.Objects
 import Python.Types
 import Foreign
 import Foreign.C.String
@@ -61,21 +64,39 @@ pyRun_SimpleString x = withCString x (\cs ->
                                           do cpyRun_SimpleString cs
                                              return ()
                                      )
-    
--- FIXME: NULL is NOT acceptable below!
 
+-- | Like 'pyRun_String', but take more Haskellish args and results.
+pyRun_StringHs :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
+                  String        -- ^ Command to run
+               -> StartFrom     -- ^ Start token
+               -> [(String, a)] -- ^ Globals (may be empty)
+               -> [(String, b)] -- ^ Locals (may be empty)
+               -> IO c
+pyRun_StringHs cmd start globals locals =
+    let conv (k, v) = do v1 <- toPyObject v
+                         return (k, v1)
+        in do
+           rglobals <- mapM conv globals
+           rlocals <- mapM conv locals
+           pyRun_String cmd start rglobals rlocals >>= fromPyObject
+    
+-- | Run some code in Python.
 pyRun_String :: String          -- ^ Command to run
-             -> StartFrom       -- ^ Start Token (use 0)
-             -> Maybe PyObject  -- ^ Globals (or Nothing for defaults)
-             -> Maybe PyObject  -- ^ Locals (or Nothing for defaults)
+             -> StartFrom       -- ^ Start Token
+             -> [(String, PyObject)] -- ^ Globals (may be empty)
+             -> [(String, PyObject)] -- ^ Locals (may be empty)
              -> IO PyObject     -- ^ Result
-pyRun_String command startfrom globals locals =
-    withCString command (\ccommand ->
-        maybeWithPyObject globals (\cglobals ->
-            maybeWithPyObject locals (\clocals ->
-                cpyRun_String ccommand start cglobals clocals >>= fromCPyObject
+pyRun_String command startfrom xglobals xlocals =
+    let cstart = sf2c startfrom
+        in do dobj <- getDefaultGlobals
+              d <- fromPyObject dobj
+              rlocals <- toPyObject (d ++ xlocals)
+              rglobals <- toPyObject (d ++ xglobals)
+              withCString command (\ccommand ->
+               withPyObject rglobals (\cglobals ->
+                withPyObject rlocals (\clocals ->
+                 cpyRun_String ccommand cstart cglobals clocals >>= fromCPyObject
                               )))
-    where start = sf2c startfrom
 
 foreign import ccall unsafe "Python.h Py_Initialize"
   py_initialize :: IO ()

@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 16:07:04 GMT	John Goerzen <jgoerzen@complete.org>	patch-48
+
+    Summary:
+      More gzip test fixes
+    Revision:
+      missingexts--head--0.7--patch-48
+
+
+    modified files:
+     ChangeLog testsrc/GZiptest.hs
+
+
 2005-02-01 16:06:08 GMT	John Goerzen <jgoerzen@complete.org>	patch-47
 
     Summary:

@@ -62,8 +62,8 @@ test_gzip = TestCase $
                    vPutChar gzf '\n'
                    vClose gzf
                    gzf2 <- openGz "testsrc/gzfiles/deleteme.gz" ReadMode 9
-                   vGetLine gzf2 >>= (@=? "Test2")
-                   vGetLine gzf2 >>= (@=? "Test3")
+                   vGetLine gzf2 >>= (@=? "Test 2")
+                   vGetLine gzf2 >>= (@=? "Test 3")
                    vRewind gzf2
                    c <- vGetContents gzf2
                    ("Test 2\nTest 3\n" ++ (replicate 1048576 't') ++ "\n") 

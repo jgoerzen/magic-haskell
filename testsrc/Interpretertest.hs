@@ -22,6 +22,7 @@ import HUnit
 import Python.Interpreter
 import Foreign.C.Types
 import Python.Objects
+import Python.Utils
 
 test_base =
     let f msg t = TestLabel msg $ TestCase t in
@@ -41,6 +42,12 @@ test_callbyname =
          f "repr" "repr" [5::Integer] "5L"
         ,f "repr2" "repr" [5::CLong] "5"
         ,f "pow" "pow" [2::CInt, 32::CInt] ((2 ^ 32)::Integer)
+{-
+        ,TestLabel "import" $ TestCase $
+         do pyImport_ImportModule "base64"
+            r <- callByName "base64.encodestring" ["hi"] noKwParms
+            "aGk=\n" @=? r
+-}
         ]
 
 test_args =

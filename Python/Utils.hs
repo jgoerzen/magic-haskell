@@ -40,6 +40,7 @@ module Python.Utils (-- * Objects
                      -- * Environment
                      getDefaultGlobals,
                      -- * Import
+                     pyImport_ImportModule,
                      pyImport_AddModule,
                      pyModule_GetDict
                     )
@@ -92,6 +93,10 @@ getDefaultGlobals =
     do m <- pyImport_AddModule "__main__"
        pyModule_GetDict m
        
+{- | Wrapper around C PyImport_ImportModule, which imports a module. -}
+pyImport_ImportModule :: String -> IO PyObject
+pyImport_ImportModule x =
+    withCString x (\cstr -> cpyImport_ImportModule cstr >>= fromCPyObject)
 
 {- | Wrapper around C PyImport_AddModule, which looks up an existing module -}
 pyImport_AddModule :: String -> IO PyObject
@@ -115,5 +120,10 @@ foreign import ccall unsafe "glue.h PyErr_Print"
 foreign import ccall unsafe "glue.h PyImport_AddModule"
  cpyImport_AddModule :: CString -> IO (Ptr CPyObject)
 
+foreign import ccall unsafe "glue.h PyImport_ImportModule"
+ cpyImport_ImportModule :: CString -> IO (Ptr CPyObject)
+
+
 foreign import ccall unsafe "glue.h PyModule_GetDict"
  cpyModule_GetDict :: Ptr CPyObject -> IO (Ptr CPyObject)
+

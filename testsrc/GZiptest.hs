@@ -19,11 +19,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module GZiptest(tests) where
 import HUnit
+import Python.Exceptions
 import MissingPy.FileArchive.GZip
 import Data.List
 import MissingH.IO.HVIO
 import System.IO
+import System.IO.Error
+import Testutil
+import System.Directory
 import qualified Control.Exception
+
+finally = Control.Exception.finally
 
 f fn exp = TestCase $ do gzf <- openGz ("testsrc/gzfiles/" ++ fn) ReadMode 9
                          c <- vGetContents gzf
@@ -42,5 +48,35 @@ test_gunzip =
                    vClose gzf
     --,f "zeros.gz" (replicate 10485760 '\0')
     ]
-tests = TestList [TestLabel "gunzip" (TestList test_gunzip)
+
+test_gzip = TestCase $ 
+    handlePy (\e -> do e2 <- formatException e
+                       fail $ show e2
+                ) $
+    do gzf <- openGz "testsrc/gzfiles/deleteme.gz" ReadWriteMode 9
+       finally (do putStrLn "\n00"
+                   vPutStr gzf "Test 2\n"
+                   putStrLn "\n00a"
+                   putStrLn "\n\n01\n\n"
+                   vSeek gzf AbsoluteSeek 7
+                   vFlush gzf
+                   putStrLn "\n1"
+                   vPutStr gzf "Test 3\n"
+                   putStrLn "\n2"
+                   vPutStr gzf (replicate 1048576 't')
+                   vPutChar gzf '\n'
+                   vClose gzf
+                   putStrLn "\n3"
+                   gzf2 <- openGz "testsrc/gzfiles/deleteme.gz" ReadMode 9
+                   c <- vGetContents gzf2
+                   ("Test 2\nTest 3\n" ++ (replicate 1048576 't') ++ "\n") 
+                      @=? c
+                   assertRaises "eof" (Control.Exception.IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetLine gzf2)
+                   vClose gzf2
+               ) (removeFile "testsrc/gzfiles/deleteme.gz")
+                   
+
+tests = TestList [TestLabel "gzip" test_gzip,
+                  TestLabel "gunzip" (TestList test_gunzip)
+
                  ]

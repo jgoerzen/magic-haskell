@@ -35,6 +35,7 @@ module Python.Exceptions (-- * Types
                           PyException(..),
                           -- * General Catching
                           catchPy,
+                          handlePy,
                           pyExceptions,
                           -- * Catching of specific Python exceptions
                           catchSpecificPy,
@@ -60,6 +61,10 @@ If it raises a 'PyException', then execute the supplied handler and return
 its return value.  Otherwise, process as normal. -}
 catchPy :: IO a -> (PyException -> IO a) -> IO a
 catchPy = catchDyn
+
+{- | Like 'catchPy', with the order of arguments reversed. -}
+handlePy :: (PyException -> IO a) -> IO a -> IO a
+handlePy = flip catchPy
 
 {- | Like catchPy, but catches only instances of the Python class given
 (see 'doesExceptionMatch'). -}

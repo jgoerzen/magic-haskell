@@ -72,7 +72,7 @@ fromPyFile (PyFile o) = o
 openModeConv ReadMode = "r"
 openModeConv WriteMode = "w"
 openModeConv AppendMode = "a"
-openModeConv ReadWriteMode = "r+"
+openModeConv ReadWriteMode = "w+"
 
 {- | Open a file on disk and return a 'PyFile'. -}
 openPyFile :: FilePath -> IOMode -> IO PyFile
@@ -115,7 +115,7 @@ instance HVIO PyFile where
     vGetContents pyf = pyfwrap pyf (\pyo ->
                            let loop = unsafeInterleaveIO $
                                 do block <- callMethodHs pyo "read" 
-                                            [20480::CInt] noKwParms
+                                            [4096::CLong] noKwParms
                                    case block of
                                      [] -> return []
                                      x -> do next <- loop
@@ -146,19 +146,30 @@ instance HVIO PyFile where
 
     vPutChar pyf c = vPutStr pyf [c]
 
-    vPutStr pyf s = pyfwrap pyf (\pyo ->
-                     runMethodHs pyo "write" [s] noKwParms)
+    {- Python strings are non-lazy, so process these in chunks. -}
+    vPutStr pyf [] = return ()
+    vPutStr pyf s = let (this, next) = splitAt 4096 s
+                        in do pyfwrap pyf (\pyo ->
+                                     runMethodHs pyo "write" [this] noKwParms)
+                              vPutStr pyf next
 
     vFlush pyf = pyfwrap pyf (\pyo ->
                      runMethodHs pyo "flush" noParms noKwParms)
 
+    {- | Some file-like objects don't take an offset.  Sigh. -}
     vSeek pyf sm offset =
         let seekint = case sm of
-                           AbsoluteSeek -> 0
+                           AbsoluteSeek -> 0::CLong
                            RelativeSeek -> 1
                            SeekFromEnd -> 2
-            in pyfwrap pyf (\pyo ->
-                runMethodHs pyo "seek" [offset, seekint] noKwParms)
+            in pyfwrap pyf (\pyo -> 
+                   case sm of
+                       AbsoluteSeek -> runMethodHs pyo "seek" 
+                                         [(fromIntegral offset)::CLong]
+                                         noKwParms
+                       _ -> runMethodHs pyo "seek" [(fromIntegral offset), 
+                                                    seekint] noKwParms
+                           )
 
     vTell pyf = pyfwrap pyf (\pyo ->
                  callMethodHs pyo "tell" noParms noKwParms)

@@ -41,7 +41,7 @@ module MissingPy.AnyDBM(
 where
 
 
-import Python.Dict
+import Python.Objects.Dict
 import MissingH.AnyDBM
 
 {- | Flags used to open a dbm-type database -}
@@ -49,22 +49,44 @@ data PyDBMOpenFlags =
    DBM_ReadOnly                 -- ^ Open an /existing/ database for read only
  | DBM_ReadWrite                -- ^ Open an /existing/ database for reading and writing
  | DBM_ReadWriteCreate          -- ^ Open a database for reading and writing, creating if it doesn't exist
- | DBM_ReadWriteNew             -- ^ Open a database, creating it anew each time
+ | DBM_ReadWriteNew             -- ^ Open a database, creating it anew each time (deleting any existing data)
+flag2str :: PyDBMOpenFlags -> String
+flag2str DBM_ReadOnly = "r"
+flag2str DBM_ReadWrite = "w"
+flag2str DBM_ReadWriteCreate = "c"
+flag2str DBM_ReadWriteNew = "n"
 
-{- |Open a GZip file.  The compression level should be from 1
-(least compression) to 9 (most compression).  This is ignored when the
-file is opened read-only.
+{- | Opens a persistent storage database using the \"best\" storage mechanism
+available to Python on this system.  This will usually be one of the *dbm
+services, though in rare circumstances, could be \"dumbdbm\", which is
+only marginally better than "MissingH.AnyDBM.StringDBM".
+-}
+openAnyDBM :: FilePath -> PyDBMOpenFlags -> IO PyDict
+openAnyDBM = openSpecificDBM "anydbm"
 
-Once opened, the functions defined in 'MissingH.IO.HVIO' can be used to 
-work with it. -}
-openGz :: FilePath              -- ^ File to open
-       -> IOMode                -- ^ Mode to open with
-       -> Int                   -- ^ Compression Level
-       -> IO PyFile             -- ^ Resulting handle
-openGz fp mode level =
-    do ofp <- toPyObject fp
-       omode <- toPyObject (openModeConv mode)
-       ocl <- toPyObject ((fromIntegral level)::CLong)
-       pyImport "gzip"
-       obj <- callByName "gzip.open" [ofp, omode, ocl] []
-       return $ mkPyFile obj
+{- | Open a database using a specific module given by the first parameter.  The
+module supported are:
+
+* dbhash
+
+* dbm
+
+* dumbdbm
+
+* gdbm
+
+SECURITY NOTE: the string is not validated before being passed to Python.
+Do not pass an arbitrary value to this function.
+-}
+openSpecificDBM :: String       -- ^ Python module name to use
+                -> FilePath     -- ^ Path to database files
+                -> PyDBMOpenFlags -- ^ Flags to use when opening
+                -> IO PyDict    -- ^ Result
+openSpecificDBM mod fp flag 
+    let flagstr = flag2str flag
+        in
+        do pyImport mod
+           fileobj <- toPyObjct fp
+           flagobj <- toPyObject flagstr
+           obj <- callByName (mod ++ ".open") [fileobj, flagobj] []
+           return $ mkPyDict obj

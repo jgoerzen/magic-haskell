@@ -15,7 +15,8 @@ Exposed-Modules: Python.Types,
  Python.Objects.File,
  Python.Objects.Dict,
  MissingPy.FileArchive.GZip,
- MissingPy.FileArchive.BZip2
+ MissingPy.FileArchive.BZip2,
+ MissingPy.AnyDBM
 Hidden-Modules: Python.ForeignImports
 Include-Dirs: /usr/include/python2.3, glue
 Extra-Libs: python2.3

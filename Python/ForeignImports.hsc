@@ -51,10 +51,8 @@ sf2c Py_single_input = #const Py_single_input
 foreign import ccall unsafe "glue.h PyErr_GivenExceptionMatches"
  pyErr_GivenExceptionMatches :: Ptr CPyObject -> Ptr CPyObject -> IO CInt
 
-{- now handled in glue.c
 foreign import ccall unsafe "glue.h Py_Initialize"
   cpy_initialize :: IO ()
--}
 
 foreign import ccall unsafe "glue.h PyRun_SimpleString"
   cpyRun_SimpleString :: CString -> IO CInt

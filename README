@@ -41,8 +41,13 @@ See the file INSTALL.
 Usage in programs
 -------------------------
 
-You can simply use -package MissingPy in most compilers to enable
+You can simply use -package MissingPy in ghc to enable
 this library.  
+
+Note that you'll want to compile most of your programs with
+-fallow-overlapping-instances at least.  (If you use *only*
+MissingPy/*, that may not be necessary.)  Also, please note that you
+must call Python.Interpreter.py_initialize before doing anything else.
 
 The API docs can be built with "make doc", or you can find them at:
 

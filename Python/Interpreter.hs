@@ -48,7 +48,7 @@ module Python.Interpreter (
                           pyImport,
                           pyImport_ImportModule,
                           pyImport_AddModule,
-                          pyModule_GetDict
+                          pyModule_GetDict,
                           )
 where
 
@@ -59,6 +59,14 @@ import Python.ForeignImports
 import Foreign
 import Foreign.C.String
 import Foreign.C
+import System.IO.Unsafe
+
+{- | Initialize the Python interpreter environment.
+
+MUST BE DONE BEFORE DOING ANYTHING ELSE! -}
+py_initialize :: IO ()
+py_initialize = do cpy_initialize
+                   pyImport "traceback"
 
 
 pyRun_SimpleString :: String -> IO ()
@@ -153,9 +161,4 @@ pyImport_ImportModule x =
                withCString x (\cstr -> 
                 cpyImport_ImportModuleEx cstr cglobals cglobals cfromlist)))
        fromCPyObject cr
-
-{- | Initialize the Python interpreter environment. -}
-py_initialize :: IO ()
-py_initialize = do cpy_initialize
-                   pyImport "traceback"
 

@@ -32,19 +32,21 @@ where
 import Python.Types
 import Python.Utils
 import Foreign.C.Types
-import Foreign
 import Foreign.C.String
+import Foreign.Ptr
 
-instance ToPyObject CInt where
+instance PyObjectConv String where
+    toPyObject x =
+        withCString x $ \cx ->
+            withCString "s" $ \cstr ->
+                py_buildvalues cstr cx >>= fromCPyObject
+
+instance PyObjectConv CInt where
     toPyObject x = 
         withCString "i" $ \cstr ->
             do po <- py_buildvalue cstr x
                fromCPyObject po
 
-instance ToPyObject CFloat where
-    toPyObject x =
-        withCString "s" $ \cstr ->
-            py_buildvalues cstr x >>= fromCPyObject
 
 ----------------------------------------------------------------------
 -- C imports
@@ -53,5 +55,5 @@ foreign import ccall unsafe "glue.h Py_BuildValue"
  py_buildvalue :: CString -> CInt -> IO (Ptr CPyObject)
 
 foreign import ccall unsafe "glue.h Py_BuildValue"
- py_buildvalues :: CString -> CFloat -> IO (Ptr CPyObject)
+ py_buildvalues :: CString -> CString -> IO (Ptr CPyObject)
 

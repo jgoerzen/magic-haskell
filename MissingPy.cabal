@@ -12,4 +12,4 @@ Exposed-Modules: Python.Types,
 Include-Dirs: /usr/include/python2.3, glue
 Build-Depends: haskell-src, MissingH
 Options-GHC: -O2
-Extensions: ForeignFunctionInterface
+Extensions: ForeignFunctionInterface, TypeSynonymInstances

@@ -28,7 +28,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module Python.Types (
                      PyObject(..),
-                     ToPyObject(..),
+                     PyObjectConv(..),
                      CPyObject
                     )
 where
@@ -44,7 +44,7 @@ newtype PyObject = PyObject (ForeignPtr CPyObject)
 
 {- | Members of this class can be converted from a Haskell type
 to a Python object. -}
-class (Show a, Eq a, Ord a) => ToPyObject a where
+class PyObjectConv a where
     toPyObject :: a -> IO PyObject
 
 {- | Members of this class can be derived from a Python object. -}

@@ -161,7 +161,7 @@ instance HVIO PyFile where
                            else return ()
                              )
 
-    {- | Some file-like objects don't take an offset.  Sigh. -}
+    {- Some file-like objects don't take an offset.  Sigh. -}
     vSeek pyf sm offset =
         let seekint = case sm of
                            AbsoluteSeek -> 0::CLong

@@ -39,8 +39,6 @@ module Python.Utils (-- * Objects
                      raisePyException,
                      -- * Environment
                      getDefaultGlobals,
-                     -- * Import
-                     pyImport_ImportModule,
                      pyImport_AddModule,
                      pyModule_GetDict
                     )
@@ -93,23 +91,32 @@ getDefaultGlobals =
     do m <- pyImport_AddModule "__main__"
        pyModule_GetDict m
        
-{- | Wrapper around C PyImport_ImportModule, which imports a module. -}
-pyImport_ImportModule :: String -> IO PyObject
-pyImport_ImportModule x =
-    withCString x (\cstr -> cpyImport_ImportModule cstr >>= fromCPyObject)
-
 {- | Wrapper around C PyImport_AddModule, which looks up an existing module -}
 pyImport_AddModule :: String -> IO PyObject
 pyImport_AddModule x =
-    withCString x (\cstr -> cpyImport_AddModule cstr >>= fromCPyObject)
+    withCString x (\cstr -> 
+        do r <- cpyImport_AddModule cstr
+           py_incref r
+           fromCPyObject r
+                  )
 
 {- | Gets the dict associated with a module. -}
 pyModule_GetDict :: PyObject -> IO PyObject
 pyModule_GetDict x =
-    withPyObject x (\cpyo -> cpyModule_GetDict cpyo >>= fromCPyObject)
+    withPyObject x (\cpyo -> 
+       do r <- cpyModule_GetDict cpyo
+          py_incref r
+          fromCPyObject r)
+
+
+foreign import ccall unsafe "glue.h PyModule_GetDict"
+ cpyModule_GetDict :: Ptr CPyObject -> IO (Ptr CPyObject)
 
 foreign import ccall "glue.h &hspy_decref"
  py_decref :: FunPtr (Ptr CPyObject -> IO ())
+
+foreign import ccall "glue.h hspy_incref"
+ py_incref :: Ptr CPyObject -> IO ()
 
 foreign import ccall unsafe "glue.h hspy_getexc"
  hspy_getexc :: IO (Ptr (Ptr CPyObject))
@@ -119,11 +126,4 @@ foreign import ccall unsafe "glue.h PyErr_Print"
 
 foreign import ccall unsafe "glue.h PyImport_AddModule"
  cpyImport_AddModule :: CString -> IO (Ptr CPyObject)
-
-foreign import ccall unsafe "glue.h PyImport_ImportModule"
- cpyImport_ImportModule :: CString -> IO (Ptr CPyObject)
-
-
-foreign import ccall unsafe "glue.h PyModule_GetDict"
- cpyModule_GetDict :: Ptr CPyObject -> IO (Ptr CPyObject)
 

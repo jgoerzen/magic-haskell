@@ -42,7 +42,12 @@ module Python.Interpreter (
                           -- * Calling Code
                           callByName,
                           noParms,
-                          noKwParms
+                          noKwParms,
+                          -- * Imports
+                          pyImport,
+                          pyImport_ImportModule,
+                          pyImport_AddModule,
+                          pyModule_GetDict
                           )
 where
 
@@ -71,34 +76,32 @@ pyRun_SimpleString x = withCString x (\cs ->
                                      )
 
 -- | Like 'pyRun_String', but take more Haskellish args and results.
-pyRun_StringHs :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
+pyRun_StringHs :: (ToPyObject b, FromPyObject c) =>
                   String        -- ^ Command to run
                -> StartFrom     -- ^ Start token
-               -> [(String, a)] -- ^ Globals (may be empty)
+--               -> [(String, a)] -- ^ Globals (may be empty)
                -> [(String, b)] -- ^ Locals (may be empty)
                -> IO c
-pyRun_StringHs cmd start globals locals =
+pyRun_StringHs cmd start locals =
     let conv (k, v) = do v1 <- toPyObject v
                          return (k, v1)
         in do
-           rglobals <- mapM conv globals
+           --rglobals <- mapM conv globals
            rlocals <- mapM conv locals
-           pyRun_String cmd start rglobals rlocals >>= fromPyObject
+           pyRun_String cmd start rlocals >>= fromPyObject
     
 -- | Run some code in Python.
 pyRun_String :: String          -- ^ Command to run
              -> StartFrom       -- ^ Start Token
-             -> [(String, PyObject)] -- ^ Globals (may be empty)
+--             -> [(String, PyObject)] -- ^ Globals (may be empty)
              -> [(String, PyObject)] -- ^ Locals (may be empty)
              -> IO PyObject     -- ^ Result
-pyRun_String command startfrom xglobals xlocals =
+pyRun_String command startfrom xlocals =
     let cstart = sf2c startfrom
         in do dobj <- getDefaultGlobals
-              d <- fromPyObject dobj
-              rlocals <- toPyObject (d ++ xlocals)
-              rglobals <- toPyObject (d ++ xglobals)
+              rlocals <- toPyObject xlocals
               withCString command (\ccommand ->
-               withPyObject rglobals (\cglobals ->
+               withPyObject dobj (\cglobals ->
                 withPyObject rlocals (\clocals ->
                  cpyRun_String ccommand cstart cglobals clocals >>= fromCPyObject
                               )))
@@ -113,7 +116,10 @@ callByName :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
            -> [(String, b)]     -- ^ List of keyword parameters
            -> IO c
 callByName fname sparms kwparms =
-    do func <- pyRun_String fname Py_eval_input [] []
+    do putStrLn "inCallByName"
+       getDefaultGlobals >>= showPyObject >>= putStrLn
+       func <- pyRun_String fname Py_eval_input []
+       showPyObject func >>= putStrLn
        pyObject_CallHs func sparms kwparms
 
 noParms :: [String]
@@ -121,6 +127,27 @@ noParms = []
 
 noKwParms :: [(String, String)]
 noKwParms = []
+
+{- | Import a module into the current environment in the normal sense
+(via \"import\" in Python).
+-}
+pyImport :: String -> IO ()
+pyImport x = 
+    do pyRun_String ("import " ++ x) Py_single_input []
+       return ()
+
+{- | Wrapper around C PyImport_ImportModule, which imports a module.
+
+You may want the higher-level 'pyImport' instead. -}
+pyImport_ImportModule :: String -> IO PyObject
+pyImport_ImportModule x =
+    do globals <- getDefaultGlobals
+       fromlist <- toPyObject ['*']
+       withPyObject globals (\cglobals ->
+        withPyObject fromlist (\cfromlist ->
+         withCString x (\cstr -> 
+          cpyImport_ImportModuleEx cstr cglobals nullPtr cfromlist >>= fromCPyObject)))
+
 
 foreign import ccall unsafe "Python.h Py_Initialize"
   py_initialize :: IO ()
@@ -130,3 +157,9 @@ foreign import ccall unsafe "Python.h PyRun_SimpleString"
 
 foreign import ccall unsafe "Python.h PyRun_String"
   cpyRun_String :: CString -> CInt -> Ptr CPyObject -> Ptr CPyObject -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyImport_ImportModuleEx"
+ cpyImport_ImportModuleEx :: CString -> Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject -> IO (Ptr CPyObject)
+
+
+

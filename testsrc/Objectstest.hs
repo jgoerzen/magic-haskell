@@ -112,7 +112,7 @@ test_doubles =
 
 test_call =
     [
-     TestCase $ do func <- pyRun_String "repr" Py_eval_input [] []
+     TestCase $ do func <- pyRun_String "repr" Py_eval_input []
                    r <- pyObject_CallHs func [5::Integer] ([]::[(String, String)])
                    "5L" @=? r
     ]

@@ -96,6 +96,8 @@ generic_persist_test initfunc openfunc =
 test_dict = generic_test (return ())
              (\_ -> toPyObject ([]::[(String, String)]) >>= return . mkPyDict)
 
+
+
 tests = TestList [TestLabel "Basic Dict" (TestList test_dict)
                  ]
 

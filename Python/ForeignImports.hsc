@@ -144,6 +144,9 @@ foreign import ccall "glue.h PyObject_Call"
  cpyObject_Call :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject ->
                    IO (Ptr CPyObject)
 
+foreign import ccall unsafe "glue.h PyMapping_Keys"
+ pyMapping_Keys :: Ptr CPyObject -> IO (Ptr CPyObject)
+
 foreign import ccall unsafe "glue.h PyList_AsTuple"
  cpyList_AsTuple :: Ptr CPyObject -> IO (Ptr CPyObject)
 

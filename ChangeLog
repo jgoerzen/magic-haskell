@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-02 22:58:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-66
+
+    Summary:
+      Adjusted Dict to use keys() instead of items() due to compatibility with *dbm
+    Revision:
+      missingexts--head--0.7--patch-66
+
+
+    modified files:
+     ChangeLog Python/ForeignImports.hsc Python/Objects/Dict.hs
+     testsrc/Dicttest.hs
+
+
 2005-02-02 22:05:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-65
 
     Summary:

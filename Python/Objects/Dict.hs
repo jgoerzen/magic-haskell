@@ -97,9 +97,17 @@ instance AnyDBM PyDict where
                    else do retval <- fromCPyObject r >>= fromPyObject
                            return $ Just retval
                                   ))
+    {-
     toListA h =
+        This used to be:
         pydwrap h fromPyObject
-        
+        but some *dbm's are incompatible with that.  Sigh. -}
 
-
+    keysA h =
+        cpydwrap h (\ch ->
+         do keysobj <- pyMapping_Keys ch >>= fromCPyObject
+            keys <- (fromPyObject keysobj)::IO [String]
+            return keys
+                   )
+            
     

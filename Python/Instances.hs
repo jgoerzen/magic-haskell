@@ -1,4 +1,4 @@
-{- arch-tag: Python types
+{- arch-tag: Python type instances
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -21,37 +21,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
-Interfaces to low-level Python types
+Python type instances
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module Python.Types (
-                     PyObject(..),
-                     ToPyObject(..),
-                     CPyObject
-                    )
+module Python.Instances (
+                        )
 where
-
-import Foreign
-import Foreign.C
+import Python.Types
+import Python.Utils
 import Foreign.C.Types
+import Foreign
+import Foreign.C.String
 
-type CPyObject = ()
+instance ToPyObject CInt where
+    toPyObject x = 
+        withCString "i" $ \cstr ->
+            do po <- py_buildvalue cstr x
+               fromCPyObject po
 
--- | The type of Python objects.
-newtype PyObject = PyObject (ForeignPtr CPyObject)
+----------------------------------------------------------------------
+-- C imports
 
-{- | Members of this class can be converted from a Haskell type
-to a Python object. -}
-class (Show a, Eq a, Ord a) => ToPyObject a where
-    toPyObject :: a -> IO PyObject
-
-{- | Members of this class can be derived from a Python object. -}
-{-
-class (Show a, Eq, a, Ord a) => FromPyObject a where
-    fromPyObject :: PyObject -> IO a
--}
-
-
+foreign import ccall unsafe "glue.h Py_BuildValue"
+ py_buildvalue :: CString -> CInt -> IO (Ptr CPyObject)
 

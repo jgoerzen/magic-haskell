@@ -1,4 +1,4 @@
-{- arch-tag: Python types
+{- arch-tag: Python low-level utilities
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -17,41 +17,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : Python.Types
+   Module     : Python.Utils
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
-Interfaces to low-level Python types
+Python low-level utilities
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module Python.Types (
-                     PyObject(..),
-                     ToPyObject(..),
-                     CPyObject
+module Python.Utils (fromCPyObject
                     )
-where
-
-import Foreign
-import Foreign.C
+    where
+import Python.Types
 import Foreign.C.Types
+import Foreign.C
+import Foreign
 
-type CPyObject = ()
-
--- | The type of Python objects.
-newtype PyObject = PyObject (ForeignPtr CPyObject)
-
-{- | Members of this class can be converted from a Haskell type
-to a Python object. -}
-class (Show a, Eq a, Ord a) => ToPyObject a where
-    toPyObject :: a -> IO PyObject
-
-{- | Members of this class can be derived from a Python object. -}
-{-
-class (Show a, Eq, a, Ord a) => FromPyObject a where
-    fromPyObject :: PyObject -> IO a
--}
+fromCPyObject :: Ptr CPyObject -> IO PyObject
+fromCPyObject po =
+    do fp <- newForeignPtr py_decref po
+       return $ PyObject fp
 
 
-
+foreign import ccall "glue.h &hspy_decref"
+ py_decref :: FunPtr (Ptr CPyObject -> IO ())

@@ -1,3 +1,6 @@
+{-
+{-# OPTIONS -fallow-overlapping-instances #-}
+-}
 {- arch-tag: Python type instances
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
@@ -45,6 +48,18 @@ instance PyObjectConv [PyObject] where
            mapM_ (\pyo -> withPyObject pyo (pyList_Append l)) mainlist
            fromCPyObject l
 
+-- | Dicts from ALs
+instance PyObjectConv [(PyObject, PyObject)] where
+    toPyObject mainlist =
+        do d <- pyDict_New
+           mapM_ (setitem d) mainlist
+           fromCPyObject d
+        where setitem l (key, value) =
+                  withPyObject key (\keyo ->
+                      withPyObject value (\valueo ->
+                          pyDict_SetItem l keyo valueo))
+                                       
+
 instance PyObjectConv CString where
    toPyObject x = 
             withCString "s" $ \cstr ->
@@ -59,6 +74,13 @@ instance PyObjectConv CInt where
             do po <- py_buildvalue cstr x
                fromCPyObject po
 
+{-
+-- | Lists from anything else
+instance PyObjectConv a => PyObjectConv [a] where
+    toPyObject mainlist = 
+        do newlist <- mapM toPyObject mainlist
+           toPyObject newlist
+-}
 
 ----------------------------------------------------------------------
 -- C imports
@@ -74,3 +96,9 @@ foreign import ccall unsafe "glue.h PyList_New"
 
 foreign import ccall unsafe "glue.h PyList_Append"
  pyList_Append :: Ptr CPyObject -> Ptr CPyObject -> IO CInt
+
+foreign import ccall unsafe "glue.h PyDict_New"
+ pyDict_New :: IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyDict_SetItem"
+ pyDict_SetItem :: Ptr CPyObject -> Ptr CPyObject -> Ptr CPyObject -> IO CInt

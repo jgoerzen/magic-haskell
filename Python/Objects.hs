@@ -279,7 +279,10 @@ instance FromPyObject [PyObject] where
                    else do thisitem <- itemfunc cpyo counter
                            py_incref thisitem
                            thisobj <- fromCPyObject thisitem
-                           next <- unsafeInterleaveIO $ fromx_worker (succ counter) size itemfunc cpyo
+                           {- This unsafeInterlaveIO caused segfaults.  Theory:
+                              parent object would be deallocated before all
+                              items would be consumed. -}
+                           next <- {-unsafeInterleaveIO $-} fromx_worker (succ counter) size itemfunc cpyo
                            return $ thisobj : next
             in
             withPyObject x worker
@@ -301,9 +304,11 @@ instance ToPyObject [(PyObject, PyObject)] where
 -- | ALs from Dicts
 instance FromPyObject [(PyObject, PyObject)] where
     fromPyObject pydict = withPyObject pydict (\cpydict ->
-        do items <- pyDict_Items cpydict >>= fromCPyObject
+           -- Type sigs here are for clarity onlyw
+        do -- This gives a PyObject
+           items <- (pyDict_Items cpydict >>= fromCPyObject):: IO PyObject
            -- Now, make a Haskell [[PyObject, PyObject]] list
-           itemlist <- fromPyObject items
+           itemlist <- (fromPyObject items)::IO [[PyObject]]
            -- Finally, convert it to a list of tuples.
            return $ map list2tup itemlist
                                               )

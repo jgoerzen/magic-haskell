@@ -136,13 +136,14 @@ callByNameHs fname sparms kwparms =
 -}
 pyImport :: String -> IO ()
 pyImport x = 
-    do r <- pyImport_ImportModule x 
+    do pyImport_ImportModule x 
        globals <- getDefaultGlobals
        cdict <- pyImport_GetModuleDict
        py_incref cdict
-       dict <- fromCPyObject cdict >>= fromPyObject
+       pyo2 <- fromCPyObject cdict
+       dict <- fromPyObject pyo2
        case lookup x dict of
-           Nothing -> return ()
+           Nothing ->  return ()
            Just pyo -> do withPyObject globals (\cglobals ->
                            withPyObject pyo (\cmodule ->
                             withCString x (\cstr ->

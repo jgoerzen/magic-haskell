@@ -22,6 +22,18 @@ void hspy_decref(PyObject *o) {
   Py_DECREF(o);
 }
 
+void hspy_incref(PyObject *o) {
+  Py_INCREF(o);
+}
+
+int hspy_list_check(PyObject *o) {
+  return PyList_Check(o);
+}
+
+int hspy_tuple_check(PyObject *o) {
+  return PyTuple_Check(o);
+}
+
 PyObject ** hspy_getexc() {
   static PyObject *retval [3];
   PyObject *type;

@@ -26,8 +26,8 @@ import Python.Objects
 test_base =
     let f msg t = TestLabel msg $ TestCase t in
     [
-     f "print" $ pyRun_SimpleString "print \"Hi from Python\\n\""
-    ,f "longs" $ do pyo <- toPyObject (10::CLong)
+--     f "print" $ pyRun_SimpleString "print \"Hi from Python\\n\""
+     f "longs" $ do pyo <- toPyObject (10::CLong)
                     newl <- fromPyObject pyo
                     (10::CLong) @=? newl
     ]

@@ -22,15 +22,38 @@ import HUnit
 import Python.Objects
 import Foreign.C.Types
 import Python.Types
+import Data.List
+
+f msg inp code exp = TestLabel msg $ TestCase $ do pyo <- toPyObject inp
+                                                   r <- code pyo
+                                                   exp @=? r
 
 test_base =
-    let f msg inp code exp = TestLabel msg $ TestCase $ do pyo <- toPyObject inp
-                                                           r <- code pyo
-                                                           exp @=? r
-    in
     [
-     f "showPyObject" (5::CInt) showPyObject "5x"
+     f "showPyObject" (5::CInt) showPyObject "<type 'int'>: 5"
     ]
 
-tests = TestList [TestLabel "base" (TestList test_base)
+test_lists =
+    [
+     f "empty" ([]::[CInt]) fromPyObject ([]::[CInt])
+    ,f "repr empty" ([]::[CInt]) reprOf "[]"
+    ,f "some cints" [1::CInt, 2, 3] fromPyObject [1::CInt, 2, 3]
+    ,f "some cints repr" [1::CInt, 2, 3] reprOf "[1, 2, 3]"
+    ,f "strings" ["foo", "bar"] fromPyObject ["foo", "bar"]
+    ,f "strings repr" ["foo", "bar"] reprOf "['foo', 'bar']"
+    ]
+
+test_al =
+    [
+     f "emptypyo" ([]::[(PyObject, PyObject)]) fromPyObject 
+       ([]::[(PyObject, PyObject)])
+    ,f "cint to cint" [(1::CInt, 2::CInt), (3, 4)] 
+           (\x -> fromPyObject x >>= return . sort)
+           [(1::CInt, 2::CInt), (3, 4)]
+    ]
+       
+
+tests = TestList [TestLabel "base" (TestList test_base),
+                  TestLabel "lists/tuples" (TestList test_lists),
+                  TestLabel "al" (TestList test_al)
                  ]

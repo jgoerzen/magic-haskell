@@ -18,4 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <Python.h>
 extern void hspy_decref(PyObject *o);
+extern void hspy_incref(PyObject *o);
 extern PyObject ** hspy_getexc();
+extern int hspy_list_check(PyObject *o);
+extern int hspy_tuple_check(PyObject *o);

@@ -46,6 +46,7 @@ import Foreign.Ptr
 import Foreign.Storable
 import Foreign.Marshal.Alloc
 import Data.List
+import System.IO.Unsafe
 
 {- | Members of this class can be converted from a Haskell type
 to a Python object. -}
@@ -87,12 +88,42 @@ showPyObject x = do typestr <- typeOf x >>= strOf
 
 -- FIXME: ERROR CHECKING!
 
+--------------------------------------------------
+-- [PyObject] Lists
+
 -- | Lists from a PyObject
 instance ToPyObject [PyObject] where
     toPyObject mainlist =
         do l <- pyList_New 0
            mapM_ (\pyo -> withPyObject pyo (pyList_Append l)) mainlist
            fromCPyObject l
+
+-- | Tuples and Lists to [PyObject] lists
+instance FromPyObject [PyObject] where
+    fromPyObject x = 
+        let worker cpyo =
+                do islist <- pyList_Check cpyo
+                   istuple <- pyTuple_Check cpyo
+                   if islist /= 0
+                      then fromx pyList_Size pyList_GetItem cpyo
+                      else if istuple /= 0
+                                 then fromx pyTuple_Size pyTuple_GetItem cpyo
+                                 else fail "Error fromPyObject to [PyObject]: Passed object not a list or tuple."
+            fromx sizefunc itemfunc cpyo = do size <- sizefunc cpyo
+                                              fromx_worker 0 size itemfunc cpyo
+            fromx_worker counter size itemfunc cpyo =
+                if counter >= size 
+                   then return []
+                   else do thisitem <- itemfunc cpyo counter
+                           py_incref thisitem
+                           thisobj <- fromCPyObject thisitem
+                           next <- unsafeInterleaveIO $ fromx_worker (succ counter) size itemfunc cpyo
+                           return $ thisobj : next
+            in
+            withPyObject x worker
+
+--------------------------------------------------
+-- Association Lists
 
 -- | Dicts from ALs
 instance ToPyObject [(PyObject, PyObject)] where
@@ -104,6 +135,19 @@ instance ToPyObject [(PyObject, PyObject)] where
                   withPyObject key (\keyo ->
                       withPyObject value (\valueo ->
                           pyDict_SetItem l keyo valueo))
+
+-- | ALs from Dicts
+instance FromPyObject [(PyObject, PyObject)] where
+    fromPyObject pydict = withPyObject pydict (\cpydict ->
+        do items <- pyDict_Items cpydict >>= fromCPyObject
+           -- Now, make a Haskell [[PyObject, PyObject]] list
+           itemlist <- fromPyObject items
+           -- Finally, convert it to a list of tuples.
+           return $ map list2tup itemlist
+                                              )
+        where list2tup x = case x of
+                                  x1:x2:[] -> (x1, x2)
+                                  _ -> error "Expected 2-tuples in fromPyObject dict"
                                        
 -- | Dicts from Haskell objects
 instance (ToPyObject a, ToPyObject b) => ToPyObject [(a, b)] where
@@ -113,6 +157,15 @@ instance (ToPyObject a, ToPyObject b) => ToPyObject [(a, b)] where
                                   return (oi1, oi2)
         in do newl <- mapM convone mainlist
               toPyObject newl
+
+-- | Dicts to Haskell objects
+instance (FromPyObject a, FromPyObject b) => FromPyObject [(a, b)] where
+    fromPyObject pydict =
+        let conv (x, y) = do x1 <- fromPyObject x
+                             y1 <- fromPyObject y
+                             return (x1, y1)
+            in do pyodict <- ((fromPyObject pydict)::IO [(PyObject, PyObject)])
+                  mapM conv pyodict
 
 instance ToPyObject CString where
    toPyObject x = 
@@ -133,13 +186,15 @@ instance FromPyObject String where
                   )
                )
                                     )
-           
-
 instance ToPyObject CInt where
     toPyObject x = 
         withCString "i" $ \cstr ->
             do po <- py_buildvalue cstr x
                fromCPyObject po
+
+instance FromPyObject CInt where
+    fromPyObject x = do y <- (fromPyObject x)::IO CLong
+                        return $ fromIntegral y
 
 instance ToPyObject CLong where
     toPyObject x =
@@ -149,13 +204,16 @@ instance FromPyObject CLong where
     fromPyObject po = 
         withPyObject po pyInt_AsLong
 
-{-
 -- | Lists from anything else
 instance ToPyObject a => ToPyObject [a] where
     toPyObject mainlist = 
         do newlist <- mapM toPyObject mainlist
            toPyObject newlist
--}
+
+instance FromPyObject a => FromPyObject [a] where
+    fromPyObject pylistobj = 
+        do pylist <- fromPyObject pylistobj
+           mapM fromPyObject pylist
 
 ----------------------------------------------------------------------
 -- C imports
@@ -196,3 +254,27 @@ foreign import ccall unsafe "glue.h PyObject_Type"
 
 foreign import ccall unsafe "glue.h PyString_AsStringAndSize"
  pyString_AsStringAndSize :: Ptr CPyObject -> Ptr CString -> Ptr CInt -> IO ()
+
+foreign import ccall unsafe "glue.h hspy_list_check"
+ pyList_Check :: Ptr CPyObject -> IO CInt
+
+foreign import ccall unsafe "glue.h hspy_tuple_check"
+ pyTuple_Check :: Ptr CPyObject -> IO CInt
+
+foreign import ccall unsafe "glue.h PyList_Size"
+ pyList_Size :: Ptr CPyObject -> IO CInt
+
+foreign import ccall unsafe "glue.h PyTuple_Size"
+ pyTuple_Size :: Ptr CPyObject -> IO CInt
+
+foreign import ccall unsafe "glue.h PyList_GetItem"
+ pyList_GetItem :: Ptr CPyObject -> CInt -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h PyTuple_GetItem"
+ pyTuple_GetItem :: Ptr CPyObject -> CInt -> IO (Ptr CPyObject)
+
+foreign import ccall unsafe "glue.h hspy_incref"
+ py_incref :: Ptr CPyObject -> IO ()
+
+foreign import ccall unsafe "glue.h PyDict_Items"
+ pyDict_Items :: Ptr CPyObject -> IO (Ptr CPyObject)

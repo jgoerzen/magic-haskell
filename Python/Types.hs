@@ -44,6 +44,7 @@ type CPyObject = ()
 
 -- | The type of Python objects.
 newtype PyObject = PyObject (ForeignPtr CPyObject)
+    deriving (Eq, Show)
 
 
 

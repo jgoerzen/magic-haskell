@@ -151,7 +151,7 @@ instance HVIO PyFile where
 
     {- Python strings are non-lazy, so process these in chunks. -}
     vPutStr pyf [] = vTestOpen pyf >> return ()
-    vPutStr pyf s = let (this, next) = splitAt 4096 s
+    vPutStr pyf s = let (this, next) = (splitAt 4096 s)::(String, String)
                         in do vTestOpen pyf
                               pyfwrap pyf (\pyo ->
                                      runMethodHs pyo "write" [this] noKwParms)

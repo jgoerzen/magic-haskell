@@ -28,6 +28,9 @@ test_base =
     let f msg t = TestLabel msg $ TestCase t in
     [
      f "print" $ pyRun_SimpleString "print \"Hi from Python\\n\""
+    ,f "longs" $ do pyo <- toPyObject (10::CLong)
+                    newl <- fromPyObject pyo
+                    (10::CLong) @=? newl
     ]
 
 test_args =
@@ -39,7 +42,7 @@ test_args =
                                 exp @=? retval
         in
         [
-         f "addition" "testval + 3" (2::CLong) (5::CLong)
+         --f "addition" "testval + 3" (2::CLong) (5::CLong)
 {-
          TestLabel "m1" $ TestCase $
                    do testpydict <- toPyObject [(5::CInt, 2::CInt)]

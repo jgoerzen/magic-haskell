@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-30 02:08:27 GMT	John Goerzen <jgoerzen@complete.org>	patch-15
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingexts--head--0.7--patch-15
+
+
+    modified files:
+     ChangeLog testsrc/Interpretertest.hs
+
+
 2005-01-30 02:06:46 GMT	John Goerzen <jgoerzen@complete.org>	patch-14
 
     Summary:

@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-03 16:58:48 GMT	John Goerzen <jgoerzen@complete.org>	patch-71
+
+    Summary:
+      Checkpointing with new build system
+    Revision:
+      missingexts--head--0.7--patch-71
+
+
+    new files:
+     gencabal.py
+
+    removed files:
+     MissingPy.cabal
+
+    modified files:
+     ChangeLog Makefile MissingPy/AnyDBM.hs testsrc/AnyDBMPytest.hs
+
+
 2005-02-03 15:52:40 GMT	John Goerzen <jgoerzen@complete.org>	patch-70
 
     Summary:

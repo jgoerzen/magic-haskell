@@ -46,6 +46,7 @@ where
 import Python.Objects.Dict
 import Python.Interpreter
 import Python.Utils
+import Python.Exceptions
 import Python.Objects
 import MissingH.AnyDBM
 
@@ -89,7 +90,7 @@ openSpecificDBM :: String       -- ^ Python module name to use
                 -> IO PyDict    -- ^ Result
 openSpecificDBM mod fp flag =
     let flagstr = flag2str flag
-        in
+        in handlePy exc2ioerror $ 
         do pyImport mod
            fileobj <- toPyObject fp
            flagobj <- toPyObject flagstr

@@ -15,13 +15,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+PYTHON ?= python
 setup: Setup.lhs MissingPy.cabal
 	ghc -package Cabal Setup.lhs -o setup
+
+MissingPy.cabal: gencabal.py
+	$(PYTHON) gencabal.py
 
 clean:
 	-./setup clean
 	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \
-		`find . -name "*~"` *.a setup dist testsrc/runtests
+		`find . -name "*~"` *.a setup dist testsrc/runtests \
+		MissingPy.cabal
 	-cd doc && $(MAKE) clean
 
 testsrc/runtests: setup $(shell find testsrc -name "*.hs")

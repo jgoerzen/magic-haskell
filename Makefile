@@ -28,6 +28,9 @@ setup: Setup.lhs MissingPy.cabal
 MissingPy.cabal: gencabal.py
 	$(PYTHON) gencabal.py
 
+doc: setup
+	./setup haddock
+
 clean:
 	-./setup clean
 	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \

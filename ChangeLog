@@ -2,6 +2,28 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-04 02:58:31 GMT	John Goerzen <jgoerzen@complete.org>	patch-78
+
+    Summary:
+      Checkpointing build system
+    Revision:
+      missingexts--head--0.7--patch-78
+
+
+    removed files:
+     debian/.arch-ids/missingh-doc.docs.id debian/missingh-doc.docs
+
+    modified files:
+     ChangeLog Makefile Python/ForeignImports.hsc debian/changelog
+     debian/control debian/docs debian/rules gencabal.py
+
+    renamed files:
+     debian/.arch-ids/missingh.doc-base.EX.id
+       ==> debian/.arch-ids/missingpy.doc-base.EX.id
+     debian/missingh.doc-base.EX
+       ==> debian/missingpy.doc-base.EX
+
+
 2005-02-03 22:54:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-77
 
     Summary:

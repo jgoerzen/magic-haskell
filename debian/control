@@ -1,59 +1,30 @@
-Source: missingh
+Source: missingpy
 Priority: optional
 Maintainer: John Goerzen <jgoerzen@complete.org>
-Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.2.2), ghc6 (<< 6.2.3), haskell-devscripts (>= 0.5.4), libghc6-hunit-dev
-Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs, haskell-devscripts (>= 0.5.4), libhugs-hunit
+Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.2.2), ghc6 (<< 6.2.3), haskell-devscripts (>= 0.5.4), libghc6-hunit-dev, python-dev (>= 2.3.3), python-gdbm (>= 2.3.3), haddock, python-dev (<< 2.4), libghc6-missingh-dev (>= 0.9.0)
+#Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs, haskell-devscripts (>= 0.5.4), libhugs-hunit
 Standards-Version: 3.6.1
 Section: devel
 
-Package: libghc6-missingh-dev
+Package: libghc6-missingpy-dev
 Section: devel
 Architecture: any
-Depends: ${haskell:Depends}
-Suggests: missingh-doc
-Description: Library of utility functions for Haskell, GHC6 package 
- MissingH is a library of all sorts of utility functions for
- Haskell programmers.  It is written in pure Haskell and thus should
- be extremely portable and easy to use.  It also has no prerequisites
- save those that are commonly included with Haskell compilers.
+Depends: ${haskell:Depends}, python-dev (>= 2.3.3), python-dev (<< 2.4), libghc6-missingh-dev (>= 0.9.0)
+Suggests: python-gdbm (>= 2.3.3)
+Description: Python interface and utility library for Haskell
+ MissingPy is two things:
  .
- MissingH is based on my MissingLib library for OCaml and contains some
- of the same features.  However, some features are left behind because
- they are already in Haskell or not needed here -- and others are added
- due to things Haskell is missing, or things that Haskell makes
- possible.
-
-Package: libhugs-missingh
-Section: devel
-Architecture: all
-Depends: ${haskell:Depends}
-Suggests: missingh-doc
-Description: Library of utility functions for Haskell, Hugs package 
- MissingH is a library of all sorts of utility functions for
- Haskell programmers.  It is written in pure Haskell and thus should
- be extremely portable and easy to use.  It also has no prerequisites
- save those that are commonly included with Haskell compilers.
+ A Haskell binding for many C and Python libraries for tasks such as
+ data compression, databases, etc.  This can be found in the
+ MissingPy module tree.
  .
- MissingH is based on my MissingLib library for OCaml and contains some
- of the same features.  However, some features are left behind because
- they are already in Haskell or not needed here -- and others are added
- due to things Haskell is missing, or things that Haskell makes
- possible.
-
-Package: missingh-doc
-Section: doc
-Architecture: all
-Description: Documentation for Haskell utility library
- MissingH is a library of all sorts of utility functions for
- Haskell programmers.  It is written in pure Haskell and thus should
- be extremely portable and easy to use.  It also has no prerequisites
- save those that are commonly included with Haskell compilers.
+ Also, it's a low-level Haskell binding to the Python interpreter to
+ enable development of hybrid applications that use both
+ environments.  This can be found in the Python module tree.  The
+ Haskell bindings above use this environment.
  .
- MissingH is based on my MissingLib library for OCaml and contains some
- of the same features.  However, some features are left behind because
- they are already in Haskell or not needed here -- and others are added
- due to things Haskell is missing, or things that Haskell makes
- possible.
+ MissingPy permits you to call Python code from Haskell.  It does NOT
+ permit you to call Haskell code from Python.
  .
- This package provides the API documentation for MissingH.
-
+ MissingPy is the companion to my MissingH library, and integrates with
+ it.

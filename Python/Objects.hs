@@ -54,6 +54,8 @@ module Python.Objects (
                        pyObject_Call,
                        pyObject_CallHs,
                        pyObject_RunHs,
+                       callMethodHs,
+                       runMethodHs,
                        noParms,
                        noKwParms,
                       )
@@ -147,6 +149,36 @@ pyObject_RunHs :: (ToPyObject a, ToPyObject b) =>
                 -> IO ()         -- ^ Return value
 pyObject_RunHs callobj simpleargs kwargs =
     pyObject_Hs callobj simpleargs kwargs >> return ()
+
+callMethodHs_internal :: (ToPyObject a, ToPyObject b) =>
+                         PyObject
+                      -> String
+                      -> [a]
+                      -> [(String, b)]
+                      -> IO PyObject
+callMethodHs_internal pyo method args kwargs =
+    do mobj <- getattr pyo method
+       pyObject_Hs mobj args kwargs
+                            
+{- | Calls the named method of the given object. -}
+callMethodHs :: (ToPyObject a, ToPyObject b, FromPyObject c) =>
+                PyObject        -- ^ The main object
+             -> String          -- ^ Name of method to call
+             -> [a]             -- ^ Non-kw args
+             -> [(String, b)]   -- ^ Keyword args
+             -> IO c            -- ^ Result
+callMethodHs pyo method args kwargs =
+    callMethodHs_internal pyo method args kwargs >>= fromPyObject
+
+{- | Like 'callMethodHs', but discards the return value. -}
+runMethodHs :: (ToPyObject a, ToPyObject b) =>
+                PyObject        -- ^ The main object
+             -> String          -- ^ Name of method to call
+             -> [a]             -- ^ Non-kw args
+             -> [(String, b)]   -- ^ Keyword args
+             -> IO ()            -- ^ Result
+runMethodHs pyo method args kwargs =
+    callMethodHs_internal pyo method args kwargs >> return ()
 
 noParms :: [String]
 noParms = []

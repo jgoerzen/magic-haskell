@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-31 20:34:06 GMT	John Goerzen <jgoerzen@complete.org>	patch-34
+
+    Summary:
+      attribute access and method calls working
+    Revision:
+      missingexts--head--0.7--patch-34
+
+
+    modified files:
+     ChangeLog Python/Objects.hs testsrc/Objectstest.hs
+
+
 2005-01-31 20:26:07 GMT	John Goerzen <jgoerzen@complete.org>	patch-33
 
     Summary:

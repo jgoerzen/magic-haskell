@@ -15,6 +15,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+all: setup
+	./setup configure
+	./setup build
+
 PYTHON ?= python
 setup: Setup.lhs MissingPy.cabal
 	ghc -package Cabal Setup.lhs -o setup
@@ -34,7 +38,6 @@ testsrc/runtests: setup $(shell find testsrc -name "*.hs")
 	./setup build
 	ghc6 -O2 -o testsrc/runtests -Ldist/build -odir dist/build -hidir dist/build -idist/build -itestsrc dist/build/libHSMissingPy-* \
 		-package HUnit -package MissingH --make -lpython2.3 testsrc/runtests.hs
-	#ghc6 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -package HUnit --make -o testsrc/runtests -itestsrc -ilibsrc testsrc/runtests.hs
 
 test-ghc6: testsrc/runtests
 	testsrc/runtests 
@@ -50,5 +53,5 @@ interact-ghci: all
 
 interact: interact-hugs
 
-test: test-ghc6 test-hugs
+test: test-ghc6
 

@@ -1,5 +1,6 @@
-{- arch-tag: Tests main file
-Copyright (C) 2004 - 2005 John Goerzen <jgoerzen@complete.org>
+{-# OPTIONS -fallow-overlapping-instances #-}
+{- arch-tag: Object tests main file
+Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,17 +17,20 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Tests(tests) where
+module Objectstest(tests) where
 import HUnit
-import qualified Interpretertest
-import qualified Objectstest
+import Python.Objects
+import Foreign.C.Types
+import Python.Types
 
-test1 = TestCase ("x" @=? "x")
+test_base =
+    let f msg inp code exp = TestLabel msg $ TestCase $ do pyo <- toPyObject inp
+                                                           r <- code pyo
+                                                           exp @=? r
+    in
+    [
+     f "showPyObject" (5::CInt) showPyObject "5x"
+    ]
 
-tests = TestList [TestLabel "test1" test1,
-                  TestLabel "objects" Objectstest.tests,
-                  TestLabel "interpreter" Interpretertest.tests
+tests = TestList [TestLabel "base" (TestList test_base)
                  ]
-
-
-

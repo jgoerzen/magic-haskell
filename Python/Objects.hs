@@ -74,6 +74,12 @@ reprOf :: PyObject -> IO String
 reprOf x = withPyObject x
              (\pyo -> pyObject_Repr pyo >>= fromCPyObject >>= fromPyObject)
 
+{- | Displays a Python object and its type. -}
+showPyObject :: PyObject -> IO String
+showPyObject x = do typestr <- typeOf x >>= strOf
+                    contentstr <- strOf x
+                    return $ typestr ++ ": " ++ contentstr
+
 ----------------------------------------------------------------------
 -- Instances
 ----------------------------------------------------------------------

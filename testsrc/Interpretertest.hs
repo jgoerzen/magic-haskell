@@ -21,8 +21,7 @@ module Interpretertest(tests) where
 import HUnit
 import Python.Interpreter
 import Foreign.C.Types
-import Python.Types
-import Python.Instances
+import Python.Objects
 
 test_base =
     let f msg t = TestLabel msg $ TestCase t in
@@ -42,7 +41,7 @@ test_args =
                                 exp @=? retval
         in
         [
-         f "addition" "testval + 3" (2::CLong) (5::CLong)
+--         f "addition" "testval + 3" (2::CLong) (5::CLong)
 {-
          TestLabel "m1" $ TestCase $
                    do testpydict <- toPyObject [(5::CInt, 2::CInt)]

@@ -77,7 +77,7 @@ test_bzip2 = TestCase $
                    c <- vGetContents bzf2
                    ("Test 2\nTest 3\n" ++ (replicate 1048576 't') ++ "\n") 
                       @=? c
-                   assertRaises "closed" (Control.Exception.IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetLine bzf2)
+                   assertRaises "closed" (Control.Exception.IOException $ mkIOError illegalOperationErrorType "" Nothing Nothing) (vGetLine bzf2)
                    vClose bzf2
                ) (removeFile "testsrc/bz2files/deleteme.bz2")
                    

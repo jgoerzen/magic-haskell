@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-02 22:05:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-65
+
+    Summary:
+      Checkpointing (tests run)
+    Revision:
+      missingexts--head--0.7--patch-65
+
+
+    modified files:
+     ChangeLog testsrc/BZip2test.hs
+
+
 2005-02-02 22:02:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-64
 
     Summary:

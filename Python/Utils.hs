@@ -53,6 +53,7 @@ raisePyException =
        let (exc, val, tb) = cpy
        pyErr_Print
 -}
+    do pyErr_Print
        fail "Python Error!"
     where getexc = do cexc <- hspy_getexc
                       exc <- peekArray 3 cexc

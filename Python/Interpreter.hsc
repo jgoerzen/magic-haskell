@@ -57,6 +57,8 @@ pyRun_SimpleString x = withCString x (\cs ->
                                              return ()
                                      )
     
+-- FIXME: NULL is NOT acceptable below!
+
 pyRun_String :: String          -- ^ Command to run
              -> StartFrom       -- ^ Start Token (use 0)
              -> Maybe PyObject  -- ^ Globals (or Nothing for defaults)

@@ -65,27 +65,19 @@ test_bzip2 = TestCase $
                    vFlush bzf
                    vPutStr bzf "Test 3\n"
                    vPutStr bzf (replicate 1048576 't')
-                   putStr "\n\n"
-                   print "1"
                    vPutChar bzf '\n'
-                   print "2"
                    vClose bzf
                    bzf2 <- openBz2 "testsrc/bz2files/deleteme.bz2" ReadMode 9
-                   print "3"
                    vGetLine bzf2 >>= (@=? "Test 2")
                    vGetLine bzf2 >>= (@=? "Test 3")
                    vGetLine bzf2
                    assertRaises "eof" (Control.Exception.IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetLine bzf2)
 
                    vRewind bzf2
-                   print "4"
                    c <- vGetContents bzf2
-                   print "5"
                    ("Test 2\nTest 3\n" ++ (replicate 1048576 't') ++ "\n") 
                       @=? c
-                   print "6"
                    --assertRaises "eof" (Control.Exception.IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetLine bzf2)
-                   print "7"
                    vClose bzf2
                ) (removeFile "testsrc/bz2files/deleteme.bz2")
                    

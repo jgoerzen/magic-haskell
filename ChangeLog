@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-03 22:54:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-77
+
+    Summary:
+      checkpointing
+    Revision:
+      missingexts--head--0.7--patch-77
+
+
+    new files:
+     utils/.arch-ids/=id
+     utils/.arch-ids/missingh-0.9.0-doc.tar.gz.id
+     utils/missingh-0.9.0-doc.tar.gz
+
+    modified files:
+     ChangeLog Makefile debian/rules
+
+    new directories:
+     utils utils/.arch-ids
+
+
 2005-02-03 22:30:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-76
 
     Summary:

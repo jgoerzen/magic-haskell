@@ -24,6 +24,7 @@ PYTHON ?= python
 setup: Setup.lhs MissingPy.cabal
 	ghc -package Cabal Setup.lhs -o setup
 
+
 MissingPy.cabal: gencabal.py
 	$(PYTHON) gencabal.py
 

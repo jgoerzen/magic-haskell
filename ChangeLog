@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-01 17:08:28 GMT	John Goerzen <jgoerzen@complete.org>	patch-52
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingexts--head--0.7--patch-52
+
+
+    modified files:
+     ChangeLog MissingPy/FileArchive/BZip2.hs Python/Utils.hs
+     glue/glue.c glue/glue.h testsrc/BZip2test.hs
+
+
 2005-02-01 16:38:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-51
 
     Summary:

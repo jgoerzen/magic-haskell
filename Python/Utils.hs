@@ -65,15 +65,22 @@ fromCPyObject po =
 the exception in Haskell. -}
 raisePyException :: IO a
 raisePyException =
-    alloca (\typeptr -> alloca (\valptr -> alloca (\tbptr ->
+    let noneorptr cval = if cval == nullPtr
+                            then do p <- cNone
+                                    fromCPyObject p
+                            else fromCPyObject cval
+        in alloca (\typeptr -> alloca (\valptr -> alloca (\tbptr ->
        do pyErr_Fetch typeptr valptr tbptr
           pyErr_NormalizeException typeptr valptr tbptr
           ctype <- peek typeptr
           cval <- peek valptr
           ctb <- peek tbptr
-          otype <- fromCPyObject ctype
-          oval <- fromCPyObject cval
-          otb <- fromCPyObject ctb
+          otype <- noneorptr ctype
+          oval <- noneorptr cval
+          otb <- noneorptr ctb
+          --seq otype $ return ()
+          --seq oval $ return ()
+          --seq otb $ return ()
           let exc = PyException {excType = otype, excValue = oval,
                                  excTraceBack = otb,
                                  excFormatted = ""}
@@ -153,3 +160,5 @@ foreign import ccall unsafe "glue.h PyErr_Print"
 foreign import ccall unsafe "glue.h PyImport_AddModule"
  cpyImport_AddModule :: CString -> IO (Ptr CPyObject)
 
+foreign import ccall unsafe "glue.h hspy_none"
+ cNone :: IO (Ptr CPyObject)

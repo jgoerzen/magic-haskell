@@ -31,7 +31,7 @@ import qualified Control.Exception
 
 finally = Control.Exception.finally
 
-f fn exp = TestLabel fn $ TestCase $ 
+f fn exp = TestLabel fn $ TestCase $ handlePy exc2ioerror $
                       do bzf <- openBz2 ("testsrc/bz2files/" ++ fn) ReadMode 9
                          c <- vGetContents bzf
                          exp @=? c
@@ -42,31 +42,39 @@ test_bunzip2 =
     [
      f "t1.bz2" "Test 1"
     ,f "t2.bz2" "Test 1Test 2"
+    ,f "empty.bz2" ""
     ,TestCase $ do bzf <- openBz2 "testsrc/bz2files/zeros.bz2" ReadMode 1
                    c <- vGetContents bzf
                    10485760 @=? length c
                    vClose bzf
-    ,f "zeros.gz" (replicate 10485760 '\0')
+    ,f "zeros.bz2" (replicate 10485760 '\0')
     ]
 
 test_bzip2 = TestCase $ 
     handlePy exc2ioerror $
-    do bzf <- openBz2 "testsrc/bz2files/deleteme.bz2" ReadWriteMode 9
-       finally (do vPutStr bzf "Test 1\n"
+    do putStrLn "\nopening\n"
+       bzf <- openBz2 "testsrc/bz2files/deleteme.bz2" WriteMode 9
+       putStrLn "\nopened\n"
+       finally (do putStrLn "\n\n0a\n"
+                   vPutStr bzf "Test 1\n"
+                   print "0"
                    vSeek bzf AbsoluteSeek 5
+                   print "1"
                    vPutChar bzf '2'
                    vRewind bzf
-                   vGetLine bzf >>= (@=?) "Test 2"
                    vSeek bzf AbsoluteSeek 7
+                   print "2"
                    vFlush bzf
                    vPutStr bzf "Test 3\n"
                    vPutStr bzf (replicate 1048576 't')
                    vPutChar bzf '\n'
                    vClose bzf
+                   print "3"
                    bzf2 <- openBz2 "testsrc/bz2files/deleteme.bz2" ReadMode 9
                    vGetLine bzf2 >>= (@=? "Test 2")
                    vGetLine bzf2 >>= (@=? "Test 3")
                    vRewind bzf2
+                   print "4"
                    c <- vGetContents bzf2
                    ("Test 2\nTest 3\n" ++ (replicate 1048576 't') ++ "\n") 
                       @=? c

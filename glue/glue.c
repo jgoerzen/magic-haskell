@@ -34,7 +34,7 @@ int hspy_tuple_check(PyObject *o) {
   return PyTuple_Check(o);
 }
 
-PyObject ** hspy_getexc() {
+PyObject ** hspy_getexc(void) {
   static PyObject *retval [3];
   PyObject *type;
   PyObject *val;
@@ -48,3 +48,9 @@ PyObject ** hspy_getexc() {
   PyErr_Clear();
   return retval;
 }
+
+PyObject *hspy_none(void) {
+  Py_INCREF(Py_None);
+  return Py_None;
+}
+

@@ -22,3 +22,4 @@ extern void hspy_incref(PyObject *o);
 extern PyObject ** hspy_getexc();
 extern int hspy_list_check(PyObject *o);
 extern int hspy_tuple_check(PyObject *o);
+extern PyObject *hspy_none(void);

@@ -52,11 +52,15 @@ import Python.Objects.File
 is opened read-only.
 
 Once opened, the functions defined in 'MissingH.IO.HVIO' can be used
-to work with it. -}
+to work with it.
+
+BZip2 supports only ReadMode and WriteMode for the IOMode. -}
 openBz2 :: FilePath             -- ^ File to open
         -> IOMode               -- ^ Mode to open with
         -> Int                  -- ^ Compression Level
         -> IO PyFile            -- ^ Resulting handle
+openBz2 _ ReadWriteMode _ = fail "BZip2 doesn't support ReadWriteMode"
+openBz2 _ AppendMode _ = fail "BZip2 doesn't support AppendMode"
 openBz2 fp mode level =
     do ofp <- toPyObject fp
        omode <- toPyObject (openModeConv mode)

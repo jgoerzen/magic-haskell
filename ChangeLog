@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-01-31 22:43:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-39
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingexts--head--0.7--patch-39
+
+
+    new files:
+     Python/Exceptions/.arch-ids/=id Python/Exceptions/ExcTypes.hsc
+
+    modified files:
+     ChangeLog MissingPy.cabal
+
+    new directories:
+     Python/Exceptions Python/Exceptions/.arch-ids
+
+
 2005-01-31 22:00:11 GMT	John Goerzen <jgoerzen@complete.org>	patch-38
 
     Summary:

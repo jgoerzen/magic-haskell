@@ -10,7 +10,8 @@ Exposed-Modules: Python.Types,
  Python.Utils,
  Python.Objects,
  Python.Interpreter,
- Python.Exceptions
+ Python.Exceptions,
+ Python.Exceptions.ExcTypes
 Include-Dirs: /usr/include/python2.3, glue
 Extra-Libs: python2.3
 Build-Depends: haskell-src, MissingH

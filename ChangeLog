@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingexts--head--0.7
 #
 
+2005-02-04 03:22:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-80
+
+    Summary:
+      final fixes
+    Revision:
+      missingexts--head--0.7--patch-80
+
+
+    modified files:
+     COPYRIGHT ChangeLog debian/changelog debian/copyright
+
+
 2005-02-04 03:19:23 GMT	John Goerzen <jgoerzen@complete.org>	patch-79
 
     Summary:

@@ -1,6 +1,6 @@
 missingpy (0.1.0) unstable; urgency=low
 
-  * Initial release.
+  * Initial release.  Closes: #293510.
 
  -- John Goerzen <jgoerzen@complete.org>  Wed, 26 Jan 2005 10:34:22 -0600
 

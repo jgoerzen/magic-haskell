@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 module Interpretertest(tests) where
-import HUnit
+import Test.HUnit
 import Python.Interpreter
 import Foreign.C.Types
 import Python.Objects

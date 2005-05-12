@@ -1,7 +1,7 @@
 Source: missingpy
 Priority: optional
 Maintainer: John Goerzen <jgoerzen@complete.org>
-Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.2.2), ghc6 (<< 6.2.3), haskell-devscripts (>= 0.5.6), libghc6-hunit-dev, python-dev (>= 2.3.3), python-gdbm (>= 2.3.3), haddock, python-dev (<< 2.4), libghc6-missingh-dev (>= 0.9.2)
+Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.4), ghc6 (<< 6.4-999), haskell-devscripts (>= 0.5.6), python-dev (>= 2.3.3), python-gdbm (>= 2.3.3), haddock, python-dev (<< 2.4), libghc6-missingh-dev (>= 0.9.2)
 #Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs, haskell-devscripts (>= 0.5.4), libhugs-hunit
 Standards-Version: 3.6.1
 Section: devel

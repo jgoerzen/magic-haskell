@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 module Dicttest(mf, generic_test, tests) where
-import HUnit
+import Test.HUnit
 import MissingH.List
 import MissingH.IO.HVFS
 import MissingH.IO.HVFS.InstanceHelpers

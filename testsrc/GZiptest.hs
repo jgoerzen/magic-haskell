@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 module GZiptest(tests) where
-import HUnit
+import Test.HUnit
 import Python.Exceptions
 import MissingPy.FileArchive.GZip
 import Data.List

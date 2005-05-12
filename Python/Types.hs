@@ -67,7 +67,7 @@ pyExceptionTc :: TyCon
 pyExceptionTc = mkTyCon "MissingPy.Python.Types.PyException"
 
 instance Typeable PyException where
-    typeOf _ = mkAppTy pyExceptionTc []
+    typeOf _ = mkTyConApp pyExceptionTc []
 
 {- | How to interpret a snippet of Python code. -}
 data StartFrom = Py_eval_input

@@ -61,96 +61,102 @@ import Foreign
 #include <Python.h>
 
 -- e :: Ptr (Ptr CPyObject) -> PyObject
-exctypes_internal_e x = unsafePerformIO $ do p <- peek x
+{-# NOINLINE exctypes_internal_e #-}
+exctypes_internal_e x =                   do p <- peek x
                                              fp <- newForeignPtr_ p
                                              return $ PyObject fp
 
 -- | Exception in Python
 pyMainException :: PyObject
-pyMainException = exctypes_internal_e cException
+pyMainException = unsafePerformIO $ exctypes_internal_e cException
 
 standardError :: PyObject
-standardError = exctypes_internal_e cStandardError
+standardError = unsafePerformIO $ exctypes_internal_e cStandardError
 
 arithmeticError :: PyObject
-arithmeticError = exctypes_internal_e cArithmeticError
+arithmeticError = unsafePerformIO $ exctypes_internal_e cArithmeticError
 
 lookupError :: PyObject
-lookupError = exctypes_internal_e cLookupError
+lookupError = unsafePerformIO $ exctypes_internal_e cLookupError
 
 assertionError :: PyObject
-assertionError = exctypes_internal_e cAssertionError
+assertionError = unsafePerformIO $ exctypes_internal_e cAssertionError
 
 attributeError :: PyObject
-attributeError = exctypes_internal_e cAttributeError
+attributeError = unsafePerformIO $ exctypes_internal_e cAttributeError
 
 pyEOFError :: PyObject
-pyEOFError = exctypes_internal_e cEOFError
+pyEOFError = unsafePerformIO $ exctypes_internal_e cEOFError
 
 environmentError :: PyObject
-environmentError = exctypes_internal_e cEnvironmentError
+environmentError = unsafePerformIO $ exctypes_internal_e cEnvironmentError
 
 floatingPointError :: PyObject
-floatingPointError = exctypes_internal_e cFloatingPointError
+floatingPointError = unsafePerformIO $ exctypes_internal_e cFloatingPointError
 
 pyIOError :: PyObject
-pyIOError = exctypes_internal_e cStandardError
+pyIOError = unsafePerformIO $ exctypes_internal_e cStandardError
 
 importError :: PyObject
-importError = exctypes_internal_e cImportError
+importError = unsafePerformIO $ exctypes_internal_e cImportError
 
 indexError :: PyObject
-indexError = exctypes_internal_e cIndexError
+indexError = unsafePerformIO $ exctypes_internal_e cIndexError
 
 keyError :: PyObject
-keyError = exctypes_internal_e cKeyError
+keyError = unsafePerformIO $ exctypes_internal_e cKeyError
 
 keyboardInterrupt :: PyObject
-keyboardInterrupt = exctypes_internal_e cKeyboardInterrupt
+keyboardInterrupt = unsafePerformIO $ exctypes_internal_e cKeyboardInterrupt
 
 memoryError :: PyObject
-memoryError = exctypes_internal_e cMemoryError
+memoryError = unsafePerformIO $ exctypes_internal_e cMemoryError
 
 nameError :: PyObject
-nameError = exctypes_internal_e cNameError
+nameError = unsafePerformIO $ exctypes_internal_e cNameError
 
 notImplementedError :: PyObject
-notImplementedError = exctypes_internal_e cNotImplementedError
+notImplementedError = unsafePerformIO $ exctypes_internal_e cNotImplementedError
 
 pyOSError :: PyObject
-pyOSError = exctypes_internal_e cOSError
+pyOSError = unsafePerformIO $ exctypes_internal_e cOSError
 
 overflowError :: PyObject
-overflowError = exctypes_internal_e cOverflowError
+overflowError = unsafePerformIO $ exctypes_internal_e cOverflowError
 
 referenceError :: PyObject
-referenceError = exctypes_internal_e cReferenceError
+referenceError = unsafePerformIO $ exctypes_internal_e cReferenceError
 
 runtimeError :: PyObject
-runtimeError = exctypes_internal_e cRuntimeError
+runtimeError = unsafePerformIO $ exctypes_internal_e cRuntimeError
 
 syntaxError :: PyObject
-syntaxError = exctypes_internal_e cSyntaxError
+syntaxError = unsafePerformIO $ exctypes_internal_e cSyntaxError
 
 systemError :: PyObject
-systemError = exctypes_internal_e cSystemError
+systemError = unsafePerformIO $ exctypes_internal_e cSystemError
 
 systemExit :: PyObject
-systemExit = exctypes_internal_e cSystemExit
+systemExit = unsafePerformIO $ exctypes_internal_e cSystemExit
 
+{-# NOINLINE typeError #-}
 typeError :: PyObject
-typeError = exctypes_internal_e cTypeError
+--typeError = unsafePerformIO $ exctypes_internal_e cTypeError
+typeError = unsafePerformIO $
+              do p <- cTypeError2
+                 fp <- newForeignPtr_ p
+                 return $ PyObject fp
 
 valueError :: PyObject
-valueError = exctypes_internal_e cValueError
+valueError = unsafePerformIO $ exctypes_internal_e cValueError
 
 #ifdef MS_WINDOWS
 windowsError :: PyObject
-windowsError = exctypes_internal_e cWindowsError
+windowsError = unsafePerformIO $ exctypes_internal_e cWindowsError
 #endif
 
 zeroDivisionError :: PyObject
-zeroDivisionError = exctypes_internal_e cZeroDivisionError
+zeroDivisionError = unsafePerformIO $ exctypes_internal_e cZeroDivisionError
 
 
 foreign import ccall unsafe "&PyExc_Exception" cException :: Ptr (Ptr CPyObject)
@@ -184,3 +190,5 @@ foreign import ccall unsafe "&PyExc_WindowsError" cWindowsError :: Ptr (Ptr CPyO
 #endif
 foreign import ccall unsafe "&PyExc_ZeroDivisionError" cZeroDivisionError :: Ptr (Ptr CPyObject)
 
+foreign import ccall unsafe "glue.h hspy_test"
+ cTypeError2 :: IO (Ptr CPyObject)

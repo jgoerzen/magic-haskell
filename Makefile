@@ -70,3 +70,6 @@ interact: interact-hugs
 
 test: test-ghc6
 
+genexceptions:
+	runhugs genexceptions.hs
+

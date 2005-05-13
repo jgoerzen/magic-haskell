@@ -83,17 +83,22 @@ raisePyException =
                                     fromCPyObject p
                             else fromCPyObject cval
         in alloca (\typeptr -> alloca (\valptr -> alloca (\tbptr ->
-       do pyErr_Fetch typeptr valptr tbptr
+       do print "fetching"
+          pyErr_Fetch typeptr valptr tbptr
+          print "normalizing"
           pyErr_NormalizeException typeptr valptr tbptr
+          print "peeking"
           ctype <- peek typeptr
           cval <- peek valptr
           ctb <- peek tbptr
+          print "noneorptring"
           otype <- noneorptr ctype
           oval <- noneorptr cval
           otb <- noneorptr ctb
           --seq otype $ return ()
           --seq oval $ return ()
           --seq otb $ return ()
+          print "last"
           let exc = PyException {excType = otype, excValue = oval,
                                  excTraceBack = otb,
                                  excFormatted = ""}

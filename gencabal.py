@@ -44,7 +44,7 @@ Exposed-Modules: Python.Types,
  MissingPy.FileArchive.BZip2,
  MissingPy.AnyDBM
 Other-Modules: Python.ForeignImports
-Build-Depends: haskell-src, MissingH>=0.9.0
+Build-Depends: haskell-src, MissingH>=0.11.0
 GHC-Options: -O2
 Extensions: ForeignFunctionInterface, TypeSynonymInstances
 """

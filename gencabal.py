@@ -26,7 +26,7 @@ Extra-Lib-Dirs: %(libpaths)s
 -- need editing.
 CC-Options: -Iglue
 Name: MissingPy
-Version: 0.8.0
+Version: 0.2.0
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha

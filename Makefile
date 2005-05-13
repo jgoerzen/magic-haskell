@@ -50,7 +50,8 @@ testsrc/runtests: all $(shell find . -name "*.hs") \
 	   -hidir dist/build -package mtl -idist/build -itestsrc \
 	   -L/usr/lib -L/usr/lib/python2.3/site-packages \
 	   -I/usr/include/python2.3 \
-		-package HUnit --make testsrc/runtests.hs dist/build/glue/glue.o -lpython2.3
+		-package HUnit --make testsrc/runtests.hs \
+		dist/build/glue/glue.o dist/build/glue/excglue.o -lpython2.3
 
 # dist/build/libHSMissingPy-*
 test-ghc6: testsrc/runtests

@@ -34,8 +34,11 @@ test_base =
     let handler e = return ()
         in
         [
-
-         TestCase $ catchSpecificPy typeError (
+         TestCase $ catchPy (
+                       do r <- pyRun_StringHs " 2 + None" Py_eval_input noKwParms
+                          r @=? "no exception raised"
+                            ) handler
+        ,TestCase $ catchSpecificPy typeError (
                        do r <- pyRun_StringHs "2 + None" Py_eval_input noKwParms
                           r @=? "no exception raised"
                                                ) handler

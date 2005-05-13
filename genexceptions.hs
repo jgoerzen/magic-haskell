@@ -1,5 +1,7 @@
 import MissingH.Str
 import Data.List
+import System.IO
+import Data.Char
 
 notice = " NOTICE -- THIS FILE IS AUTO-GENERATED -- DO NOT EDIT"
 
@@ -9,14 +11,14 @@ ifdefcode str =
 windowsexc = "WindowsError"
 
 genGlue copyright excs =
-    do h <- openFile "glue/excglue.h"
-       c <- openFile "glue/excglue.h"
-       let head = "/* " ++ notice ++ "\n" ++ copyright ++ 
+    do h <- openFile "glue/excglue.h" WriteMode
+       c <- openFile "glue/excglue.c" WriteMode
+       let heads = "/* " ++ notice ++ "\n" ++ copyright ++ 
               "*/\n#include <Python.h>"
-       hPutStrLn h head
-       hPutStrLn c head
+       hPutStrLn h heads
+       hPutStrLn c heads
        hPutStrLn h $ unlines . map excfunch $ excs
-       hPutstrLn h $ ifdefcode $ excfunch windowsexc
+       hPutStrLn h $ ifdefcode $ excfunch windowsexc
        hPutStrLn c $ unlines . map excfuncc $ excs
        hPutStrLn c $ ifdefcode $ excfuncc windowsexc
        hClose h
@@ -28,7 +30,7 @@ genGlue copyright excs =
               ++ "; }"
 
 genExcTypes copyright excs =
-    do h <- openFile "Python/Exceptions/ExcTypes.hsc"
+    do h <- openFile "Python/Exceptions/ExcTypes.hsc" WriteMode
        hPutStrLn h $ "{- " ++ notice ++ "\n" ++ copyright ++
                      "-}"
        hPutStrLn h $ unlines $ 
@@ -53,21 +55,21 @@ genExcTypes copyright excs =
            "",
            "Please note that windowsError is available only on Microsoft platforms.",
            "",
-           "Written by John Goerzen, jgoerzen\@complete.org",
+           "Written by John Goerzen, jgoerzen\\@complete.org",
            "-}",
            "#include <Python.h>",
            "module Python.Exceptions.ExcTypes",
            "("]
-       hPutStrLn $ ifdefcode $ (hsname windowsexc) ++ ","
-       hPutStrLn $ intersperse ',' . map hsname $ excs
-       hPutStrLn ")\nwhere"
-       hPutStrLn $ unlines $
+       hPutStrLn h $ concat $ intersperse ",\n" . map hsname $ excs
+       hPutStrLn h $ ifdefcode $ "," ++ (hsname windowsexc)
+       hPutStrLn h ")\nwhere"
+       hPutStrLn h $ unlines $
           ["import Python.Types",
            "import Python.Objects",
            "import System.IO.Unsafe",
            "import Python.Utils",
            "import Foreign",
-           "exctypes_internal_e :: IO (Ptr CPyObject) -> PyObject",
+           "exctypes_internal_e :: IO (Ptr CPyObject) -> IO PyObject",
            "exctypes_internal_e f = do p <- f",
            "                           fp <- newForeignPtr_ p",
            "                           return $ PyObject fp"
@@ -76,9 +78,16 @@ genExcTypes copyright excs =
        hPutStrLn h $ ifdefcode $ hsfunc windowsexc
        hPutStrLn h $ unlines . map cfunc $ excs
        hPutStrLn h $ ifdefcode $ cfunc windowsexc
+       hClose h
     where hsname "Exception" = "pyMainException"
-          hsname (x:xs) = toUpper x : xs
+          hsname "EOFError" = "pyEOFError"
+          hsname "IOError" = "pyIOError"
+          hsname "OSError" = "pyOSError"
+          hsname (x:xs) = toLower x : xs
+          hscomment "Exception" = "-- | This is Exception in Python; renamed to avoid naming conflicts here.\n"
+          hscomment _ = ""
           hsfunc exc =
+              hscomment exc ++ 
               "{-# NOINLINE " ++ hsname exc ++ " #-}\n" ++
               hsname exc ++ " = unsafePerformIO $ exctypes_internal_e " ++
                 "c" ++ exc ++ "\n"
@@ -88,7 +97,7 @@ genExcTypes copyright excs =
               
 
 main = do c <- readFile "exceptionlist"
-          copyright <- readfile "COPYRIGHT"
+          copyright <- readFile "COPYRIGHT"
           let excs = sort . map strip . filter (/= "") . lines $ c
           genGlue copyright excs
           genExcTypes copyright excs

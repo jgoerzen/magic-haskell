@@ -20,11 +20,11 @@ Basic types for CDK programs.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module CDK.Types(CDKscreen)
+module CDK.Types(CDKScreen)
 where
 
 import Foreign.Ptr
 
-type CCDKscreen = ()
-type CDKscreen = Ptr CCDKscreen
+type CCDKScreen = ()
+type CDKScreen = Ptr CCDKScreen
 

@@ -20,7 +20,9 @@ Initialization and shutdown for CDK programs
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module CDK.Init(initCDK)
+module CDK.Init(initCDK, initCDKColor,
+                destroyCDKScreen,
+                endCDK)
 where
 
 import Foreign.Ptr
@@ -28,4 +30,20 @@ import CDK.Types
 
 {- | Initialize curses and CDK.  Returns the new cdkscreen handle. -}
 foreign import ccall safe "glue.h initialize_cdk"
-  initCDK :: IO CDKscreen
+  initCDK :: IO CDKScreen
+
+{- | 
+starts the Cdk color capabilities.  It defines 64 color pairs each
+            of  which is accessible using the COLOR_PAIR macro.  If you do not
+            have color support, this function call makes no difference.
+-}
+foreign import ccall safe "cdk/cdk.h initCDKColor"
+  initCDKColor :: IO ()
+
+{- | Destroys a CDK screen. -}
+foreign import ccall safe "cdk/cdk.h destroyCDKScreen"
+  destroyCDKScreen :: CDKScreen -> IO ()
+
+{- | Cleans up CDK and shuts down curses. -}
+foreign import ccall safe "cdk/cdk.h endCDK"
+  endCDK :: IO ()

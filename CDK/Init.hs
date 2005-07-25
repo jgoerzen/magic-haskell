@@ -29,7 +29,7 @@ import Foreign.Ptr
 import CDK.Types
 
 {- | Initialize curses and CDK.  Returns the new cdkscreen handle. -}
-foreign import ccall safe "glue.h initialize_cdk"
+foreign import ccall unsafe "glue.h initialize_cdk"
   initCDK :: IO CDKScreen
 
 {- | 
@@ -37,13 +37,13 @@ starts the Cdk color capabilities.  It defines 64 color pairs each
             of  which is accessible using the COLOR_PAIR macro.  If you do not
             have color support, this function call makes no difference.
 -}
-foreign import ccall safe "cdk/cdk.h initCDKColor"
+foreign import ccall unsafe "cdk/cdk.h initCDKColor"
   initCDKColor :: IO ()
 
 {- | Destroys a CDK screen. -}
-foreign import ccall safe "cdk/cdk.h destroyCDKScreen"
+foreign import ccall unsafe "cdk/cdk.h destroyCDKScreen"
   destroyCDKScreen :: CDKScreen -> IO ()
 
 {- | Cleans up CDK and shuts down curses. -}
-foreign import ccall safe "cdk/cdk.h endCDK"
+foreign import ccall unsafe "cdk/cdk.h endCDK"
   endCDK :: IO ()

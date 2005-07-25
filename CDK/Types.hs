@@ -26,5 +26,7 @@ where
 import Foreign.Ptr
 
 type CCDKScreen = ()
+
+{- | Main CDK screen type -}
 type CDKScreen = Ptr CCDKScreen
 

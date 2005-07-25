@@ -1,4 +1,4 @@
-{- 
+{-  -*- Mode: haskell; -*-
 Haskell CDK Interface
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
@@ -20,13 +20,24 @@ Basic types for CDK programs.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module CDK.Types(CDKScreen)
+module CDK.Types(CDKScreen, CDKEntry)
 where
 
 import Foreign.Ptr
+import Data.Word
+import Data.Int
 
-type CCDKScreen = ()
+#include <cdk/cdk.h>
+#include <ncurses.h>
+
+data CCDKScreen
 
 {- | Main CDK screen type -}
 type CDKScreen = Ptr CCDKScreen
 
+data CCDKEntry
+
+{- | CDK Entry -}
+type CDKEntry = Ptr CCDKEntry
+
+type Chtype = #type chtype

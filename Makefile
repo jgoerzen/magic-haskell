@@ -15,13 +15,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+PROJECT := LDAP
+
 .PHONY: all
 all: setup
 	./setup configure
 	./setup build
 
 PYTHON ?= python
-setup: Setup.lhs CDK.cabal
+setup: Setup.lhs LDAP.cabal
 	ghc -package Cabal Setup.lhs -o setup
 
 

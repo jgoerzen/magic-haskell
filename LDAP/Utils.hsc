@@ -24,7 +24,7 @@ should be considered to be the source code.
 
 -}
 
-module LDAP.Utils(checkLE) where
+module LDAP.Utils(checkLE, checkNULL) where
 import Foreign.Ptr
 import LDAP.Constants
 import LDAP.Exceptions

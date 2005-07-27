@@ -1,5 +1,5 @@
 {- -*- Mode: haskell; -*-
-Haskell CDK Interface
+Haskell LDAP Interface
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
 This code is under a 3-clause BSD license; see COPYING for details.
@@ -28,18 +28,22 @@ import Foreign.Ptr
 import Foreign.C.String
 import LDAP.Types
 import Foreign.C.Types
+import LDAP.Utils
 
 {- | Preferred way to initialize a LDAP connection. 
-The default port is given in 'LDAP.Constants.ldapPort' -}
+The default port is given in 'LDAP.Constants.ldapPort'.
+
+Could throw IOError on failure. -}
 ldapInit :: String -> LDAPInt -> IO LDAP
 ldapInit host port =
     withCString host (\cs ->
-       cldap_init cs port)
+       checkNULL "ldapInit" $ cldap_init cs port)
 
+{- | Like 'ldapInit', but establish network connection immediately. -}
 ldapOpen :: String -> CInt -> IO LDAP
 ldapOpen host port =
     withCString host (\cs ->
-                      cldap_open cs port)
+                      checkNULL "ldapOpen" $ cldap_open cs port)
 
 foreign import ccall unsafe "ldap.h ldap_init"
   cldap_init :: CString -> CInt -> IO LDAP

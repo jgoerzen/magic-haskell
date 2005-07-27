@@ -1,4 +1,4 @@
-Extra-Libraries: cdk, ncurses
+Extra-Libraries: ldap
 -- End detected settings section.  Everything below here should not
 -- need editing.
 Name: CDK
@@ -8,9 +8,9 @@ Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha
 Copyright: Copyright (c) 2005 John Goerzen
 C-Sources: glue/glue.c
-Exposed-Modules: CDK.Types,
- CDK.Init,
- CDK.Constants
+Exposed-Modules: LDAP.Types,
+ LDAP.Init,
+ LDAP.Constants
 --Other-Modules: Python.ForeignImports
 Build-Depends: haskell-src
 GHC-Options: -O2

@@ -20,7 +20,7 @@ CDK constants for use in your programs
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module CDK.Constants
+module LDAP.Constants
     (cLEFT, cRIGHT, cCENTER, cTOP,
      cBOTTOM, cHORIZONTAL, cVERTICAL,
      cNONE, cROW, cCOL)

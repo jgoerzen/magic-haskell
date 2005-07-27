@@ -29,14 +29,8 @@ import Data.Int
 
 #include <ldap.h>
 
-data CCDKScreen
+data CLDAP
 
-{- | Main CDK screen type -}
-type CDKScreen = Ptr CCDKScreen
+{- | Main LDAP object type -}
+type LDAP = Ptr CLDAP
 
-data CCDKEntry
-
-{- | CDK Entry -}
-type CDKEntry = Ptr CCDKEntry
-
-type Chtype = #type chtype

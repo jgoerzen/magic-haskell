@@ -11,7 +11,7 @@ C-Sources: glue/glue.c
 Exposed-Modules: LDAP.Types,
  LDAP.Init,
  LDAP.Constants
---Other-Modules: Python.ForeignImports
+Other-Modules: LDAP.Utils
 Build-Depends: haskell-src
 GHC-Options: -O2
 CC-Options: -Iglue

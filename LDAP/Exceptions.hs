@@ -31,22 +31,31 @@ where
 import Data.Dynamic
 import Data.Typeable
 import Control.Exception
+import LDAP.Types
 
 {- | The basic type of LDAP exceptions.  These are raised when an operation
 does not indicate success. -}
 
 data LDAPException = LDAPException 
     {code :: LDAPInt,           -- ^ Numeric error code
-     description :: String      -- ^ Description of error
+     description :: String,     -- ^ Description of error
+     caller :: String           -- ^ Calling function
     }
 instance Show LDAPException where
-    show x = "LDAPException " ++ show (code x) ++ ": " ++ description x
+    show x = caller x ++ ": LDAPException " ++ show (code x) ++ ": " 
+             ++ description x
 
 instance Eq LDAPException where
     x == y = code x == code y
 
 instance Ord LDAPException where
     compare x y = compare (code x) (code y)
+
+ldapExceptionTc :: TyCon
+ldapExceptionTc = mkTyCon "LDAP.LDAPException"
+
+instance Typeable LDAPException where
+    typeOf _ = mkTyConApp ldapExceptionTc []
 
 {- | Execute the given IO action.
 

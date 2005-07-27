@@ -20,8 +20,7 @@ LDAP constants for use in your programs
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module LDAP.Constants
-    (ldapPort)
+module LDAP.Constants(module LDAP.Constants)
 where
 import Foreign.C.Types
 import LDAP.Types

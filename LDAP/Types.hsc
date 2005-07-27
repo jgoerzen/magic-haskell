@@ -20,12 +20,13 @@ Basic types for LDAP programs.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module LDAP.Types
+module LDAP.Types(LDAP, LDAPInt)
 where
 
 import Foreign.Ptr
 import Data.Word
 import Data.Int
+import Foreign.C.Types
 
 #include <ldap.h>
 
@@ -34,3 +35,5 @@ data CLDAP
 {- | Main LDAP object type -}
 type LDAP = Ptr CLDAP
 
+{- | Convenience type so we use the correct ints for the LDAP library. -}
+type LDAPInt = CInt

@@ -20,8 +20,8 @@ Initialization and shutdown for LDAP programs
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module LDAP.Init(ldap_open,
-                 ldap_init)
+module LDAP.Init(ldapOpen,
+                 ldapInit)
 where
 
 import Foreign.Ptr
@@ -29,14 +29,15 @@ import Foreign.C.String
 import LDAP.Types
 import Foreign.C.Types
 
-{- | Preferred way to initialize a LDAP connection. -}
-ldap_init :: String -> CInt -> IO LDAP
-ldap_init host port =
+{- | Preferred way to initialize a LDAP connection. 
+The default port is given in 'LDAP.Constants.ldapPort' -}
+ldapInit :: String -> LDAPInt -> IO LDAP
+ldapInit host port =
     withCString host (\cs ->
        cldap_init cs port)
 
-ldap_open :: String -> CInt -> IO LDAP
-ldap_open host port =
+ldapOpen :: String -> CInt -> IO LDAP
+ldapOpen host port =
     withCString host (\cs ->
                       cldap_open cs port)
 
@@ -46,5 +47,4 @@ foreign import ccall unsafe "ldap.h ldap_init"
 
 foreign import ccall unsafe "ldap.h ldap_open"
   cldap_open :: CString -> CInt -> IO LDAP
-
 

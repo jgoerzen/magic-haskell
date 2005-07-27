@@ -1,12 +1,12 @@
 {- -*- Mode: haskell; -*-
-Haskell CDK Interface
+Haskell LDAP Interface
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
 This code is under a 3-clause BSD license; see COPYING for details.
 -}
 
 {- |
-   Module     : CDK.Constants
+   Module     : LDAP.Constants
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : BSD
 
@@ -15,27 +15,17 @@ This code is under a 3-clause BSD license; see COPYING for details.
    Stability  : provisional
    Portability: portable
 
-CDK constants for use in your programs
+LDAP constants for use in your programs
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module LDAP.Constants
-    (cLEFT, cRIGHT, cCENTER, cTOP,
-     cBOTTOM, cHORIZONTAL, cVERTICAL,
-     cNONE, cROW, cCOL)
+    (ldapPort)
 where
+import Foreign.C.Types
+import LDAP.Types
 
-#include "cdk/cdk.h"
+#include "ldap.h"
 
-cLEFT = #const LEFT
-cRIGHT = #const RIGHT
-cCENTER = #const CENTER
-cTOP = #const TOP
-cBOTTOM = #const BOTTOM
-cHORIZONTAL = #const HORIZONTAL
-cVERTICAL = #const VERTICAL
-
-cNONE = #const NONE
-cROW = #const ROW
-cCOL = #const COL
+#enum LDAPInt, , LDAP_PORT

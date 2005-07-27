@@ -20,7 +20,7 @@ Basic types for LDAP programs.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module LDAP.Types(LDAP, LDAPInt)
+module LDAP.Types(LDAP, LDAPInt, BERInt, BERTag)
 where
 
 import Foreign.Ptr
@@ -37,3 +37,9 @@ type LDAP = Ptr CLDAP
 
 {- | Convenience type so we use the correct ints for the LDAP library. -}
 type LDAPInt = CInt
+
+{- | BER type tag -}
+type BERTag = #type ber_tag_t
+
+{- | BER int type -}
+type BERInt = #type ber_int_t

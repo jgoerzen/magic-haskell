@@ -27,6 +27,7 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
  */
 
-#include <cdk/cdk.h>
+#include <ldap.h>
 
-extern CDKSCREEN *initialize_cdk(void);
+extern void freeLDAPObject(LDAP *ld);
+

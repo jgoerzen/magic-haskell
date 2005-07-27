@@ -27,13 +27,16 @@ import Foreign.Ptr
 import Data.Word
 import Data.Int
 import Foreign.C.Types
+import Foreign.ForeignPtr
+import LDAP.TypesLL
 
 #include <ldap.h>
 
-data CLDAP
+{- | Main LDAP object type.
 
-{- | Main LDAP object type -}
-type LDAP = Ptr CLDAP
+LDAP objects are automatically unbound (and memory freed) when they are
+garbage-collected by Haskell. -}
+type LDAP = ForeignPtr CLDAP
 
 {- | Convenience type so we use the correct ints for the LDAP library. -}
 type LDAPInt = CInt

@@ -37,18 +37,18 @@ Could throw IOError on failure. -}
 ldapInit :: String -> LDAPInt -> IO LDAP
 ldapInit host port =
     withCString host (\cs ->
-       checkNULL "ldapInit" $ cldap_init cs port)
+       fromLDAPPtr "ldapInit" $ cldap_init cs port)
 
 {- | Like 'ldapInit', but establish network connection immediately. -}
 ldapOpen :: String -> CInt -> IO LDAP
 ldapOpen host port =
     withCString host (\cs ->
-                      checkNULL "ldapOpen" $ cldap_open cs port)
+                      fromLDAPPtr "ldapOpen" $ cldap_open cs port)
 
 foreign import ccall unsafe "ldap.h ldap_init"
-  cldap_init :: CString -> CInt -> IO LDAP
+  cldap_init :: CString -> CInt -> IO LDAPPtr
 
 
 foreign import ccall unsafe "ldap.h ldap_open"
-  cldap_open :: CString -> CInt -> IO LDAP
+  cldap_open :: CString -> CInt -> IO LDAPPtr
 

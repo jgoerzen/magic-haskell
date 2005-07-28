@@ -32,12 +32,13 @@ import Data.Dynamic
 import Data.Typeable
 import Control.Exception
 import LDAP.Types
+import LDAP.Data
 
 {- | The basic type of LDAP exceptions.  These are raised when an operation
 does not indicate success. -}
 
 data LDAPException = LDAPException 
-    {code :: LDAPErrorCode,     -- ^ Numeric error code
+    {code :: LDAPReturnCode,     -- ^ Numeric error code
      description :: String,     -- ^ Description of error
      caller :: String           -- ^ Calling function
     }

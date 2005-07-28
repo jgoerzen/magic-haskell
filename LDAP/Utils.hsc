@@ -30,6 +30,7 @@ import Foreign.Ptr
 import LDAP.Constants
 import LDAP.Exceptions
 import LDAP.Types
+import LDAP.Data
 import LDAP.TypesLL
 import Control.Exception
 import Data.Dynamic

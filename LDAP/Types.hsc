@@ -18,12 +18,13 @@ This code is under a 3-clause BSD license; see COPYING for details.
 Basic types for LDAP programs.
 
 Written by John Goerzen, jgoerzen\@complete.org
+
+See also "LDAP.Data" for types relating to return codes, option codes, etc.
 -}
 
 module LDAP.Types(-- * General
-                  LDAP, LDAPInt, BERInt, BERTag,
-                  -- * Return Codes
-                  LDAPErrorCode(..))
+                  LDAP, LDAPInt, BERInt, BERTag
+                 )
 where
 
 import Foreign.Ptr

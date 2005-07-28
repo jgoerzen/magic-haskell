@@ -42,7 +42,8 @@ data LDAPException = LDAPException
      caller :: String           -- ^ Calling function
     }
 instance Show LDAPException where
-    show x = caller x ++ ": LDAPException " ++ show (code x) ++ ": " 
+    show x = caller x ++ ": LDAPException " ++ show (code x) ++ 
+             "(" ++ show (fromEnum $ code x) ++ "): " ++
              ++ description x
 
 instance Eq LDAPException where

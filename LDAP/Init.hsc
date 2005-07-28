@@ -6,7 +6,7 @@ This code is under a 3-clause BSD license; see COPYING for details.
 -}
 
 {- |
-   Module     : CDK.Init
+   Module     : LDAP.Init
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : BSD
 

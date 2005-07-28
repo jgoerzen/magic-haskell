@@ -60,6 +60,7 @@ main =
     do putStrLn modHeader
        putStrLn (errorClause "LDAPReturnCode" errorConsts)
        putStrLn (errorClause "LDAPOptionCode" optionConsts)
+       putStrLn (errorClause "LDAPScope" scopeConsts)
 
 errorConsts = [
       "LDAP_SUCCESS", "LDAP_OPERATIONS_ERROR", "LDAP_PROTOCOL_ERROR", 
@@ -96,3 +97,7 @@ optionConsts = [
       "LDAP_OPT_HOST_NAME", "LDAP_OPT_ERROR_NUMBER", "LDAP_OPT_ERROR_STRING", 
       "LDAP_OPT_MATCHED_DN", "LDAP_OPT_ON", "LDAP_OPT_OFF", "LDAP_OPT_SUCCESS",
       "LDAP_OPT_ERROR"]
+
+scopeConsts = [
+      "LDAP_SCOPE_DEFAULT", "LDAP_SCOPE_BASE", "LDAP_SCOPE_ONELEVEL",
+      "LDAP_SCOPE_SUBTREE"]

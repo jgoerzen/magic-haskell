@@ -293,3 +293,32 @@ instance Eq LDAPOptionCode where
  x == y = (fromEnum x) == (fromEnum y)
 
 
+data LDAPScope =
+   LdapScopeDefault
+ | LdapScopeBase
+ | LdapScopeOnelevel
+ | LdapScopeSubtree
+ | UnknownLDAPScope Int
+
+ deriving (Show)
+
+instance Enum LDAPScope where
+ toEnum (#{const LDAP_SCOPE_DEFAULT}) = LdapScopeDefault
+ toEnum (#{const LDAP_SCOPE_BASE}) = LdapScopeBase
+ toEnum (#{const LDAP_SCOPE_ONELEVEL}) = LdapScopeOnelevel
+ toEnum (#{const LDAP_SCOPE_SUBTREE}) = LdapScopeSubtree
+ toEnum x = UnknownLDAPScope x
+
+ fromEnum LdapScopeDefault = (#{const LDAP_SCOPE_DEFAULT})
+ fromEnum LdapScopeBase = (#{const LDAP_SCOPE_BASE})
+ fromEnum LdapScopeOnelevel = (#{const LDAP_SCOPE_ONELEVEL})
+ fromEnum LdapScopeSubtree = (#{const LDAP_SCOPE_SUBTREE})
+ fromEnum (UnknownLDAPScope x) = x
+
+instance Ord LDAPScope where
+ compare x y = compare (fromEnum x) (fromEnum y)
+
+instance Eq LDAPScope where
+ x == y = (fromEnum x) == (fromEnum y)
+
+

@@ -10,7 +10,8 @@ Copyright: Copyright (c) 2005 John Goerzen
 C-Sources: glue/glue.c
 Exposed-Modules: LDAP.Types,
  LDAP.Init,
- LDAP.Constants
+ LDAP.Constants,
+ LDAP.Data
 Other-Modules: LDAP.Utils,
  LDAP.TypesLL
 Build-Depends: haskell-src

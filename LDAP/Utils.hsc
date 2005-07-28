@@ -43,10 +43,10 @@ import Foreign.ForeignPtr
 checkLE :: String -> IO LDAPInt -> IO ()
 checkLE callername action =
     do result <- action
-       if result == ldapSuccess
+       if result == fromIntegral (fromEnum LdapSuccess)
           then return ()
           else do s <- (ldap_err2string result >>= peekCString)
-                  let exc = LDAPException {code = result, 
+                  let exc = LDAPException {code = (toEnum (fromIntegral result)), 
                                            description = s,
                                            caller = callername}
                   throwDyn exc

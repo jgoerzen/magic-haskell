@@ -37,7 +37,7 @@ import LDAP.Types
 does not indicate success. -}
 
 data LDAPException = LDAPException 
-    {code :: LDAPInt,           -- ^ Numeric error code
+    {code :: LDAPErrorCode,     -- ^ Numeric error code
      description :: String,     -- ^ Description of error
      caller :: String           -- ^ Calling function
     }

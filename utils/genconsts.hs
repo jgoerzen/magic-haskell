@@ -21,17 +21,23 @@ errorClause =
     concat (intersperse "\n |" (map toDecl errorConsts)) ++
     "\n deriving (Eq, Bounded, Show)" ++
     "\n\ninstance Enum LDAPErrorCode where\n" ++
-    concat (intersperse "\n" (map enums errorConsts)) ++
-    "\n toEnum x = error \"Code \" ++ show x ++ \" is not a valid LDAPErrorCode\"\n"
+    concat (intersperse "\n" (map toenums errorConsts)) ++
+    "\n toEnum x = error $ \"Code \" ++ show x ++ \" is not a valid LDAPErrorCode\"\n" ++
+    "\n" ++ concat (intersperse "\n" (map fromenums errorConsts)) ++ "\n" ++
+    "instance Ord LDAPErrorCode where\n" ++
+    " compare x y = compare (fromEnum x) (fromEnum y)\n\n"
     where
     toDecl = const2HS
-    enums i = 
-        " toEnum " ++ getC i ++ " = " ++ hsi ++ "\n" ++
-        " fromEnum " ++ hsi ++ " = " ++ getC i
-        where hsi = const2HS i
+    toenums i = 
+        " toEnum " ++ getC i ++ " = " ++ (const2HS i)
+    fromenums i = 
+        " fromEnum " ++ (const2HS i) ++ " = " ++ getC i
 
-main =
-    putStrLn $ errorClause
+modHeader = "module LDAP.Data (module LDAP.Data) where\n\n#include \"ldap.h\"\n\n"
+
+main = 
+    do putStrLn modHeader
+       putStrLn errorClause
 
 errorConsts = [
       "LDAP_SUCCESS", "LDAP_OPERATIONS_ERROR", "LDAP_PROTOCOL_ERROR", 

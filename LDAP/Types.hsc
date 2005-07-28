@@ -20,7 +20,10 @@ Basic types for LDAP programs.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module LDAP.Types(LDAP, LDAPInt, BERInt, BERTag)
+module LDAP.Types(-- * General
+                  LDAP, LDAPInt, BERInt, BERTag,
+                  -- * Return Codes
+                  LDAPErrorCode(..))
 where
 
 import Foreign.Ptr
@@ -29,6 +32,7 @@ import Data.Int
 import Foreign.C.Types
 import Foreign.ForeignPtr
 import LDAP.TypesLL
+import LDAP.Data
 
 #include <ldap.h>
 

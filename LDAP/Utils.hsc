@@ -37,12 +37,12 @@ import Data.Dynamic
 import Foreign.C.Error
 import Foreign.C.String
 import Foreign.ForeignPtr
+import Foreign
 
 {- | Check the return value.  If it's something other than 
 'LDAP.Constants.ldapSuccess', raise an LDAP exception. -}
-
-checkLE :: String -> IO LDAPInt -> IO ()
-checkLE callername action =
+checkLE :: String -> LDAP -> IO LDAPInt -> IO ()
+checkLE callername ld action =
     do result <- action
        if result == fromIntegral (fromEnum LdapSuccess)
           then return ()
@@ -76,9 +76,29 @@ maybeWithLDAPPtr :: Maybe LDAP -> (LDAPPtr -> IO a) -> IO a
 maybeWithLDAPPtr Nothing func = func nullPtr
 maybeWithLDAPPtr (Just x) y = withLDAPPtr x y
 
+{- | Returns a string, doesn't raise exceptions on err (just crashes) -}
+ldapGetOptionStrNoEc :: LDAP -> LDAPOptionCode -> IO String
+ldapGetOptionStrNoEc ld oc =
+    withLDAPPtr ld (\pld ->
+     alloca (f pld))
+    where
+    oci = fromEnum oc
+    f pld (ptr::Ptr CString) = 
+        do res <- ldap_get_option pld (fromIntegral oci) (castPtr ptr)
+           if res /= 0
+              then fail $ "Crash in ldap_get_option, code " ++ show res
+              else do cstr <- peek ptr
+                      fp <- newForeignPtr ldap_memfree_call cstr
+                      withForeignPtr fp (peekCString)
+
 foreign import ccall unsafe "ldap.h &ldap_unbind"
   ldap_unbind :: FunPtr (LDAPPtr -> IO ()) -- ldap_unbind, ignoring retval
 
 foreign import ccall unsafe "ldap.h ldap_err2string"
-   ldap_err2string :: LDAPInt -> IO CString
+  ldap_err2string :: LDAPInt -> IO CString
 
+foreign import ccall unsafe "ldap.h ldap_get_option"
+  ldap_get_option :: LDAPPtr -> LDAPInt -> Ptr () -> IO LDAPInt
+
+foreign import ccall unsafe "ldap.h &ldap_memfree"
+  ldap_memfree_call :: FunPtr (CString -> IO ())

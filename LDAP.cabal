@@ -11,7 +11,8 @@ C-Sources: glue/glue.c
 Exposed-Modules: LDAP.Types,
  LDAP.Init,
  LDAP.Constants,
- LDAP.Data
+ LDAP.Data,
+ LDAP.Exceptions
 Other-Modules: LDAP.Utils,
  LDAP.TypesLL
 Build-Depends: haskell-src

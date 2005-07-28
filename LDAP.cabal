@@ -13,7 +13,8 @@ Exposed-Modules: LDAP,
  LDAP.Init,
  LDAP.Constants,
  LDAP.Data,
- LDAP.Exceptions
+ LDAP.Exceptions,
+ LDAP.Search
 Other-Modules: LDAP.Utils,
  LDAP.TypesLL
 Build-Depends: haskell-src

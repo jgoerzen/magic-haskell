@@ -25,7 +25,8 @@ should be considered to be the source code.
 -}
 
 module LDAP.Utils(checkLE, checkNULL, LDAPPtr, fromLDAPPtr,
-                  withLDAPPtr, maybeWithLDAPPtr) where
+                  withLDAPPtr, maybeWithLDAPPtr, withMString,
+                  withCStringArr) where
 import Foreign.Ptr
 import LDAP.Constants
 import LDAP.Exceptions
@@ -127,6 +128,14 @@ ldapGetOptionStrNoEc ld oc =
                              else do hstr <- peekCString cs
                                      return $ Just hstr
                                         )
+
+withMString :: Maybe String -> (CString -> IO a) -> IO a
+withMString Nothing action = action (nullPtr)
+withMString (Just str) action = withCString str action
+
+withCStringArr :: [String] -> (Ptr CString -> IO a) -> IO a
+withCStringArr inp action =
+    withArray0 nullPtr inp action
 
 foreign import ccall unsafe "ldap.h &ldap_unbind"
   ldap_unbind :: FunPtr (LDAPPtr -> IO ()) -- ldap_unbind, ignoring retval

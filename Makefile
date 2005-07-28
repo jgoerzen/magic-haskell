@@ -72,3 +72,6 @@ test: test-ghc6
 genexceptions:
 	runhugs genexceptions.hs
 
+data:
+	runhugs utils/genconsts.hs > LDAP/Data.hsc
+

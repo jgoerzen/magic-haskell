@@ -16,16 +16,20 @@ const2HS (x:xs) =
 
 getC const = "#{const " ++ const ++ "}"
 
-errorClause =
-    "data LDAPErrorCode = \n " ++
-    concat (intersperse "\n |" (map toDecl errorConsts)) ++
-    "\n deriving (Eq, Bounded, Show)" ++
-    "\n\ninstance Enum LDAPErrorCode where\n" ++
-    concat (intersperse "\n" (map toenums errorConsts)) ++
-    "\n toEnum x = error $ \"Code \" ++ show x ++ \" is not a valid LDAPErrorCode\"\n" ++
-    "\n" ++ concat (intersperse "\n" (map fromenums errorConsts)) ++ "\n" ++
-    "instance Ord LDAPErrorCode where\n" ++
-    " compare x y = compare (fromEnum x) (fromEnum y)\n\n"
+errorClause name consts =
+    "data " ++ name ++ " =\n   " ++
+    concat (intersperse "\n | " (map toDecl consts)) ++
+    "\n | Unknown" ++ name ++ " Int\n" ++
+    "\n deriving (Show)" ++
+    "\n\ninstance Enum " ++ name ++ " where\n" ++
+    concat (intersperse "\n" (map toenums consts)) ++
+    "\n toEnum x = Unknown" ++ name ++ " x\n" ++
+    "\n" ++ concat (intersperse "\n" (map fromenums errorConsts)) ++
+    "\n fromEnum (Unknown" ++ name ++ " x) = x\n" ++
+    "\ninstance Ord " ++ name ++ " where\n" ++
+    " compare x y = compare (fromEnum x) (fromEnum y)\n\n" ++
+    "instance Eq " ++ name ++ " where\n" ++
+    " x == y = (fromEnum x) == (fromEnum y)\n\n"
     where
     toDecl = const2HS
     toenums i = 
@@ -37,7 +41,7 @@ modHeader = "module LDAP.Data (module LDAP.Data) where\n\n#include \"ldap.h\"\n\
 
 main = 
     do putStrLn modHeader
-       putStrLn errorClause
+       putStrLn (errorClause "LDAPErrorCode" errorConsts)
 
 errorConsts = [
       "LDAP_SUCCESS", "LDAP_OPERATIONS_ERROR", "LDAP_PROTOCOL_ERROR", 

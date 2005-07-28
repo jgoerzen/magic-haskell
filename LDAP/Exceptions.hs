@@ -44,7 +44,7 @@ data LDAPException = LDAPException
 instance Show LDAPException where
     show x = caller x ++ ": LDAPException " ++ show (code x) ++ 
              "(" ++ show (fromEnum $ code x) ++ "): " ++
-             ++ description x
+             description x
 
 instance Eq LDAPException where
     x == y = code x == code y

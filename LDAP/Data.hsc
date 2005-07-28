@@ -3,69 +3,71 @@ module LDAP.Data (module LDAP.Data) where
 #include "ldap.h"
 
 
-data LDAPErrorCode = 
- LdapSuccess
- |LdapOperationsError
- |LdapProtocolError
- |LdapTimelimitExceeded
- |LdapSizelimitExceeded
- |LdapCompareFalse
- |LdapCompareTrue
- |LdapAuthMethodNotSupported
- |LdapStrongAuthNotSupported
- |LdapStrongAuthRequired
- |LdapPartialResults
- |LdapReferral
- |LdapAdminlimitExceeded
- |LdapUnavailableCriticalExtension
- |LdapConfidentialityRequired
- |LdapSaslBindInProgress
- |LdapNoSuchAttribute
- |LdapUndefinedType
- |LdapInappropriateMatching
- |LdapConstraintViolation
- |LdapTypeOrValueExists
- |LdapInvalidSyntax
- |LdapNoSuchObject
- |LdapAliasProblem
- |LdapInvalidDnSyntax
- |LdapIsLeaf
- |LdapAliasDerefProblem
- |LdapProxyAuthzFailure
- |LdapInappropriateAuth
- |LdapInvalidCredentials
- |LdapInsufficientAccess
- |LdapBusy
- |LdapUnavailable
- |LdapUnwillingToPerform
- |LdapLoopDetect
- |LdapNamingViolation
- |LdapObjectClassViolation
- |LdapNotAllowedOnNonleaf
- |LdapNotAllowedOnRdn
- |LdapAlreadyExists
- |LdapNoObjectClassMods
- |LdapResultsTooLarge
- |LdapAffectsMultipleDsas
- |LdapOther
- |LdapServerDown
- |LdapLocalError
- |LdapEncodingError
- |LdapDecodingError
- |LdapTimeout
- |LdapAuthUnknown
- |LdapFilterError
- |LdapUserCancelled
- |LdapParamError
- |LdapNoMemory
- |LdapConnectError
- |LdapNotSupported
- |LdapControlNotFound
- |LdapNoResultsReturned
- |LdapMoreResultsToReturn
- |LdapClientLoop
- |LdapReferralLimitExceeded
- deriving (Eq, Bounded, Show)
+data LDAPErrorCode =
+   LdapSuccess
+ | LdapOperationsError
+ | LdapProtocolError
+ | LdapTimelimitExceeded
+ | LdapSizelimitExceeded
+ | LdapCompareFalse
+ | LdapCompareTrue
+ | LdapAuthMethodNotSupported
+ | LdapStrongAuthNotSupported
+ | LdapStrongAuthRequired
+ | LdapPartialResults
+ | LdapReferral
+ | LdapAdminlimitExceeded
+ | LdapUnavailableCriticalExtension
+ | LdapConfidentialityRequired
+ | LdapSaslBindInProgress
+ | LdapNoSuchAttribute
+ | LdapUndefinedType
+ | LdapInappropriateMatching
+ | LdapConstraintViolation
+ | LdapTypeOrValueExists
+ | LdapInvalidSyntax
+ | LdapNoSuchObject
+ | LdapAliasProblem
+ | LdapInvalidDnSyntax
+ | LdapIsLeaf
+ | LdapAliasDerefProblem
+ | LdapProxyAuthzFailure
+ | LdapInappropriateAuth
+ | LdapInvalidCredentials
+ | LdapInsufficientAccess
+ | LdapBusy
+ | LdapUnavailable
+ | LdapUnwillingToPerform
+ | LdapLoopDetect
+ | LdapNamingViolation
+ | LdapObjectClassViolation
+ | LdapNotAllowedOnNonleaf
+ | LdapNotAllowedOnRdn
+ | LdapAlreadyExists
+ | LdapNoObjectClassMods
+ | LdapResultsTooLarge
+ | LdapAffectsMultipleDsas
+ | LdapOther
+ | LdapServerDown
+ | LdapLocalError
+ | LdapEncodingError
+ | LdapDecodingError
+ | LdapTimeout
+ | LdapAuthUnknown
+ | LdapFilterError
+ | LdapUserCancelled
+ | LdapParamError
+ | LdapNoMemory
+ | LdapConnectError
+ | LdapNotSupported
+ | LdapControlNotFound
+ | LdapNoResultsReturned
+ | LdapMoreResultsToReturn
+ | LdapClientLoop
+ | LdapReferralLimitExceeded
+ | UnknownLDAPErrorCode Int
+
+ deriving (Show)
 
 instance Enum LDAPErrorCode where
  toEnum #{const LDAP_SUCCESS} = LdapSuccess
@@ -129,7 +131,7 @@ instance Enum LDAPErrorCode where
  toEnum #{const LDAP_MORE_RESULTS_TO_RETURN} = LdapMoreResultsToReturn
  toEnum #{const LDAP_CLIENT_LOOP} = LdapClientLoop
  toEnum #{const LDAP_REFERRAL_LIMIT_EXCEEDED} = LdapReferralLimitExceeded
- toEnum x = error $ "Code " ++ show x ++ " is not a valid LDAPErrorCode"
+ toEnum x = UnknownLDAPErrorCode x
 
  fromEnum LdapSuccess = #{const LDAP_SUCCESS}
  fromEnum LdapOperationsError = #{const LDAP_OPERATIONS_ERROR}
@@ -192,7 +194,12 @@ instance Enum LDAPErrorCode where
  fromEnum LdapMoreResultsToReturn = #{const LDAP_MORE_RESULTS_TO_RETURN}
  fromEnum LdapClientLoop = #{const LDAP_CLIENT_LOOP}
  fromEnum LdapReferralLimitExceeded = #{const LDAP_REFERRAL_LIMIT_EXCEEDED}
+ fromEnum (UnknownLDAPErrorCode x) = x
+
 instance Ord LDAPErrorCode where
  compare x y = compare (fromEnum x) (fromEnum y)
+
+instance Eq LDAPErrorCode where
+ x == y = (fromEnum x) == (fromEnum y)
 
 

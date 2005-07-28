@@ -65,7 +65,7 @@ automatically. -}
 fromLDAPPtr :: String -> IO LDAPPtr -> IO LDAP
 fromLDAPPtr caller action =
     do ptr <- checkNULL caller action
-       newForeignPtr freeLDAPObject ptr
+       newForeignPtr ldap_unbind ptr
 
 {- | Use a 'LDAP' in a function that needs 'LDAPPtr'. -}
 withLDAPPtr :: LDAP -> (LDAPPtr -> IO a) -> IO a
@@ -76,8 +76,8 @@ maybeWithLDAPPtr :: Maybe LDAP -> (LDAPPtr -> IO a) -> IO a
 maybeWithLDAPPtr Nothing func = func nullPtr
 maybeWithLDAPPtr (Just x) y = withLDAPPtr x y
 
-foreign import ccall unsafe "glue.h &freeLDAPObject"
-  freeLDAPObject :: FunPtr (LDAPPtr -> IO ()) -- ldap_unbind, ignoring retval
+foreign import ccall unsafe "ldap.h &ldap_unbind"
+  ldap_unbind :: FunPtr (LDAPPtr -> IO ()) -- ldap_unbind, ignoring retval
 
 foreign import ccall unsafe "ldap.h ldap_err2string"
    ldap_err2string :: LDAPInt -> IO CString

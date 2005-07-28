@@ -60,7 +60,7 @@ test-hugs:
 	runhugs -98 +o -P$(PWD)/libsrc:$(PWD)/testsrc: testsrc/runtests.hs
 
 interact-hugs:
-	hugs -98 +o -P$(PWD)/libsrc:
+	hugs -98 +o -Pdist/build:
 
 interact-ghci: all
 	ghci -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc

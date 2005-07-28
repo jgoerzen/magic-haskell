@@ -8,7 +8,8 @@ Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha
 Copyright: Copyright (c) 2005 John Goerzen
 C-Sources: glue/glue.c
-Exposed-Modules: LDAP.Types,
+Exposed-Modules: LDAP,
+ LDAP.Types,
  LDAP.Init,
  LDAP.Constants,
  LDAP.Data,

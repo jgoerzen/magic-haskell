@@ -29,5 +29,5 @@ SUCH DAMAGE.
 
 #include <ldap.h>
 
-extern void freeLDAPObject(LDAP *ld);
+extern void freeLDAPobj(LDAP *ld);
 

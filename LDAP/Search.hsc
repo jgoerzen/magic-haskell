@@ -50,6 +50,8 @@ ldapSearch :: LDAP              -- ^ LDAP connection object
            -> Bool              -- ^ If True, exclude attribute values (return types only)
            -> IO [LDAPEntry]
 
+-- LDAP Entry might look like [(DN, [(String, [String])])]
+
 ldapSearch ld base scope filter attrs attrsonly =
   withLDAPPtr ld (\cld ->
   withMString base (\cbase ->
@@ -95,7 +97,15 @@ getnextitems cld lmptr bptr =
                   nextitems <- getnextitems cld lmptr bptr
                   return $ (str, values):nextitems
 
-getvalues 
+newtype Berval = Berval String 
+instance Berval Storable where
+    
+
+getvalues :: LDAPPtr -> Ptr LDAPMessage -> String -> IO [String]
+
+
+foreign import ccall unsafe "ldap.h ldap_get_values_len"
+  ldap_get_values_len :: LDAPPtr -> Ptr LDAPMessage -> CString -> IO (Ptr (Ptr Berval))
 
 foreign import ccall unsafe "ldap.h ldap_search"
   ldap_search :: LDAPPtr -> CString -> LDAPInt -> CString -> Ptr CString ->

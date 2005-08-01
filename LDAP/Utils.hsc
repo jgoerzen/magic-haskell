@@ -135,7 +135,9 @@ withMString (Just str) action = withCString str action
 
 withCStringArr :: [String] -> (Ptr CString -> IO a) -> IO a
 withCStringArr inp action =
-    withArray0 nullPtr inp action
+    bracket (mapM newCString inp)
+            (\csl -> mapM_ free csl)
+            (\csl -> withArray0 nullPtr csl action)
 
 foreign import ccall unsafe "ldap.h &ldap_unbind"
   ldap_unbind :: FunPtr (LDAPPtr -> IO ()) -- ldap_unbind, ignoring retval

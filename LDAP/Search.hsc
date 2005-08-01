@@ -29,7 +29,7 @@ import LDAP.Types
 import LDAP.Data
 import Foreign
 
-#include "ldap.h"
+#include <ldap.h>
 
 {- | Defines what attributes to return with the search result. -}
 data SearchAttributes =
@@ -39,7 +39,7 @@ data SearchAttributes =
 
 sa2sl :: SearchAttributes -> [String]
 sa2sl LDAPNoAttrs = [ #{const_str LDAP_NO_ATTRS} ]
-sa2sl LDAPAllUserAttrs = [ #{const_str LDAP_ALL_USER_ATTRS} ]
+sa2sl LDAPAllUserAttrs = [ #{const_str LDAP_ALL_USER_ATTRIBUTES} ]
 sa2sl (LDAPAttrList x) = x
 
 ldapSearch :: LDAP              -- ^ LDAP connection object

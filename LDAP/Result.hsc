@@ -43,8 +43,7 @@ ldap_1result ld msgid =
     where f cld (ptr::Ptr (Ptr CLDAPMessage)) =
               do checkLE "ldap_1result" ld $
                          ldap_result cld msgid 0 nullPtr ptr
-                 cldptr <- peek ptr
-                 newForeignPtr ldap_msgfree_call cldptr
+                 fromldmptr "ldap_1result" (peek ptr)
 
 fromldmptr :: String -> IO (Ptr CLDAPMessage) -> IO LDAPMessage
 fromldmptr caller action =

@@ -55,13 +55,47 @@ ldapSearch ld base scope filter attrs attrsonly =
   withMString base (\cbase ->
   withMString filter (\cfilter ->
   withCStringArr (sa2sl attrs) (\cattrs ->
-  do msgid <- checkLE "ldapSearch" ld $
+  do msgid <- checkLEn1 "ldapSearch" ld $
               ldap_search cld cbase (fromIntegral $ fromEnum scope)
                           cfilter cattrs (fromBool attrsonly)
+     res1 <- ldap_1result ld msgid
+     withForeignPtr res1 (\cres1 ->
+      do felm <- ldap_first_entry cld cres1
+         if felm == nullPtr
+            then return []
+            else getattrs ld felm
      
   ))))
 
-data LDAPMessage
+data BerElement
+
+getattrs :: LDAP -> (Ptr LDAPMessage) -> IO [(String, [String])]
+getattrs ld lmptr =
+    withLDAPPtr ld (\cld -> alloca (f cld))
+    where f cld (ptr::Ptr (Ptr BerElement)) =
+              do cstr <- ldap_first_attribute cld lmptr ptr
+                 if cstr == nullPtr
+                    then return []
+                    else do str <- peekCString
+                            ldap_memfree cstr
+                            bptr <- peek ptr
+                            values <- getvalues
+                            nextitems <- getnextitems cld lmptr bptr
+                            return $ (str, values):nextitems
+
+getnextitems :: Ptr CLDAP -> Ptr LDAPMessage -> Ptr BerElement 
+             -> IO [(String, [String])]
+getnextitems cld lmptr bptr =
+    do cstr <- ldap_next_attribute cld lmptr bptr
+       if cstr == nullPtr
+          then return []
+          else do str <- peekCString
+                  ldap_memfree cstr
+                  values <- getvalues
+                  nextitems <- getnextitems cld lmptr bptr
+                  return $ (str, values):nextitems
+
+getvalues 
 
 foreign import ccall unsafe "ldap.h ldap_search"
   ldap_search :: LDAPPtr -> CString -> LDAPInt -> CString -> Ptr CString ->
@@ -69,3 +103,11 @@ foreign import ccall unsafe "ldap.h ldap_search"
 
 foreign import ccall unsafe "ldap.h ldap_first_entry"
   ldap_first_entry :: LDAPPtr -> Ptr LDAPMessage -> IO (Ptr LDAPMessage)
+
+foreign import ccall unsafe "ldap.h ldap_first_attribute"
+  ldap_first_attribute :: LDAPPtr -> Ptr LDAPMessage -> Ptr (Ptr BerElement) 
+                       -> IO CString
+
+foreign import ccall unsafe "ldap.h ldap_next_attribute"
+  ldap_next_attribute :: LDAPPtr -> Ptr LDAPMessage -> Ptr BerElement
+                       -> IO CString

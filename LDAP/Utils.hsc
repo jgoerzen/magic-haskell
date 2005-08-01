@@ -24,9 +24,10 @@ should be considered to be the source code.
 
 -}
 
-module LDAP.Utils(checkLE, checkNULL, LDAPPtr, fromLDAPPtr,
+module LDAP.Utils(checkLE, checkLEe, checkLEn1,
+                  checkNULL, LDAPPtr, fromLDAPPtr,
                   withLDAPPtr, maybeWithLDAPPtr, withMString,
-                  withCStringArr) where
+                  withCStringArr, ldap_memfree) where
 import Foreign.Ptr
 import LDAP.Constants
 import LDAP.Exceptions
@@ -49,10 +50,17 @@ import Foreign
 
 {- | Check the return value.  If it's something other than 
 'LDAP.Constants.ldapSuccess', raise an LDAP exception. -}
+
 checkLE :: String -> LDAP -> IO LDAPInt -> IO ()
-checkLE callername ld action =
+checkLE = checkLEe (\r -> r == fromIntegral (fromEnum LdapSuccess))
+
+checkLEn1 :: String -> LDAP -> IO LDAPInt -> IO ()
+chechLEn1 = checkLEe (\r -> r /= -1)
+
+checkLEe :: (LDAPInt -> Bool) -> String -> LDAP -> IO LDAPInt -> IO ()
+checkLEe test callername ld action =
     do result <- action
-       if result == fromIntegral (fromEnum LdapSuccess)
+       if test result
           then return ()
           else do errornum <- ldapGetOptionIntNoEc ld LdapOptErrorNumber
                   let hserror = toEnum (fromIntegral errornum)
@@ -153,3 +161,6 @@ foreign import ccall unsafe "ldap.h ldap_get_option"
 
 foreign import ccall unsafe "ldap.h &ldap_memfree"
   ldap_memfree_call :: FunPtr (CString -> IO ())
+
+foreign import ccall unsafe "ldap.h ldap_memfree"
+  ldap_memfree :: CString -> IO ()

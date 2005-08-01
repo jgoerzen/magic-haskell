@@ -121,13 +121,16 @@ ldapGetOptionStrNoEc ld oc =
            if res /= 0
               then fail $ "Crash in str ldap_get_option, code " ++ show res
               else do cstr <- peek ptr
-                      fp <- newForeignPtr ldap_memfree_call cstr
+                      fp <- wrap_memfree
                       withForeignPtr fp (\cs ->
                        do if cs == nullPtr
                              then return Nothing
                              else do hstr <- peekCString cs
                                      return $ Just hstr
                                         )
+
+wrap_memfree :: Ptr a -> IO (ForeignPtr a)
+wrap_memfree p = newForeignPtr ldap_memfree_call p
 
 withMString :: Maybe String -> (CString -> IO a) -> IO a
 withMString Nothing action = action (nullPtr)

@@ -61,6 +61,11 @@ ldapSearch ld base scope filter attrs attrsonly =
      
   ))))
 
+data LDAPMessage
+
 foreign import ccall unsafe "ldap.h ldap_search"
   ldap_search :: LDAPPtr -> CString -> LDAPInt -> CString -> Ptr CString ->
                  LDAPInt -> IO LDAPInt
+
+foreign import ccall unsafe "ldap.h ldap_first_entry"
+  ldap_first_entry :: LDAPPtr -> Ptr LDAPMessage -> IO (Ptr LDAPMessage)

@@ -28,9 +28,12 @@ where
 
 import LDAP.Utils
 import LDAP.Types
+import LDAP.TypesLL
 import LDAP.Data
 import Foreign
+import Foreign.C.String
 import LDAP.Result
+import Control.Exception(finally)
 
 #include <ldap.h>
 
@@ -77,34 +80,34 @@ ldapSearch ld base scope filter attrs attrsonly =
                     dn <- peekCString cdn
                     ldap_memfree cdn
                     attrs <- getattrs ld felm
-                    return $ LDAPEntry {ledn = dn, leattrs = attrs}
+                    return $ [LDAPEntry {ledn = dn, leattrs = attrs}]
      
       )
   ))))
 
 data BerElement
 
-getattrs :: LDAP -> (Ptr LDAPMessage) -> IO [(String, [String])]
+getattrs :: LDAP -> (Ptr CLDAPMessage) -> IO [(String, [String])]
 getattrs ld lmptr =
     withLDAPPtr ld (\cld -> alloca (f cld))
     where f cld (ptr::Ptr (Ptr BerElement)) =
               do cstr <- ldap_first_attribute cld lmptr ptr
                  if cstr == nullPtr
                     then return []
-                    else do str <- peekCString
+                    else do str <- peekCString cstr
                             ldap_memfree cstr
                             bptr <- peek ptr
                             values <- getvalues cld lmptr str
                             nextitems <- getnextitems cld lmptr bptr
                             return $ (str, values):nextitems
 
-getnextitems :: Ptr CLDAP -> Ptr LDAPMessage -> Ptr BerElement 
+getnextitems :: Ptr CLDAP -> Ptr CLDAPMessage -> Ptr BerElement 
              -> IO [(String, [String])]
 getnextitems cld lmptr bptr =
     do cstr <- ldap_next_attribute cld lmptr bptr
        if cstr == nullPtr
           then return []
-          else do str <- peekCString
+          else do str <- peekCString cstr
                   ldap_memfree cstr
                   values <- getvalues cld lmptr str
                   nextitems <- getnextitems cld lmptr bptr
@@ -117,11 +120,11 @@ bv2str bptr =
        cstr <- ( #{peek struct berval, bv_val} ) bptr
        peekCStringLen (cstr, len)
 
-getvalues :: LDAPPtr -> Ptr LDAPMessage -> String -> IO [String]
+getvalues :: LDAPPtr -> Ptr CLDAPMessage -> String -> IO [String]
 getvalues cld clm attr =
     withCString attr (\cattr ->
     do berarr <- ldap_get_values_len cld clm cattr
-       finally procberarr ldap_value_free_len
+       finally (procberarr berarr) (ldap_value_free_len berarr)
     )
 
 procberarr :: Ptr (Ptr Berval) -> IO [String]
@@ -129,8 +132,11 @@ procberarr pbv =
     do bvl <- peekArray0 nullPtr pbv
        mapM bv2str bvl
 
+foreign import ccall unsafe "ldap.h ldap_get_dn"
+  ldap_get_dn :: LDAPPtr -> Ptr CLDAPMessage -> IO CString
+
 foreign import ccall unsafe "ldap.h ldap_get_values_len"
-  ldap_get_values_len :: LDAPPtr -> Ptr LDAPMessage -> CString -> IO (Ptr (Ptr Berval))
+  ldap_get_values_len :: LDAPPtr -> Ptr CLDAPMessage -> CString -> IO (Ptr (Ptr Berval))
 
 foreign import ccall unsafe "ldap.h ldap_value_free_len"
   ldap_value_free_len :: Ptr (Ptr Berval) -> IO ()
@@ -140,12 +146,12 @@ foreign import ccall unsafe "ldap.h ldap_search"
                  LDAPInt -> IO LDAPInt
 
 foreign import ccall unsafe "ldap.h ldap_first_entry"
-  ldap_first_entry :: LDAPPtr -> Ptr LDAPMessage -> IO (Ptr LDAPMessage)
+  ldap_first_entry :: LDAPPtr -> Ptr CLDAPMessage -> IO (Ptr CLDAPMessage)
 
 foreign import ccall unsafe "ldap.h ldap_first_attribute"
-  ldap_first_attribute :: LDAPPtr -> Ptr LDAPMessage -> Ptr (Ptr BerElement) 
+  ldap_first_attribute :: LDAPPtr -> Ptr CLDAPMessage -> Ptr (Ptr BerElement) 
                        -> IO CString
 
 foreign import ccall unsafe "ldap.h ldap_next_attribute"
-  ldap_next_attribute :: LDAPPtr -> Ptr LDAPMessage -> Ptr BerElement
+  ldap_next_attribute :: LDAPPtr -> Ptr CLDAPMessage -> Ptr BerElement
                        -> IO CString

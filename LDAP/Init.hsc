@@ -59,8 +59,10 @@ ldapSimpleBind ld dn passwd =
     withLDAPPtr ld (\ptr ->
      withCString dn (\cdn ->
       withCString passwd (\cpasswd -> 
-        checkLE "ldapSimpleBind" ld
-                            (ldap_simple_bind_s ptr cdn cpasswd))))
+        do checkLE "ldapSimpleBind" ld
+                            (ldap_simple_bind_s ptr cdn cpasswd)
+           return ()
+                         )))
 
 foreign import ccall unsafe "ldap.h ldap_init"
   cldap_init :: CString -> CInt -> IO LDAPPtr

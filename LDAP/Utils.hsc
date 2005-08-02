@@ -51,18 +51,17 @@ import Foreign.C.Types
 
 {- | Check the return value.  If it's something other than 
 'LDAP.Constants.ldapSuccess', raise an LDAP exception. -}
-
-checkLE :: String -> LDAP -> IO LDAPInt -> IO ()
+checkLE :: String -> LDAP -> IO LDAPInt -> IO LDAPInt
 checkLE = checkLEe (\r -> r == fromIntegral (fromEnum LdapSuccess))
 
-checkLEn1 :: String -> LDAP -> IO LDAPInt -> IO ()
+checkLEn1 :: String -> LDAP -> IO LDAPInt -> IO LDAPInt
 checkLEn1 = checkLEe (\r -> r /= -1)
 
-checkLEe :: (LDAPInt -> Bool) -> String -> LDAP -> IO LDAPInt -> IO ()
+checkLEe :: (LDAPInt -> Bool) -> String -> LDAP -> IO LDAPInt -> IO LDAPInt
 checkLEe test callername ld action =
     do result <- action
        if test result
-          then return ()
+          then return result
           else do errornum <- ldapGetOptionIntNoEc ld LdapOptErrorNumber
                   let hserror = toEnum (fromIntegral errornum)
                   err2string <- (ldap_err2string errornum >>= peekCString)

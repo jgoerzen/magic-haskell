@@ -20,10 +20,9 @@ LDAP Result Processing
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module LDAP.Result where
-                   (LDAPMessage, CLDAPMessage,
+module LDAP.Result (LDAPMessage, CLDAPMessage,
                     ldap_1result
-                   )
+                   ) where
 
 import LDAP.Utils
 import LDAP.Types
@@ -32,7 +31,7 @@ import Foreign
 #include <ldap.h>
 
 data CLDAPMessage
-type LDAPMessage = FroeignPtr CLDAPMessage
+type LDAPMessage = ForeignPtr CLDAPMessage
 
 {- | Get 1 result from an operation. -}
 ldap_1result :: LDAP -> LDAPInt -> IO (LDAPMessage)
@@ -49,11 +48,11 @@ fromldmptr :: String -> IO (Ptr CLDAPMessage) -> IO LDAPMessage
 fromldmptr caller action =
     do ptr <- action
        if ptr == nullPtr
-          then fail (action ++ ": got null LDAPMessage pointer")
+          then fail (caller ++ ": got null LDAPMessage pointer")
           else newForeignPtr ldap_msgfree_call ptr
 
 foreign import ccall unsafe "ldap.h ldap_result"
   ldap_result :: LDAPPtr -> LDAPInt -> LDAPInt -> Ptr () -> Ptr (Ptr CLDAPMessage) -> IO LDAPInt
 
-foreign import ccall unsafe "ldap.h ldap_msgfree"
+foreign import ccall unsafe "ldap.h &ldap_msgfree"
   ldap_msgfree_call :: FunPtr (Ptr CLDAPMessage -> IO ())

@@ -40,6 +40,7 @@ import Foreign.C.Error
 import Foreign.C.String
 import Foreign.ForeignPtr
 import Foreign
+import Foreign.C.Types
 
 {- FIXME frmo python: 
 
@@ -55,7 +56,7 @@ checkLE :: String -> LDAP -> IO LDAPInt -> IO ()
 checkLE = checkLEe (\r -> r == fromIntegral (fromEnum LdapSuccess))
 
 checkLEn1 :: String -> LDAP -> IO LDAPInt -> IO ()
-chechLEn1 = checkLEe (\r -> r /= -1)
+checkLEn1 = checkLEe (\r -> r /= -1)
 
 checkLEe :: (LDAPInt -> Bool) -> String -> LDAP -> IO LDAPInt -> IO ()
 checkLEe test callername ld action =
@@ -129,7 +130,7 @@ ldapGetOptionStrNoEc ld oc =
            if res /= 0
               then fail $ "Crash in str ldap_get_option, code " ++ show res
               else do cstr <- peek ptr
-                      fp <- wrap_memfree
+                      fp <- wrap_memfree cstr
                       withForeignPtr fp (\cs ->
                        do if cs == nullPtr
                              then return Nothing
@@ -137,7 +138,7 @@ ldapGetOptionStrNoEc ld oc =
                                      return $ Just hstr
                                         )
 
-wrap_memfree :: Ptr a -> IO (ForeignPtr a)
+wrap_memfree :: CString -> IO (ForeignPtr Foreign.C.Types.CChar)
 wrap_memfree p = newForeignPtr ldap_memfree_call p
 
 withMString :: Maybe String -> (CString -> IO a) -> IO a

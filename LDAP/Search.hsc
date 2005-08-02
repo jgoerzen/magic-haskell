@@ -20,7 +20,9 @@ LDAP Searching
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module LDAP.Search (SearchAttributes
+module LDAP.Search (SearchAttributes(..),
+                    LDAPEntry(..),
+                    ldapSearch
                    )
 where
 
@@ -28,14 +30,16 @@ import LDAP.Utils
 import LDAP.Types
 import LDAP.Data
 import Foreign
+import LDAP.Result
 
 #include <ldap.h>
 
 {- | Defines what attributes to return with the search result. -}
 data SearchAttributes =
-  LDAPNoAttrs                   -- ^ No attributes
-  LDAPAllUserAttrs              -- ^ User attributes only
-  LDAPAttrList [String]         -- ^ User-specified list
+   LDAPNoAttrs                   -- ^ No attributes
+ | LDAPAllUserAttrs              -- ^ User attributes only
+ | LDAPAttrList [String]         -- ^ User-specified list
+   deriving (Eq, Show)
 
 sa2sl :: SearchAttributes -> [String]
 sa2sl LDAPNoAttrs = [ #{const_str LDAP_NO_ATTRS} ]
@@ -43,9 +47,9 @@ sa2sl LDAPAllUserAttrs = [ #{const_str LDAP_ALL_USER_ATTRIBUTES} ]
 sa2sl (LDAPAttrList x) = x
 
 data LDAPEntry = LDAPEntry 
-    {LEDN :: String             -- ^ Distinguished Name for this object
-    ,LEAttrs :: [(String, [String])] -- ^ Map from attribute names to values
-    }
+    {ledn :: String             -- ^ Distinguished Name of this object
+    ,leattrs :: [(String, [String])] -- ^ Mapping from attribute name to values
+                           }
     deriving (Eq, Show)
 
 ldapSearch :: LDAP              -- ^ LDAP connection object
@@ -73,8 +77,9 @@ ldapSearch ld base scope filter attrs attrsonly =
                     dn <- peekCString cdn
                     ldap_memfree cdn
                     attrs <- getattrs ld felm
-                    return $ LDAPEntry {LEDN = dn, LEAttrs = attrs}
+                    return $ LDAPEntry {ledn = dn, leattrs = attrs}
      
+      )
   ))))
 
 data BerElement
@@ -108,8 +113,8 @@ getnextitems cld lmptr bptr =
 data Berval
 bv2str :: Ptr Berval -> IO String
 bv2str bptr = 
-    do len <- (#{peek berval, bv_len}) bptr
-       cstr <- (#{peek berval, bv_val}) bptr
+    do len <- ( #{peek struct berval, bv_len} ) bptr
+       cstr <- ( #{peek struct berval, bv_val} ) bptr
        peekCStringLen (cstr, len)
 
 getvalues :: LDAPPtr -> Ptr LDAPMessage -> String -> IO [String]

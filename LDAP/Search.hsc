@@ -42,6 +42,12 @@ sa2sl LDAPNoAttrs = [ #{const_str LDAP_NO_ATTRS} ]
 sa2sl LDAPAllUserAttrs = [ #{const_str LDAP_ALL_USER_ATTRIBUTES} ]
 sa2sl (LDAPAttrList x) = x
 
+data LDAPEntry = LDAPEntry 
+    {LEDN :: String             -- ^ Distinguished Name for this object
+    ,LEAttrs :: [(String, [String])] -- ^ Map from attribute names to values
+    }
+    deriving (Eq, Show)
+
 ldapSearch :: LDAP              -- ^ LDAP connection object
            -> Maybe String      -- ^ Base DN for search, if any
            -> LDAPScope         -- ^ Scope of the search
@@ -49,8 +55,6 @@ ldapSearch :: LDAP              -- ^ LDAP connection object
            -> SearchAttributes  -- ^ Desired attributes in result set
            -> Bool              -- ^ If True, exclude attribute values (return types only)
            -> IO [LDAPEntry]
-
--- LDAP Entry might look like [(DN, [(String, [String])])]
 
 ldapSearch ld base scope filter attrs attrsonly =
   withLDAPPtr ld (\cld ->
@@ -65,7 +69,11 @@ ldapSearch ld base scope filter attrs attrsonly =
       do felm <- ldap_first_entry cld cres1
          if felm == nullPtr
             then return []
-            else getattrs ld felm
+            else do cdn <- ldap_get_dn cld felm -- FIXME: check null
+                    dn <- peekCString cdn
+                    ldap_memfree cdn
+                    attrs <- getattrs ld felm
+                    return $ LDAPEntry {LEDN = dn, LEAttrs = attrs}
      
   ))))
 
@@ -81,7 +89,7 @@ getattrs ld lmptr =
                     else do str <- peekCString
                             ldap_memfree cstr
                             bptr <- peek ptr
-                            values <- getvalues
+                            values <- getvalues cld lmptr str
                             nextitems <- getnextitems cld lmptr bptr
                             return $ (str, values):nextitems
 
@@ -93,19 +101,34 @@ getnextitems cld lmptr bptr =
           then return []
           else do str <- peekCString
                   ldap_memfree cstr
-                  values <- getvalues
+                  values <- getvalues cld lmptr str
                   nextitems <- getnextitems cld lmptr bptr
                   return $ (str, values):nextitems
 
-newtype Berval = Berval String 
-instance Berval Storable where
-    
+data Berval
+bv2str :: Ptr Berval -> IO String
+bv2str bptr = 
+    do len <- (#{peek berval, bv_len}) bptr
+       cstr <- (#{peek berval, bv_val}) bptr
+       peekCStringLen (cstr, len)
 
 getvalues :: LDAPPtr -> Ptr LDAPMessage -> String -> IO [String]
+getvalues cld clm attr =
+    withCString attr (\cattr ->
+    do berarr <- ldap_get_values_len cld clm cattr
+       finally procberarr ldap_value_free_len
+    )
 
+procberarr :: Ptr (Ptr Berval) -> IO [String]
+procberarr pbv =
+    do bvl <- peekArray0 nullPtr pbv
+       mapM bv2str bvl
 
 foreign import ccall unsafe "ldap.h ldap_get_values_len"
   ldap_get_values_len :: LDAPPtr -> Ptr LDAPMessage -> CString -> IO (Ptr (Ptr Berval))
+
+foreign import ccall unsafe "ldap.h ldap_value_free_len"
+  ldap_value_free_len :: Ptr (Ptr Berval) -> IO ()
 
 foreign import ccall unsafe "ldap.h ldap_search"
   ldap_search :: LDAPPtr -> CString -> LDAPInt -> CString -> Ptr CString ->

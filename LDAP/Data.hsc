@@ -322,3 +322,29 @@ instance Eq LDAPScope where
  x == y = (fromEnum x) == (fromEnum y)
 
 
+data LDAPModOp =
+   LdapModAdd
+ | LdapModDelete
+ | LdapModReplace
+ | UnknownLDAPModOp Int
+
+ deriving (Show)
+
+instance Enum LDAPModOp where
+ toEnum (#{const LDAP_MOD_ADD}) = LdapModAdd
+ toEnum (#{const LDAP_MOD_DELETE}) = LdapModDelete
+ toEnum (#{const LDAP_MOD_REPLACE}) = LdapModReplace
+ toEnum x = UnknownLDAPModOp x
+
+ fromEnum LdapModAdd = (#{const LDAP_MOD_ADD})
+ fromEnum LdapModDelete = (#{const LDAP_MOD_DELETE})
+ fromEnum LdapModReplace = (#{const LDAP_MOD_REPLACE})
+ fromEnum (UnknownLDAPModOp x) = x
+
+instance Ord LDAPModOp where
+ compare x y = compare (fromEnum x) (fromEnum y)
+
+instance Eq LDAPModOp where
+ x == y = (fromEnum x) == (fromEnum y)
+
+

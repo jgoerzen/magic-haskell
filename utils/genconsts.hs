@@ -61,6 +61,7 @@ main =
        putStrLn (errorClause "LDAPReturnCode" errorConsts)
        putStrLn (errorClause "LDAPOptionCode" optionConsts)
        putStrLn (errorClause "LDAPScope" scopeConsts)
+       putStrLn (errorClause "LDAPModOp" modConsts)
 
 errorConsts = [
       "LDAP_SUCCESS", "LDAP_OPERATIONS_ERROR", "LDAP_PROTOCOL_ERROR", 
@@ -101,3 +102,5 @@ optionConsts = [
 scopeConsts = [
       "LDAP_SCOPE_DEFAULT", "LDAP_SCOPE_BASE", "LDAP_SCOPE_ONELEVEL",
       "LDAP_SCOPE_SUBTREE"]
+
+modConsts = ["LDAP_MOD_ADD", "LDAP_MOD_DELETE", "LDAP_MOD_REPLACE"]

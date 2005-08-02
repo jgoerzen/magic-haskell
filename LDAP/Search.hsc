@@ -21,8 +21,8 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module LDAP.Search (SearchAttributes(..),
-                    LDAPEntry(..),
-                    ldapSearch
+                    LDAPEntry(..), LDAPScope(..),
+                    ldapSearch, 
                    )
 where
 

@@ -71,7 +71,15 @@ ldapSearch ld base scope filter attrs attrsonly =
   do msgid <- checkLEn1 "ldapSearch" ld $
               ldap_search cld cbase (fromIntegral $ fromEnum scope)
                           cfilter cattrs (fromBool attrsonly)
-     res1 <- ldap_1result ld msgid
+     procSR ld cld msgid
+                               )
+                      )
+                    )
+                  )
+
+procSR :: LDAP -> Ptr CLDAP -> LDAPInt -> IO [LDAPEntry]
+procSR ld cld msgid =
+  do res1 <- ldap_1result ld msgid
      withForeignPtr res1 (\cres1 ->
       do felm <- ldap_first_entry cld cres1
          if felm == nullPtr
@@ -80,10 +88,11 @@ ldapSearch ld base scope filter attrs attrsonly =
                     dn <- peekCString cdn
                     ldap_memfree cdn
                     attrs <- getattrs ld felm
-                    return $ [LDAPEntry {ledn = dn, leattrs = attrs}]
-     
-      )
-  ))))
+                    next <- procSR ld cld msgid
+                    return $ (LDAPEntry {ledn = dn, leattrs = attrs}):next
+                         )
+      
+
 
 data BerElement
 

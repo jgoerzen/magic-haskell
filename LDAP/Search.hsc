@@ -80,15 +80,18 @@ ldapSearch ld base scope filter attrs attrsonly =
 procSR :: LDAP -> Ptr CLDAP -> LDAPInt -> IO [LDAPEntry]
 procSR ld cld msgid =
   do res1 <- ldap_1result ld msgid
+     --putStrLn "Have 1result"
      withForeignPtr res1 (\cres1 ->
       do felm <- ldap_first_entry cld cres1
          if felm == nullPtr
             then return []
-            else do cdn <- ldap_get_dn cld felm -- FIXME: check null
+            else do --putStrLn "Have first entry"
+                    cdn <- ldap_get_dn cld felm -- FIXME: check null
                     dn <- peekCString cdn
                     ldap_memfree cdn
                     attrs <- getattrs ld felm
                     next <- procSR ld cld msgid
+                    --putStrLn $ "Next is " ++ (show next)
                     return $ (LDAPEntry {ledn = dn, leattrs = attrs}):next
                          )
       

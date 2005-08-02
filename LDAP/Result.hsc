@@ -40,7 +40,7 @@ ldap_1result ld msgid =
     alloca (f cld)
     )
     where f cld (ptr::Ptr (Ptr CLDAPMessage)) =
-              do checkLE "ldap_1result" ld $
+              do checkLEn1 "ldap_1result" ld $
                          ldap_result cld msgid 0 nullPtr ptr
                  fromldmptr "ldap_1result" (peek ptr)
 

@@ -39,3 +39,5 @@ import LDAP.Types
 import LDAP.Init
 import LDAP.Data
 import LDAP.Constants
+import LDAP.Search
+

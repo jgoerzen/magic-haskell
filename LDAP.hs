@@ -26,6 +26,8 @@ module LDAP (-- * Basic Types
              module LDAP.Types,
              -- * Initialization
              module LDAP.Init,
+             -- * Searching
+             module LDAP.Search,
              -- * Error Handling
              module LDAP.Exceptions,
              -- * Haskell enumerated LDAP types

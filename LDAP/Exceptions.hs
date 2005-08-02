@@ -25,6 +25,7 @@ module LDAP.Exceptions (-- * Types
                         -- * General Catching
                         catchLDAP,
                         handleLDAP,
+                        failLDAP
                         )
 
 where
@@ -70,3 +71,12 @@ catchLDAP = catchDyn
 handleLDAP :: (LDAPException -> IO a) -> IO a -> IO a
 handleLDAP = flip catchLDAP
 
+{- | Catches LDAP errors, and re-raises them as IO errors with fail.
+Useful if you don't care to catch LDAP errors, but want to see a sane
+error message if one happens.  One would often use this as a high-level
+wrapper around LDAP calls.
+-}
+failLDAP :: IO a -> IO a
+failLDAP action =
+    catchLDAP action handler
+    where handler e = fail ("LDAP error: " ++ show e)

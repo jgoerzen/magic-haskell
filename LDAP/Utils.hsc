@@ -27,7 +27,8 @@ should be considered to be the source code.
 module LDAP.Utils(checkLE, checkLEe, checkLEn1,
                   checkNULL, LDAPPtr, fromLDAPPtr,
                   withLDAPPtr, maybeWithLDAPPtr, withMString,
-                  withCStringArr, ldap_memfree) where
+                  withCStringArr, ldap_memfree,
+                  bv2str) where
 import Foreign.Ptr
 import LDAP.Constants
 import LDAP.Exceptions
@@ -149,6 +150,30 @@ withCStringArr inp action =
     bracket (mapM newCString inp)
             (\csl -> mapM_ free csl)
             (\csl -> withArray0 nullPtr csl action)
+
+bv2str :: Ptr Berval -> IO String
+bv2str bptr = 
+    do (len::BERLen) <- ( #{peek struct berval, bv_len} ) bptr
+       cstr <- ( #{peek struct berval, bv_val} ) bptr
+       peekCStringLen (cstr, fromIntegral len)
+
+{- | Must be freed later with freeHSBerval! -}
+
+newBerval :: String -> IO (Ptr Berval)
+newBerval str =
+        in do (ptr::Ptr Berval) <- mallocBytes #{size struct berval}
+              (cstr, len) <- newCStringLen str
+              let (clen::BERLen) = fromIntegral len
+              ( #{poke struct berval, bv_len} ) ptr clen
+              ( #{poke struct berval, bv_val} ) ptr cstr
+              return ptr
+
+{- | Free a berval allocated from Haskell. -}
+freeHSBerval :: Ptr Berval -> IO ()
+freeHSBerval ptr =
+    do cstr <- ( #{peek struct berval, bv_val} ) ptr
+       free cstr
+       free ptr
 
 foreign import ccall unsafe "ldap.h &ldap_unbind"
   ldap_unbind :: FunPtr (LDAPPtr -> IO ()) -- ldap_unbind, ignoring retval

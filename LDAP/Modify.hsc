@@ -15,7 +15,7 @@ This code is under a 3-clause BSD license; see COPYING for details.
    Stability  : provisional
    Portability: portable
 
-LDAP Searching
+LDAP changes
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
@@ -47,6 +47,16 @@ ldapModify :: LDAP              -- ^ LDAP connection object
            -> IO ()
 
 data CLDAPMod
+
+newCLDAPMod :: LDAPMod -> IO (Ptr CLDAPMod)
+newCLDAPMod lm =
+    do (ptr::(Ptr CLDAPMod)) <- mallocBytes #{size LDAPMod}
+       cmodtype <- newCString (modType lm)
+       let (cmodop::LDAPInt) = 
+               (fromIntegral . fromEnum . modOp $ lm) .|. 
+               #{const LDAP_MOD_BVALUES}
+       
+       
 
 foreign import ccall unsafe "ldap.h ldap_modify_s"
   ldap_modify_s :: LDAPPtr -> CString -> Ptr (Ptr CLDAPMod) -> IO LDAPInt

@@ -51,3 +51,6 @@ type BERTag = #type ber_tag_t
 
 {- | BER int type -}
 type BERInt = #type ber_int_t
+
+{- | BER length type -}
+type BERLen = #type ber_len_t

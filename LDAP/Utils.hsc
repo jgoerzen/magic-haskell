@@ -27,8 +27,9 @@ should be considered to be the source code.
 module LDAP.Utils(checkLE, checkLEe, checkLEn1,
                   checkNULL, LDAPPtr, fromLDAPPtr,
                   withLDAPPtr, maybeWithLDAPPtr, withMString,
-                  withCStringArr, ldap_memfree,
-                  bv2str) where
+                  withCStringArr0, ldap_memfree,
+                  bv2str, newBerval, freeHSBerval,
+                  withAnyArr0) where
 import Foreign.Ptr
 import LDAP.Constants
 import LDAP.Exceptions
@@ -42,6 +43,8 @@ import Foreign.C.String
 import Foreign.ForeignPtr
 import Foreign
 import Foreign.C.Types
+
+#include <ldap.h>
 
 {- FIXME frmo python: 
 
@@ -171,7 +174,7 @@ bv2str bptr =
 
 newBerval :: String -> IO (Ptr Berval)
 newBerval str =
-        in do (ptr::Ptr Berval) <- mallocBytes #{size struct berval}
+           do (ptr::Ptr Berval) <- mallocBytes #{size struct berval}
               (cstr, len) <- newCStringLen str
               let (clen::BERLen) = fromIntegral len
               ( #{poke struct berval, bv_len} ) ptr clen

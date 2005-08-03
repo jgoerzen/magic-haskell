@@ -125,13 +125,6 @@ getnextitems cld lmptr bptr =
                   nextitems <- getnextitems cld lmptr bptr
                   return $ (str, values):nextitems
 
-data Berval
-bv2str :: Ptr Berval -> IO String
-bv2str bptr = 
-    do len <- ( #{peek struct berval, bv_len} ) bptr
-       cstr <- ( #{peek struct berval, bv_val} ) bptr
-       peekCStringLen (cstr, len)
-
 getvalues :: LDAPPtr -> Ptr CLDAPMessage -> String -> IO [String]
 getvalues cld clm attr =
     withCString attr (\cattr ->

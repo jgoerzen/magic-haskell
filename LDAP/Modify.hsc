@@ -63,7 +63,7 @@ newCLDAPMod lm =
        let (cmodop::LDAPInt) = 
                (fromIntegral . fromEnum . modOp $ lm) .|. 
                #{const LDAP_MOD_BVALUES}
-       bervals <- mapM newBerVal (modVals lm)
+       bervals <- mapM newBerval (modVals lm)
        (arrptr::Ptr (Ptr Berval)) <- newArray0 nullPtr bervals 
        ( #{poke LDAPMod, mod_op} ) ptr cmodop
        ( #{poke LDAPMod, mod_type } ) ptr cmodtype

@@ -23,7 +23,7 @@ See also "LDAP.Data" for types relating to return codes, option codes, etc.
 -}
 
 module LDAP.Types(-- * General
-                  LDAP, LDAPInt, BERInt, BERTag
+                  LDAP, LDAPInt, BERInt, BERTag, BERLen
                  )
 where
 

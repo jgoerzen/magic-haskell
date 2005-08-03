@@ -7,7 +7,7 @@ License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha
 Copyright: Copyright (c) 2005 John Goerzen
-C-Sources: glue/glue.c
+-- C-Sources: glue/glue.c
 Exposed-Modules: LDAP,
  LDAP.Types,
  LDAP.Init,
@@ -21,5 +21,5 @@ Other-Modules: LDAP.Utils,
  LDAP.Result
 Build-Depends: haskell-src
 GHC-Options: -O2
-CC-Options: -Iglue
+-- CC-Options: -Iglue
 Extensions: ForeignFunctionInterface, TypeSynonymInstances

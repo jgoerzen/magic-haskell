@@ -43,6 +43,6 @@ import LDAP.Types
 import LDAP.Init
 import LDAP.Data
 import LDAP.Constants
-import LDAP.Search
-import LDAP.Modify
+import LDAP.Search hiding (LDAPScope(..))
+import LDAP.Modify hiding (LDAPModOp(..))
 

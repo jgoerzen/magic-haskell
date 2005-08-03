@@ -21,7 +21,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module LDAP.Modify (LDAPModOp(..), LDAPMod(..),
-                    ldapModify
+                    ldapAdd, ldapModify, ldapDelete
                    )
 where
 
@@ -47,13 +47,30 @@ ldapModify :: LDAP              -- ^ LDAP connection object
            -> String            -- ^ DN to modify
            -> [LDAPMod]         -- ^ Changes to make
            -> IO ()
-ldapModify ld dn changelist =
+ldapModify = genericChange "ldapModify" ldap_modify_s
+
+ldapAdd :: LDAP                 -- ^ LDAP connection object
+        -> String               -- ^ DN to add
+        -> [LDAPMod]            -- ^ Items to add
+        -> IO ()
+ldapAdd = genericChange "ldapAdd" ldap_add_s
+
+genericChange name func ld dn changelist =
     withLDAPPtr ld (\cld ->
     withCString dn (\cdn ->
     withCLDAPModArr0 changelist (\cmods ->
-    do checkLE "ldapModify" ld $ ldap_modify_s cld cdn cmods
+    do checkLE name ld $ func cld cdn cmods
        return ()
             )))
+
+{- | Delete the specified DN -}
+ldapDelete :: LDAP -> String -> IO ()
+ldapDelete ld dn =
+    withLDAPPtr ld (\cld ->
+    withCString dn (\cdn ->
+    do checkLE "ldapDelete" ld $ ldap_delete_s cld cdn
+       return ()
+                   ))
 
 data CLDAPMod
 
@@ -91,3 +108,8 @@ withCLDAPModArr0 = withAnyArr0 newCLDAPMod freeCLDAPMod
 foreign import ccall unsafe "ldap.h ldap_modify_s"
   ldap_modify_s :: LDAPPtr -> CString -> Ptr (Ptr CLDAPMod) -> IO LDAPInt
 
+foreign import ccall unsafe "ldap.h ldap_delete_s"
+  ldap_delete_s :: LDAPPtr -> CString -> IO LDAPInt
+
+foreign import ccall unsafe "ldap.h ldap_add_s"
+  ldap_add_s :: LDAPPtr -> CString -> Ptr (Ptr CLDAPMod) -> IO LDAPInt

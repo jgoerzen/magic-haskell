@@ -51,7 +51,8 @@ ldapModify ld dn changelist =
     withLDAPPtr ld (\cld ->
     withCString dn (\cdn ->
     withCLDAPModArr0 changelist (\cmods ->
-    checkLE $ ldap_modify_s cld cdn cmods
+    do checkLE "ldapModify" ld $ ldap_modify_s cld cdn cmods
+       return ()
             )))
 
 data CLDAPMod
@@ -78,13 +79,13 @@ freeCLDAPMod ptr =
        mapM_ freeHSBerval arr
        free arrptr
        -- Free the modtype
-       cmodtype <- ( #{peek LDAPMod, mod_type} )
+       (cmodtype::CString) <- ( #{peek LDAPMod, mod_type} ) ptr
        free cmodtype
        -- mod_op is an int and doesn't need freeing
        -- free the LDAPMod itself.
        free ptr
        
-withCLDAPModArr0 :: [LDAPMod] -> Ptr (Ptr CLDAPMod -> IO a) -> IO a
+withCLDAPModArr0 :: [LDAPMod] -> (Ptr (Ptr CLDAPMod) -> IO a) -> IO a
 withCLDAPModArr0 = withAnyArr0 newCLDAPMod freeCLDAPMod
 
 foreign import ccall unsafe "ldap.h ldap_modify_s"

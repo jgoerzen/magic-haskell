@@ -1,30 +1,35 @@
-Source: missingpy
+Source: ldap-haskell
 Priority: optional
 Maintainer: John Goerzen <jgoerzen@complete.org>
-Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.4), ghc6 (<< 6.4-999), haskell-devscripts (>= 0.5.6), python-dev (>= 2.3.3), python-gdbm (>= 2.3.3), haddock, python-dev (<< 2.4), libghc6-missingh-dev (= 0.11.2)
-#Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs, haskell-devscripts (>= 0.5.4), libhugs-hunit
+Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.4), ghc6 (<< 6.4-999), haskell-devscripts (>= 0.5.6), libldap2-dev
+Build-Depends-Indep: debhelper (>= 4.0.0), haddock, ghc6 (>= 6.4), hugs, haskell-devscripts (>= 0.5.4), libldap2-dev
 Standards-Version: 3.6.1
 Section: devel
 
-Package: libghc6-missingpy-dev
+Package: libghc6-ldap-dev
 Section: devel
 Architecture: any
-Depends: ${haskell:Depends}, python-dev (>= 2.3.3), python-dev (<< 2.4), libghc6-missingh-dev (= 0.11.2)
-Suggests: python-gdbm (>= 2.3.3)
-Description: Python interface and utility library for Haskell
- MissingPy is two things:
+Depends: ${haskell:Depends}, libldap2-dev
+Description: LDAP Interface for Haskell
+ This package provides an interface to the C LDAP API for Haskell programmers.
+ With it, you can search, modify, and interrogate LDAP directories.
+ The Haskell binding features automatic memory management and proper
+ handling for binary data, and handles all marhsalling into and out of
+ C data structures for you automatically.
  .
- A Haskell binding for many C and Python libraries for tasks such as
- data compression, databases, etc.  This can be found in the
- MissingPy module tree.
+ This package is built for GHC.  A Hugs package is also available
+ in libhugs-ldap.
+
+Package: libhugs-ldap
+Section: devel
+Architecture: all
+Depends: ${haskell:Depends}, libldap2
+ This package provides an interface to the C LDAP API for Haskell programmers.
+ With it, you can search, modify, and interrogate LDAP directories.
+ The Haskell binding features automatic memory management and proper
+ handling for binary data, and handles all marhsalling into and out of
+ C data structures for you automatically.
  .
- Also, it's a low-level Haskell binding to the Python interpreter to
- enable development of hybrid applications that use both
- environments.  This can be found in the Python module tree.  The
- Haskell bindings above use this environment.
- .
- MissingPy permits you to call Python code from Haskell.  It does NOT
- permit you to call Haskell code from Python.
- .
- MissingPy is the companion to my MissingH library, and integrates with
- it.
+ This package is built for Hugs.  A GHC package is also available
+ in libghc6-ldap-dev.
+

@@ -1,25 +1,5 @@
-missingpy (0.2.1) unstable; urgency=low
+haskell-ldap (0.1.0) unstable; urgency=low
 
-  * Rebuilt for missingh 0.11.2.  Closes: #315706.
+  * Initial release.
 
  -- John Goerzen <jgoerzen@complete.org>  Fri,  8 Jul 2005 06:15:37 -0500
-
-missingpy (0.2.0) unstable; urgency=low
-
-  * Now compatible with GHC 6.4.
-  * Requires MissingH 0.11.0 or above.
-
- -- John Goerzen <jgoerzen@complete.org>  Fri, 13 May 2005 04:15:22 -0500
-
-missingpy (0.1.1) unstable; urgency=low
-
-  * Update for the latest Cabal.
-
- -- John Goerzen <jgoerzen@complete.org>  Tue,  5 Apr 2005 14:56:54 -0500
-
-missingpy (0.1.0) unstable; urgency=low
-
-  * Initial release.  Closes: #293510.
-
- -- John Goerzen <jgoerzen@complete.org>  Wed, 26 Jan 2005 10:34:22 -0600
-

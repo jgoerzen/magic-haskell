@@ -2,7 +2,7 @@ Extra-Libraries: ldap
 -- End detected settings section.  Everything below here should not
 -- need editing.
 Name: LDAP
-Version: 0.2.0
+Version: 0.1.0
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha

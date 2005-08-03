@@ -28,6 +28,8 @@ module LDAP (-- * Basic Types
              module LDAP.Init,
              -- * Searching
              module LDAP.Search,
+             -- * Adding, Deleting, and Altering
+             module LDAP.Modify,
              -- * Error Handling
              module LDAP.Exceptions,
              -- * Haskell enumerated LDAP types
@@ -42,4 +44,5 @@ import LDAP.Init
 import LDAP.Data
 import LDAP.Constants
 import LDAP.Search
+import LDAP.Modify
 

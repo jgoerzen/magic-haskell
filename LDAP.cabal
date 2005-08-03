@@ -14,7 +14,8 @@ Exposed-Modules: LDAP,
  LDAP.Constants,
  LDAP.Data,
  LDAP.Exceptions,
- LDAP.Search
+ LDAP.Search,
+ LDAP.Modify
 Other-Modules: LDAP.Utils,
  LDAP.TypesLL,
  LDAP.Result

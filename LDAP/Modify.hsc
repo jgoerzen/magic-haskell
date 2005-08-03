@@ -20,7 +20,8 @@ LDAP changes
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module LDAP.Modify (LDAPModOp
+module LDAP.Modify (LDAPModOp(..), LDAPMod(..),
+                    ldapModify
                    )
 where
 
@@ -46,6 +47,12 @@ ldapModify :: LDAP              -- ^ LDAP connection object
            -> String            -- ^ DN to modify
            -> [LDAPMod]         -- ^ Changes to make
            -> IO ()
+ldapModify ld dn changelist =
+    withLDAPPtr ld (\cld ->
+    withCString dn (\cdn ->
+    withCLDAPModArr0 changelist (\cmods ->
+    checkLE $ ldap_modify_s cld cdn cmods
+            )))
 
 data CLDAPMod
 
@@ -56,8 +63,29 @@ newCLDAPMod lm =
        let (cmodop::LDAPInt) = 
                (fromIntegral . fromEnum . modOp $ lm) .|. 
                #{const LDAP_MOD_BVALUES}
-       bervals <- mapM 
+       bervals <- mapM newBerVal (modVals lm)
+       (arrptr::Ptr (Ptr Berval)) <- newArray0 nullPtr bervals 
+       ( #{poke LDAPMod, mod_op} ) ptr cmodop
+       ( #{poke LDAPMod, mod_type } ) ptr cmodtype
+       ( #{poke LDAPMod, mod_vals } ) ptr arrptr
+       return ptr
+
+freeCLDAPMod :: Ptr CLDAPMod -> IO ()
+freeCLDAPMod ptr =
+    do -- Free the array of Bervals
+       (arrptr::Ptr (Ptr Berval)) <- ( #{peek LDAPMod, mod_vals} ) ptr
+       (arr::[Ptr Berval]) <- peekArray0 nullPtr arrptr
+       mapM_ freeHSBerval arr
+       free arrptr
+       -- Free the modtype
+       cmodtype <- ( #{peek LDAPMod, mod_type} )
+       free cmodtype
+       -- mod_op is an int and doesn't need freeing
+       -- free the LDAPMod itself.
+       free ptr
        
+withCLDAPModArr0 :: [LDAPMod] -> Ptr (Ptr CLDAPMod -> IO a) -> IO a
+withCLDAPModArr0 = withAnyArr0 newCLDAPMod freeCLDAPMod
 
 foreign import ccall unsafe "ldap.h ldap_modify_s"
   ldap_modify_s :: LDAPPtr -> CString -> Ptr (Ptr CLDAPMod) -> IO LDAPInt

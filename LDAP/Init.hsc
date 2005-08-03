@@ -30,6 +30,9 @@ import Foreign.C.String
 import LDAP.Types
 import Foreign.C.Types
 import LDAP.Utils
+import Foreign.Marshal.Utils
+
+#include <ldap.h>
 
 {- | Preferred way to initialize a LDAP connection. 
 The default port is given in 'LDAP.Constants.ldapPort'.
@@ -40,11 +43,16 @@ ldapInit :: String              -- ^ Host
          -> IO LDAP             -- ^ New LDAP Obj
 ldapInit host port =
     withCString host (\cs ->
-       fromLDAPPtr "ldapInit" $ cldap_init cs port)
+    with ((#{const LDAP_VERSION3})::LDAPInt) (\copt ->
+       do cld <- cldap_init cs port
+          rv <- fromLDAPPtr "ldapInit" (return cld)
+          ldap_set_option cld #{const LDAP_OPT_PROTOCOL_VERSION} (castPtr copt)
+          return rv
+                     ))
 
 {- | Like 'ldapInit', but establish network connection immediately. -}
 ldapOpen :: String              -- ^ Host
-            -> CInt             -- ^ Port
+            -> LDAPInt          -- ^ Port
             -> IO LDAP          -- ^ New LDAP Obj
 ldapOpen host port =
     withCString host (\cs ->
@@ -73,3 +81,6 @@ foreign import ccall unsafe "ldap.h ldap_open"
 
 foreign import ccall unsafe "ldap.h ldap_simple_bind_s"
   ldap_simple_bind_s :: LDAPPtr -> CString -> CString -> IO LDAPInt
+
+foreign import ccall unsafe "ldap.h ldap_set_option"
+  ldap_set_option :: LDAPPtr -> LDAPInt -> Ptr () -> IO LDAPInt

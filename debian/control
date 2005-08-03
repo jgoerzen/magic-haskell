@@ -9,7 +9,7 @@ Section: devel
 Package: libghc6-ldap-dev
 Section: devel
 Architecture: any
-Depends: ${haskell:Depends}, libldap2-dev
+Depends: ${haskell:Depends}, libldap2-dev, ${shlibs:Depends}
 Description: LDAP Interface for Haskell
  This package provides an interface to the C LDAP API for Haskell programmers.
  With it, you can search, modify, and interrogate LDAP directories.
@@ -23,7 +23,7 @@ Description: LDAP Interface for Haskell
 Package: libhugs-ldap
 Section: devel
 Architecture: any
-Depends: ${haskell:Depends}, libldap2
+Depends: ${haskell:Depends}, libldap2, ${shlibs:Depends}
 Description: LDAP Interface for Haskell
  This package provides an interface to the C LDAP API for Haskell programmers.
  With it, you can search, modify, and interrogate LDAP directories.

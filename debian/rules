@@ -86,7 +86,7 @@ installdocs: builddocs
 	#make test-hugs
 
 # Build architecture-independent files here.
-binary-indep: builddocs installdocs
+#binary-indep: builddocs installdocs
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs -i

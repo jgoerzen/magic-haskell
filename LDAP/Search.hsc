@@ -67,7 +67,7 @@ ldapSearch ld base scope filter attrs attrsonly =
   withLDAPPtr ld (\cld ->
   withMString base (\cbase ->
   withMString filter (\cfilter ->
-  withCStringArr (sa2sl attrs) (\cattrs ->
+  withCStringArr0 (sa2sl attrs) (\cattrs ->
   do msgid <- checkLEn1 "ldapSearch" ld $
               ldap_search cld cbase (fromIntegral $ fromEnum scope)
                           cfilter cattrs (fromBool attrsonly)

@@ -145,11 +145,21 @@ withMString :: Maybe String -> (CString -> IO a) -> IO a
 withMString Nothing action = action (nullPtr)
 withMString (Just str) action = withCString str action
 
-withCStringArr :: [String] -> (Ptr CString -> IO a) -> IO a
-withCStringArr inp action =
-    bracket (mapM newCString inp)
-            (\csl -> mapM_ free csl)
-            (\csl -> withArray0 nullPtr csl action)
+withCStringArr0 :: [String] -> (Ptr CString -> IO a) -> IO a
+withCStringArr0 inp action = withAnyArr0 newCString free inp action
+
+withAnyArr0 :: (a -> IO (Ptr b)) -- ^ Function that transforms input data into pointer
+            -> (Ptr b -> IO ())  -- ^ Function that frees generated data
+            -> [a]               -- ^ List of input data
+            -> (Ptr (Ptr b) -> IO c) -- ^ Action to run with the C array
+            -> IO c             -- Return value
+withAnyArr0 input2ptract freeact inp action =
+    bracket (mapM input2ptract inp)
+            (\clist -> mapM_ freeact clist)
+            (\clist -> withArray0 nullPtr clist action)
+
+withBervalArr0 :: [String] -> (Ptr (Ptr Berval) -> IO a) -> IO a
+withBervalArr0 = withAnyArr0 newBerval freeHSBerval
 
 bv2str :: Ptr Berval -> IO String
 bv2str bptr = 

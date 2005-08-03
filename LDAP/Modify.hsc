@@ -32,6 +32,7 @@ import Foreign
 import Foreign.C.String
 import LDAP.Result
 import Control.Exception(finally)
+import Data.Bits
 
 #include <ldap.h>
 
@@ -55,7 +56,7 @@ newCLDAPMod lm =
        let (cmodop::LDAPInt) = 
                (fromIntegral . fromEnum . modOp $ lm) .|. 
                #{const LDAP_MOD_BVALUES}
-       
+       bervals <- mapM 
        
 
 foreign import ccall unsafe "ldap.h ldap_modify_s"

@@ -25,7 +25,7 @@ Package: libhugs-ldap
 Section: devel
 Architecture: any
 Suggests: ldap-haskell-doc
-Depends: ${haskell:Depends}, libldap2, ${shlibs:Depends}
+Depends: ${haskell:Depends}, ${shlibs:Depends}
 Description: LDAP Interface for Haskell
  This package provides an interface to the C LDAP API for Haskell programmers.
  With it, you can search, modify, and interrogate LDAP directories.

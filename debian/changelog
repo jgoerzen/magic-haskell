@@ -1,5 +1,5 @@
-ldap-haskell (0.1.0) unstable; urgency=low
+magic-haskell (1.0.0) unstable; urgency=low
 
   * Initial release.
 
- -- John Goerzen <jgoerzen@complete.org>  Wed, 10 Aug 2005 05:15:37 -0500
+ -- John Goerzen <jgoerzen@complete.org>  Tue, 16 Aug 2005 05:45:37 -0500

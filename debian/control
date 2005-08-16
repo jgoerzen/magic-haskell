@@ -1,50 +1,46 @@
-Source: ldap-haskell
+Source: magic-haskell
 Priority: optional
 Maintainer: John Goerzen <jgoerzen@complete.org>
-Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.4), ghc6 (<< 6.4-999), hugs (>= 98.200503.08), haskell-devscripts (>= 0.5.6), libldap2-dev
-Build-Depends-Indep: debhelper (>= 4.0.0), haddock, ghc6 (>= 6.4), haskell-devscripts (>= 0.5.4), libldap2-dev
+Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.4), ghc6 (<< 6.4-999), hugs (>= 98.200503.08), haskell-devscripts (>= 0.5.6), libmagic-dev
+Build-Depends-Indep: debhelper (>= 4.0.0), haddock, ghc6 (>= 6.4), haskell-devscripts (>= 0.5.4), libmagic-dev
 Standards-Version: 3.6.1
 Section: devel
 
-Package: libghc6-ldap-dev
+Package: libghc6-magic-dev
 Section: devel
 Architecture: any
-Suggests: ldap-haskell-doc
-Depends: ${haskell:Depends}, libldap2-dev, ${shlibs:Depends}
-Description: LDAP Interface for Haskell
- This package provides an interface to the C LDAP API for Haskell programmers.
- With it, you can search, modify, and interrogate LDAP directories.
- The Haskell binding features automatic memory management and proper
- handling for binary data, and handles all marhsalling into and out of
- C data structures for you automatically.
+Suggests: magic-haskell-doc
+Depends: ${haskell:Depends}, libmagic-dev, ${shlibs:Depends}
+Description: File type determination library for Haskell
+ This package provides a Haskell interface to the C libmagic library.
+ With it, you can determine the type of a file by examining its contents
+ rather than its name.  The Haskell interface provides a full-featured
+ binding.
  .
  This package is built for GHC.  A Hugs package is also available
- in libhugs-ldap.
+ in libhugs-magic.
 
-Package: libhugs-ldap
+Package: libhugs-magic
 Section: devel
 Architecture: any
-Suggests: ldap-haskell-doc
+Suggests: magic-haskell-doc
 Depends: ${haskell:Depends}, ${shlibs:Depends}
-Description: LDAP Interface for Haskell
- This package provides an interface to the C LDAP API for Haskell programmers.
- With it, you can search, modify, and interrogate LDAP directories.
- The Haskell binding features automatic memory management and proper
- handling for binary data, and handles all marhsalling into and out of
- C data structures for you automatically.
+Description: File type determination library for Haskell.
+ This package provides a Haskell interface to the C libmagic library.
+ With it, you can determine the type of a file by examining its contents
+ rather than its name.  The Haskell interface provides a full-featured
+ binding.
  .
  This package is built for Hugs.  A GHC package is also available
- in libghc6-ldap-dev.
+ in libghc6-magic-dev.
 
-Package: ldap-haskell-doc
+Package: magic-haskell-doc
 Section: devel
 Architecture: all
-Description: LDAP Interface for Haskell
- This package provides an interface to the C LDAP API for Haskell programmers.
- With it, you can search, modify, and interrogate LDAP directories.
- The Haskell binding features automatic memory management and proper
- handling for binary data, and handles all marhsalling into and out of
- C data structures for you automatically.
+Description: File type determination library for Haskell.
+ This package provides a Haskell interface to the C libmagic library.
+ With it, you can determine the type of a file by examining its contents
+ rather than its name.  The Haskell interface provides a full-featured
+ binding.
  .
- This package provides documentation for the Haskell LDAP bindings.
-
+ This package provides documentation for the Haskell magic binding.

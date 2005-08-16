@@ -72,5 +72,5 @@ genexceptions:
 	runhugs genexceptions.hs
 
 data:
-	runhugs utils/genconsts.hs > LDAP/Data.hsc
+	runhugs utils/genconsts.hs > Magic/Data.hsc
 

@@ -18,4 +18,4 @@ Other-Modules: Magic.Utils,
 Build-Depends: haskell-src
 GHC-Options: -O2
 -- CC-Options: -Iglue
-Extensions: ForeignFunctionInterface
+Extensions: ForeignFunctionInterface, TypeSynonymInstances

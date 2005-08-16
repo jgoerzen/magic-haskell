@@ -1,12 +1,12 @@
-{-  -*- Mode: haskell; -*-
-Haskell LDAP Interface
+{- -*- Mode: haskell; -*-
+Haskell Magic Interface
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
 This code is under a 3-clause BSD license; see COPYING for details.
 -}
 
 {- |
-   Module     : LDAP.Types
+   Module     : Magic
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : BSD
 
@@ -15,13 +15,19 @@ This code is under a 3-clause BSD license; see COPYING for details.
    Stability  : provisional
    Portability: portable
 
-Low-level types for LDAP programs.
+Top-level Magic module.
 
 Written by John Goerzen, jgoerzen\@complete.org
+
+Foo bar
 -}
 
-module LDAP.TypesLL(CLDAP, Berval)
+module LDAP (-- * Basic Types
+             module Magic.Types,
+             -- * Initialization
+             module Magic.Init
+            )
 where
+import Magic.Types
+import Magic.Init
 
-data CLDAP
-data Berval

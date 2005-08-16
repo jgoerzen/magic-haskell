@@ -11,16 +11,8 @@ Copyright: Copyright (c) 2005 John Goerzen
 Exposed-Modules: Magic,
  Magic.Data,
  Magic.Types,
- LDAP.Types,
- LDAP.Init,
- LDAP.Constants,
- LDAP.Data,
- LDAP.Exceptions,
- LDAP.Search,
- LDAP.Modify
-Other-Modules: LDAP.Utils,
- Magic.TypesLL,
- LDAP.Result
+Other-Modules: Magic.Utils,
+ Magic.TypesLL
 Build-Depends: haskell-src
 GHC-Options: -O2
 -- CC-Options: -Iglue

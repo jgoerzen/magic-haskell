@@ -22,7 +22,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 Foo bar
 -}
 
-module LDAP (-- * Basic Types
+module Magic (-- * Basic Types
              module Magic.Types,
              -- * Initialization
              module Magic.Init,

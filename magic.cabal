@@ -1,8 +1,8 @@
 Extra-Libraries: magic
 -- End detected settings section.  Everything below here should not
 -- need editing.
-Name: LDAP
-Version: 0.1.0
+Name: magic
+Version: 1.0.0
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha

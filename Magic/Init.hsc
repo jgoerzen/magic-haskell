@@ -51,7 +51,6 @@ magicLoad m s = withMagicPtr m (\cmagic ->
     withCString s (\cs ->
      checkIntError "magicLoad" m $ magic_load cmagic cs))
     
-
 foreign import ccall unsafe "magic.h magic_open"
   magic_open :: CInt -> IO (Ptr CMagic)
 

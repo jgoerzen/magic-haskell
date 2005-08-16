@@ -6,7 +6,10 @@ This code is under a 3-clause BSD license; see COPYING for details.
 
 module Inittest(tests) where
 import Test.HUnit
-import LDAP
+import Magic
 
 test_base =
     let f 
+
+
+tests = [

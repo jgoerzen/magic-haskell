@@ -1,4 +1,4 @@
-Extra-Libraries: ldap
+Extra-Libraries: magic
 -- End detected settings section.  Everything below here should not
 -- need editing.
 Name: LDAP
@@ -11,7 +11,8 @@ Copyright: Copyright (c) 2005 John Goerzen
 Exposed-Modules: Magic,
  Magic.Data,
  Magic.Types,
- Magic.Init
+ Magic.Init,
+ Magic.Operations
 Other-Modules: Magic.Utils,
  Magic.TypesLL
 Build-Depends: haskell-src

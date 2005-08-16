@@ -20,14 +20,18 @@ Initialization and shutdown for magic programs
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module Magic.Operations()
+module Magic.Operations(-- * Guessing the type
+                        magicFile, magicStdin,
+                        magicString, magicCString)
 where
 
 import Foreign.Ptr
 import Foreign.C.String
 import Magic.Types
 import Foreign.C.Types
+import Data.Word
 import Foreign.C.String
+import Foreign.C.Error
 import Magic.Utils
 import Magic.TypesLL
 import Foreign.Marshal.Utils
@@ -46,9 +50,27 @@ magicFile magic fp =
 magicStdin :: Magic -> IO String
 magicStdin magic =
     withMagicPtr magic (\cmagic ->
-     do res <- throwErrnoIfNull "magicStdin" (magic_stdin cmagic nullPtr)
+     do res <- throwErrnoIfNull "magicStdin" (magic_file cmagic nullPtr)
         peekCString res
                        )
 
+{- | Calls the Magic system to process the given String.  Please note:
+it is not evaluated lazily. -}
+magicString :: Magic -> String -> IO String
+magicString m s = withCStringLen s (magicCString m)
+
+{- | Lower-level function used to call the Magic system to process a C 
+string. -}
+magicCString :: Magic -> CStringLen -> IO String
+magicCString magic (cstr, len) =
+    withMagicPtr magic (\cmagic ->
+     do res <- throwErrnoIfNull "magicCString" (magic_buffer cmagic cstr (fromIntegral len))
+        peekCString res
+                    )
+
+
 foreign import ccall unsafe "magic.h magic_file"
   magic_file :: Ptr CMagic -> CString -> IO CString
+
+foreign import ccall unsafe "magic.h magic_buffer"
+  magic_buffer :: Ptr CMagic -> CString -> #{type size_t} -> IO CString

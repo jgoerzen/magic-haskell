@@ -25,9 +25,11 @@ Foo bar
 module LDAP (-- * Basic Types
              module Magic.Types,
              -- * Initialization
-             module Magic.Init
+             module Magic.Init,
+             -- * Operation
+             module Magic.Operations
             )
 where
 import Magic.Types
 import Magic.Init
-
+import Magic.Operations

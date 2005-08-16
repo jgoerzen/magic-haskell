@@ -41,7 +41,7 @@ magicFile :: Magic -> FilePath -> IO String
 magicFile magic fp =
     withMagicPtr magic (\cmagic ->
     withCString fp (\cfp ->
-     do res <- throwErrnoIfNull "magicFile" (magic_file cmagic cfp)
+     do res <- throwErrorIfNull "magicFile" magic (magic_file cmagic cfp)
         peekCString res
                     )
                        )
@@ -50,7 +50,7 @@ magicFile magic fp =
 magicStdin :: Magic -> IO String
 magicStdin magic =
     withMagicPtr magic (\cmagic ->
-     do res <- throwErrnoIfNull "magicStdin" (magic_file cmagic nullPtr)
+     do res <- throwErrorIfNull "magicStdin" magic (magic_file cmagic nullPtr)
         peekCString res
                        )
 
@@ -64,7 +64,7 @@ string. -}
 magicCString :: Magic -> CStringLen -> IO String
 magicCString magic (cstr, len) =
     withMagicPtr magic (\cmagic ->
-     do res <- throwErrnoIfNull "magicCString" (magic_buffer cmagic cstr (fromIntegral len))
+     do res <- throwErrorIfNull "magicCString" magic (magic_buffer cmagic cstr (fromIntegral len))
         peekCString res
                     )
 

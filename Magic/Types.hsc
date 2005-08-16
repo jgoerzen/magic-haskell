@@ -21,7 +21,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module Magic.Types(Magic,
-                   MagicFlag)
+                   MagicFlag(..))
 where
 import Foreign.Ptr
 import Data.Word

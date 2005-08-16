@@ -72,7 +72,7 @@ magicCString magic (cstr, len) =
 
 {- | Change the flags on an already-created object. -}
 magicSetFlags :: Magic -> [MagicFlag] -> IO ()
-magicSetFlags m mfl = withMagicPtr m (\cm ->
+magicSetFlags m mfl = withMagicPtr m (\cmagic ->
      checkIntError "magicSetFlags" m $ magic_setflags cmagic flags)
     where flags = flaglist2int mfl
 

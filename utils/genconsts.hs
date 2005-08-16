@@ -1,5 +1,5 @@
 {- -*- Mode: haskell; -*-
-Haskell LDAP Interface
+Haskell Magic Interface
 Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
 
 This code is under a 3-clause BSD license; see COPYING for details.
@@ -58,7 +58,7 @@ modHeader =
 
 main = 
     do putStrLn modHeader
-       putStrLn (errorClause "MagicFlags" magicFlags)
+       putStrLn (errorClause "MagicFlag" magicFlags)
 
 magicFlags = ["MAGIC_NONE", "MAGIC_DEBUG", "MAGIC_SYMLINK",
               "MAGIC_COMPRESS", "MAGIC_DEVICES", "MAGIC_MIME",

@@ -16,10 +16,10 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module Magic.Data (module Magic.Data) where
 
-#include "ldap.h"
+#include "magic.h"
 
 
-data MagicFlags =
+data MagicFlag =
    MagicNone
  | MagicDebug
  | MagicSymlink
@@ -31,11 +31,11 @@ data MagicFlags =
  | MagicPreserveAtime
  | MagicRaw
  | MagicError
- | UnknownMagicFlags Int
+ | UnknownMagicFlag Int
 
  deriving (Show)
 
-instance Enum MagicFlags where
+instance Enum MagicFlag where
  toEnum (#{const MAGIC_NONE}) = MagicNone
  toEnum (#{const MAGIC_DEBUG}) = MagicDebug
  toEnum (#{const MAGIC_SYMLINK}) = MagicSymlink
@@ -47,7 +47,7 @@ instance Enum MagicFlags where
  toEnum (#{const MAGIC_PRESERVE_ATIME}) = MagicPreserveAtime
  toEnum (#{const MAGIC_RAW}) = MagicRaw
  toEnum (#{const MAGIC_ERROR}) = MagicError
- toEnum x = UnknownMagicFlags x
+ toEnum x = UnknownMagicFlag x
 
  fromEnum MagicNone = (#{const MAGIC_NONE})
  fromEnum MagicDebug = (#{const MAGIC_DEBUG})
@@ -60,12 +60,12 @@ instance Enum MagicFlags where
  fromEnum MagicPreserveAtime = (#{const MAGIC_PRESERVE_ATIME})
  fromEnum MagicRaw = (#{const MAGIC_RAW})
  fromEnum MagicError = (#{const MAGIC_ERROR})
- fromEnum (UnknownMagicFlags x) = x
+ fromEnum (UnknownMagicFlag x) = x
 
-instance Ord MagicFlags where
+instance Ord MagicFlag where
  compare x y = compare (fromEnum x) (fromEnum y)
 
-instance Eq MagicFlags where
+instance Eq MagicFlag where
  x == y = (fromEnum x) == (fromEnum y)
 
 

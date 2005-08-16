@@ -20,7 +20,7 @@ Low-Types for magic programs.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module Magic.Types(CMagic)
+module Magic.TypesLL(CMagic)
 where
 
 data CMagic

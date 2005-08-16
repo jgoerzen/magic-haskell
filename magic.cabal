@@ -11,6 +11,7 @@ Copyright: Copyright (c) 2005 John Goerzen
 Exposed-Modules: Magic,
  Magic.Data,
  Magic.Types,
+ Magic.Init
 Other-Modules: Magic.Utils,
  Magic.TypesLL
 Build-Depends: haskell-src

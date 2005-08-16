@@ -22,7 +22,9 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module Magic.Operations(-- * Guessing the type
                         magicFile, magicStdin,
-                        magicString, magicCString)
+                        magicString, magicCString,
+                        -- * Other operations
+                        magicSetFlags, magicCompile)
 where
 
 import Foreign.Ptr
@@ -68,9 +70,33 @@ magicCString magic (cstr, len) =
         peekCString res
                     )
 
+{- | Change the flags on an already-created object. -}
+magicSetFlags :: Magic -> [MagicFlag] -> IO ()
+magicSetFlags m mfl = withMagicPtr m (\cm ->
+     checkIntError "magicSetFlags" m $ magic_setflags cmagic flags)
+    where flags = flaglist2int mfl
+
+{- | Compile the colon-separated list of database file(s).  The compiled files
+created have .mgc added to the names of the argument.
+-}
+magicCompile :: Magic           -- ^ Object to use
+             -> Maybe String    -- ^ Colon separated list of databases, or Nothing for default
+             -> IO ()
+magicCompile m mstr = withMagicPtr m (\cm ->
+     case mstr of
+               Nothing -> worker cm nullPtr
+               Just x -> withCString x (worker cm)
+                                     )
+    where worker cm cs = checkIntError "magicCompile" m $ magic_compile cm cs
 
 foreign import ccall unsafe "magic.h magic_file"
   magic_file :: Ptr CMagic -> CString -> IO CString
 
 foreign import ccall unsafe "magic.h magic_buffer"
   magic_buffer :: Ptr CMagic -> CString -> #{type size_t} -> IO CString
+
+foreign import ccall unsafe "magic.h magic_setflags"
+  magic_setflags :: Ptr CMagic -> CInt -> IO CInt
+
+foreign import ccall unsafe "magic.h magic_compile"
+  magic_compile :: Ptr CMagic -> CString -> IO CInt

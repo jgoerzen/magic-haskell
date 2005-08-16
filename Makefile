@@ -1,4 +1,3 @@
-# arch-tag: Main Makefile
 # Copyright (C) 2004 - 2005 John Goerzen <jgoerzen@complete.org>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -15,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-PROJECT := LDAP
+PROJECT := magic
 
 .PHONY: all
 all: setup
@@ -23,7 +22,7 @@ all: setup
 	./setup build
 
 PYTHON ?= python
-setup: Setup.lhs LDAP.cabal
+setup: Setup.lhs $(PROJECT).cabal
 	ghc -package Cabal Setup.lhs -o setup
 
 
@@ -34,7 +33,7 @@ clean:
 	-./setup clean
 	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \
 		`find . -name "*~"` *.a setup dist testsrc/runtests \
-		MissingPy.cabal local-pkg
+		local-pkg
 	-cd doc && $(MAKE) clean
 
 .PHONY: local-pkg

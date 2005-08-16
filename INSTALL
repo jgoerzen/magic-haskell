@@ -1,25 +1,11 @@
 INSTALLATION INSTRUCTIONS
 -------------------------
 
-Before you start, you will of course need to have Python installed,
-version 2.3 or better.  Get it from www.python.org if you don't have
-it already.  It's very portable and easily built.
+Before you start, you will need to have libmagic installed.  I have tested
+this package with version 4.12; earlier versions may or may not work.
 
-Now, you're ready to build MissingPy.
-
-You'll need GHC 6.4 or above for this version.  If you have GHC 6.2,
-you'll need 0.1.2 or earlier.
-
-Next, download and install MissingH, version 0.11.0 or above.  Grab it
-from http://quux.org/devel/missingh.  Debian users can
-apt-get install libghc6-missingh-dev.
-
-Now, run:
-
- python gencabal.py
-
-This will generate the build file MissingPy.cabal.  Look at the
-declarations near the top and edit them if necessary.
+libmagic is part of the "file" package and can be found at
+ftp://ftp.astron.com/pub/file/.
 
 Now, run "make setup" (you may need to edit the Makefile if you don't
 use GHC or if your GHC is at an unusual location).
@@ -30,10 +16,3 @@ Then:
  ./setup build
  ./setup install
  
-Optionally, to run the unit tests, you'll need to install HUnit.  Then:
-
- make test
-
-(More to come in this file)
-
-# arch-tag: Installation Instructions

@@ -1,3 +1,16 @@
+magic-haskell (1.0.2) unstable; urgency=low
+
+  * Tightened up build-deps on haskell-devscripts due to a bug in that
+    package.  Closes: #326795.
+
+ -- John Goerzen <jgoerzen@complete.org>  Tue,  6 Sep 2005 10:21:09 -0500
+
+magic-haskell (1.0.1) unstable; urgency=low
+
+  * Added README to doc package.
+
+ -- John Goerzen <jgoerzen@complete.org>  Tue, 16 Aug 2005 05:53:18 -0500
+
 magic-haskell (1.0.0) unstable; urgency=low
 
   * Initial release.

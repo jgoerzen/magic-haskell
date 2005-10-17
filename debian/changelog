@@ -1,3 +1,9 @@
+magic-haskell (1.0.3) unstable; urgency=low
+
+  * Rebuilt against ghc6 6.4.1.
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 17 Oct 2005 00:02:45 -0500
+
 magic-haskell (1.0.2) unstable; urgency=low
 
   * Tightened up build-deps on haskell-devscripts due to a bug in that

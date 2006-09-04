@@ -1,6 +1,7 @@
 magic-haskell (1.0.4) unstable; urgency=low
 
   * ACK NMU -- Thanks, Luk.  Closes: #379265.
+  * Escape @ signs in email addresses in Haddock comments.  Closes: #361573.
 
  -- John Goerzen <jgoerzen@complete.org>  Mon,  4 Sep 2006 09:28:13 -0500
 

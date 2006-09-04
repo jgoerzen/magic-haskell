@@ -1,3 +1,10 @@
+magic-haskell (1.0.3-0.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Update build dependency on ghc6 (Closes: #379265).
+
+ -- Luk Claes <luk@debian.org>  Wed,  2 Aug 2006 23:22:43 +0200
+
 magic-haskell (1.0.3) unstable; urgency=low
 
   * Rebuilt against ghc6 6.4.1.

@@ -5,7 +5,7 @@
    License    : BSD
 
    Maintainer : John Goerzen,
-   Maintainer : jgoerzen@complete.org
+   Maintainer : jgoerzen\@complete.org
    Stability  : provisional
    Portability: portable
 

@@ -11,7 +11,7 @@ This code is under a 3-clause BSD license; see COPYING for details.
    License    : BSD
 
    Maintainer : John Goerzen,
-   Maintainer : jgoerzen@complete.org
+   Maintainer : jgoerzen\@complete.org
    Stability  : provisional
    Portability: portable
 

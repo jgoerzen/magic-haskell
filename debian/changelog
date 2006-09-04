@@ -1,3 +1,9 @@
+magic-haskell (1.0.4) unstable; urgency=low
+
+  * ACK NMU -- Thanks, Luk.  Closes: #379265.
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon,  4 Sep 2006 09:28:13 -0500
+
 magic-haskell (1.0.3-0.1) unstable; urgency=medium
 
   * Non-maintainer upload.

@@ -1,6 +1,6 @@
 magic-haskell (1.0.6) unstable; urgency=low
 
-  * Update for new ghc 6.6.1.
+  * Update for new ghc 6.6.1.  Closes: #427322.
 
  -- John Goerzen <jgoerzen@complete.org>  Wed, 06 Jun 2007 04:07:41 -0500
 

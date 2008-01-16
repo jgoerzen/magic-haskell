@@ -3,7 +3,7 @@ Extra-Libraries: magic
 -- need editing.
 Name: magic
 Version: 1.0.7
-License: BSD
+license: BSD3
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
 Stability: Alpha
@@ -26,4 +26,5 @@ Other-Modules: Magic.Utils,
 Build-Depends: base
 GHC-Options: -O2
 -- CC-Options: -Iglue
-Extensions: ForeignFunctionInterface, TypeSynonymInstances
+Extensions: ForeignFunctionInterface, TypeSynonymInstances,
+            EmptyDataDecls

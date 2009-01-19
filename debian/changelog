@@ -1,3 +1,9 @@
+magic-haskell (1.0.7.1) unstable; urgency=high
+
+  * Updating for new GHC.
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 19 Jan 2009 10:21:18 -0600
+
 magic-haskell (1.0.7) unstable; urgency=low
 
   * Update for GHC 6.8.

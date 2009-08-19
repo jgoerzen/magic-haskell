@@ -8,6 +8,7 @@ Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
 Stability: Alpha
 Copyright: Copyright (c) 2005-2009 John Goerzen
+build-type: Simple
 license-file: COPYING
 Category: Text
 Synopsis: Interface to C file/magic library
@@ -23,7 +24,7 @@ Exposed-Modules: Magic,
  Magic.Operations
 Other-Modules: Magic.Utils,
  Magic.TypesLL
-Build-Depends: base
+Build-Depends: base >= 3 && < 5
 GHC-Options: -O2
 -- CC-Options: -Iglue
 Extensions: ForeignFunctionInterface, TypeSynonymInstances,

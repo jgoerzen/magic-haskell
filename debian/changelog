@@ -1,3 +1,10 @@
+magic-haskell (1.0.8-1) unstable; urgency=low
+
+  * Switched to regular non-native package.
+  * Removed old configure parameter.  Closes: #522475.
+
+ -- John Goerzen <jgoerzen@complete.org>  Wed, 19 Aug 2009 15:56:56 -0500
+
 magic-haskell (1.0.7.1) unstable; urgency=high
 
   * Updating for new GHC.

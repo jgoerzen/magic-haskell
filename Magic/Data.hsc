@@ -25,6 +25,8 @@ data MagicFlag =
  | MagicSymlink
  | MagicCompress
  | MagicDevices
+ | MagicMimeType
+ | MagicMimeEncoding
  | MagicMime
  | MagicContinue
  | MagicCheck
@@ -41,6 +43,8 @@ instance Enum MagicFlag where
  toEnum (#{const MAGIC_SYMLINK}) = MagicSymlink
  toEnum (#{const MAGIC_COMPRESS}) = MagicCompress
  toEnum (#{const MAGIC_DEVICES}) = MagicDevices
+ toEnum (#{const MAGIC_MIME_TYPE}) = MagicMimeType
+ toEnum (#{const MAGIC_MIME_ENCODING}) = MagicMimeEncoding
  toEnum (#{const MAGIC_MIME}) = MagicMime
  toEnum (#{const MAGIC_CONTINUE}) = MagicContinue
  toEnum (#{const MAGIC_CHECK}) = MagicCheck
@@ -54,6 +58,8 @@ instance Enum MagicFlag where
  fromEnum MagicSymlink = (#{const MAGIC_SYMLINK})
  fromEnum MagicCompress = (#{const MAGIC_COMPRESS})
  fromEnum MagicDevices = (#{const MAGIC_DEVICES})
+ fromEnum MagicMimeType = (#{const MAGIC_MIME_TYPE})
+ fromEnum MagicMimeEncoding = (#{const MAGIC_MIME_ENCODING})
  fromEnum MagicMime = (#{const MAGIC_MIME})
  fromEnum MagicContinue = (#{const MAGIC_CONTINUE})
  fromEnum MagicCheck = (#{const MAGIC_CHECK})

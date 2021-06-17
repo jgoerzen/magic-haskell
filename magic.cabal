@@ -3,6 +3,7 @@ Extra-Libraries: magic
 -- need editing.
 Name: magic
 Version: 1.1
+Cabal-Version: >= 1.8
 license: BSD3
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen

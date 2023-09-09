@@ -89,14 +89,18 @@ magicCompile m mstr = withMagicPtr m (\cm ->
                                      )
     where worker cm cs = checkIntError "magicCompile" m $ magic_compile cm cs
 
-foreign import ccall unsafe "magic.h magic_file"
+-- Does file I/O -> safe
+foreign import ccall safe "magic.h magic_file"
   magic_file :: Ptr CMagic -> CString -> IO CString
 
+-- Does not do I/O -> unsafe
 foreign import ccall unsafe "magic.h magic_buffer"
   magic_buffer :: Ptr CMagic -> CString -> #{type size_t} -> IO CString
 
+-- Does not do I/O -> unsafe
 foreign import ccall unsafe "magic.h magic_setflags"
   magic_setflags :: Ptr CMagic -> CInt -> IO CInt
 
-foreign import ccall unsafe "magic.h magic_compile"
+-- Does file I/O -> safe
+foreign import ccall safe "magic.h magic_compile"
   magic_compile :: Ptr CMagic -> CString -> IO CInt
